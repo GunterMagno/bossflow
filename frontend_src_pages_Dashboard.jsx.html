@@ -75,7 +75,7 @@ import './Dashboard.css';
 function Dashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [activeMenu, setActiveMenu] = useState('inicio');
+  const [activeMenu, setActiveMenu] = useState('home');
   const [diagrams, setDiagrams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -203,7 +203,7 @@ function Dashboard() {
   return (
     &lt;section className="dashboard">
       &lt;aside className="dashboard__sidebar">
-        &lt;section className="dashboard__sidebar-contenido">
+        &lt;section className="dashboard__sidebar-content">
           &lt;header className="dashboard__logo">
             &lt;h2>BossFlow&lt;/h2>
           &lt;/header>
@@ -212,72 +212,72 @@ function Dashboard() {
             &lt;Link
               to="/dashboard"
               className={`dashboard__nav-item ${
-                activeMenu === 'inicio' ? 'dashboard__nav-item--activo' : ''
+                activeMenu === 'home' ? 'dashboard__nav-item--active' : ''
               }`}
-              onClick={() => setActiveMenu('inicio')}
+              onClick={() => setActiveMenu('home')}
             >
-              &lt;FiHome className="dashboard__nav-icono" />
+              &lt;FiHome className="dashboard__nav-icon" />
               &lt;span>Inicio&lt;/span>
             &lt;/Link>
 
             &lt;Link
               to="/dashboard"
               className={`dashboard__nav-item ${
-                activeMenu === 'mis-diagramas' ? 'dashboard__nav-item--activo' : ''
+                activeMenu === 'my-diagrams' ? 'dashboard__nav-item--active' : ''
               }`}
-              onClick={() => setActiveMenu('mis-diagramas')}
+              onClick={() => setActiveMenu('my-diagrams')}
             >
-              &lt;FiFileText className="dashboard__nav-icono" />
+              &lt;FiFileText className="dashboard__nav-icon" />
               &lt;span>Mis diagramas&lt;/span>
             &lt;/Link>
 
             &lt;Link
-              to="/dashboard/colaboraciones"
+              to="/dashboard/collaborations"
               className={`dashboard__nav-item ${
-                activeMenu === 'colaboraciones' ? 'dashboard__nav-item--activo' : ''
+                activeMenu === 'collaborations' ? 'dashboard__nav-item--active' : ''
               }`}
-              onClick={() => setActiveMenu('colaboraciones')}
+              onClick={() => setActiveMenu('collaborations')}
             >
-              &lt;FiUsers className="dashboard__nav-icono" />
+              &lt;FiUsers className="dashboard__nav-icon" />
               &lt;span>Colaboraciones&lt;/span>
             &lt;/Link>
 
             &lt;Link
-              to="/dashboard/plantillas"
+              to="/dashboard/templates"
               className={`dashboard__nav-item ${
-                activeMenu === 'plantillas' ? 'dashboard__nav-item--activo' : ''
+                activeMenu === 'templates' ? 'dashboard__nav-item--active' : ''
               }`}
-              onClick={() => setActiveMenu('plantillas')}
+              onClick={() => setActiveMenu('templates')}
             >
-              &lt;FiLayers className="dashboard__nav-icono" />
+              &lt;FiLayers className="dashboard__nav-icon" />
               &lt;span>Plantillas&lt;/span>
             &lt;/Link>
 
             &lt;Link
-              to="/dashboard/comentarios"
+              to="/dashboard/comments"
               className={`dashboard__nav-item ${
-                activeMenu === 'comentarios' ? 'dashboard__nav-item--activo' : ''
+                activeMenu === 'comments' ? 'dashboard__nav-item--active' : ''
               }`}
-              onClick={() => setActiveMenu('comentarios')}
+              onClick={() => setActiveMenu('comments')}
             >
-              &lt;FiMessageSquare className="dashboard__nav-icono" />
+              &lt;FiMessageSquare className="dashboard__nav-icon" />
               &lt;span>Comentarios&lt;/span>
             &lt;/Link>
 
             &lt;Link
               to="/settings"
               className={`dashboard__nav-item ${
-                activeMenu === 'configuracion' ? 'dashboard__nav-item--activo' : ''
+                activeMenu === 'settings' ? 'dashboard__nav-item--active' : ''
               }`}
-              onClick={() => setActiveMenu('configuracion')}
+              onClick={() => setActiveMenu('settings')}
             >
-              &lt;FiSettings className="dashboard__nav-icono" />
+              &lt;FiSettings className="dashboard__nav-icon" />
               &lt;span>Configuración&lt;/span>
             &lt;/Link>
           &lt;/nav>
 
           &lt;button className="dashboard__logout" onClick={handleLogout}>
-            &lt;FiLogOut className="dashboard__nav-icono" />
+            &lt;FiLogOut className="dashboard__nav-icon" />
             &lt;span>Cerrar sesión&lt;/span>
           &lt;/button>
         &lt;/section>
@@ -285,14 +285,14 @@ function Dashboard() {
 
       {/* Main content */}
       &lt;main className="dashboard__main">
-        {activeMenu === 'inicio' &amp;&amp; (
+        {activeMenu === 'home' &amp;&amp; (
           &lt;>
             {/* Statistics */}
-            &lt;section className="dashboard__seccion">
-              &lt;header className="dashboard__seccion-header">
+            &lt;section className="dashboard__section">
+              &lt;header className="dashboard__section-header">
                 &lt;section>
-                  &lt;h2 className="dashboard__titulo">Resumen&lt;/h2>
-                  &lt;p className="dashboard__descripcion">
+                  &lt;h2 className="dashboard__title">Resumen&lt;/h2>
+                  &lt;p className="dashboard__description">
                     Vista general de tu actividad
                   &lt;/p>
                 &lt;/section>
@@ -300,41 +300,41 @@ function Dashboard() {
 
               &lt;section className="dashboard__stats-grid">
                 &lt;article className="dashboard__stat-card">
-                  &lt;figure className="dashboard__stat-icono">
+                  &lt;figure className="dashboard__stat-icon">
                     &lt;FiFileText />
                   &lt;/figure>
-                  &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{statistics.totalDiagrams}&lt;/h3>
+                  &lt;section className="dashboard__stat-content">
+                    &lt;h3 className="dashboard__stat-number">{statistics.totalDiagrams}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Mis diagramas&lt;/p>
                   &lt;/section>
                 &lt;/article>
 
                 &lt;article className="dashboard__stat-card">
-                  &lt;figure className="dashboard__stat-icono">
+                  &lt;figure className="dashboard__stat-icon">
                     &lt;FiUsers />
                   &lt;/figure>
-                  &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{statistics.collaborations}&lt;/h3>
+                  &lt;section className="dashboard__stat-content">
+                    &lt;h3 className="dashboard__stat-number">{statistics.collaborations}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Colaboraciones&lt;/p>
                   &lt;/section>
                 &lt;/article>
 
                 &lt;article className="dashboard__stat-card">
-                  &lt;figure className="dashboard__stat-icono">
+                  &lt;figure className="dashboard__stat-icon">
                     &lt;FiCopy />
                   &lt;/figure>
-                  &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{statistics.totalNodes}&lt;/h3>
+                  &lt;section className="dashboard__stat-content">
+                    &lt;h3 className="dashboard__stat-number">{statistics.totalNodes}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Nodos creados&lt;/p>
                   &lt;/section>
                 &lt;/article>
 
                 &lt;article className="dashboard__stat-card">
-                  &lt;figure className="dashboard__stat-icono">
+                  &lt;figure className="dashboard__stat-icon">
                     &lt;FiMessageSquare />
                   &lt;/figure>
-                  &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{statistics.pendingComments}&lt;/h3>
+                  &lt;section className="dashboard__stat-content">
+                    &lt;h3 className="dashboard__stat-number">{statistics.pendingComments}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Comentarios&lt;/p>
                   &lt;/section>
                 &lt;/article>
@@ -342,20 +342,20 @@ function Dashboard() {
             &lt;/section>
 
             {/* Quick access */}
-            &lt;section className="dashboard__seccion">
-              &lt;header className="dashboard__seccion-header">
+            &lt;section className="dashboard__section">
+              &lt;header className="dashboard__section-header">
                 &lt;section>
-                  &lt;h2 className="dashboard__titulo">Acceso rápido&lt;/h2>
-                  &lt;p className="dashboard__descripcion">
+                  &lt;h2 className="dashboard__title">Acceso rápido&lt;/h2>
+                  &lt;p className="dashboard__description">
                     Tus diagramas más recientes
                   &lt;/p>
                 &lt;/section>
               &lt;section>
                 &lt;button
                   onClick={() => setIsModalOpen(true)}
-                  className="dashboard__boton-nuevo"
+                  className="dashboard__new-button"
                 >
-                  &lt;FiPlus className="dashboard__boton-icono" />
+                  &lt;FiPlus className="dashboard__button-icon" />
                   Nuevo diagrama
                 &lt;/button>
               &lt;/section>
@@ -372,34 +372,34 @@ function Dashboard() {
                 &lt;/article>
               ) : recentDiagrams.length > 0 ? (
                 &lt;section className="dashboard__grid">
-                  {recentDiagrams.map((diagrama) => (
+                  {recentDiagrams.map((diagram) => (
                     &lt;Link
-                      key={diagrama.id}
-                      to={`/editor/${diagrama.id}`}
+                      key={diagram.id}
+                      to={`/editor/${diagram.id}`}
                       className="dashboard__card"
                     >
-                      &lt;figure className="dashboard__card-icono">
+                      &lt;figure className="dashboard__card-icon">
                         &lt;FiFileText />
                       &lt;/figure>
 
-                      &lt;article className="dashboard__card-contenido">
-                        &lt;h3 className="dashboard__card-titulo">{diagrama.title}&lt;/h3>
-                        {diagrama.description &amp;&amp; (
-                          &lt;p className="dashboard__card-descripcion">
-                            {diagrama.description}
+                      &lt;article className="dashboard__card-content">
+                        &lt;h3 className="dashboard__card-title">{diagram.title}&lt;/h3>
+                        {diagram.description &amp;&amp; (
+                          &lt;p className="dashboard__card-description">
+                            {diagram.description}
                           &lt;/p>
                         )}
 
                         &lt;footer className="dashboard__card-footer">
                           &lt;section className="dashboard__card-info">
-                            &lt;span className="dashboard__card-fecha">
-                              &lt;FiClock className="dashboard__info-icono" />
-                              {formatRelativeDate(diagrama.updatedAt)}
+                            &lt;span className="dashboard__card-date">
+                              &lt;FiClock className="dashboard__info-icon" />
+                              {formatRelativeDate(diagram.updatedAt)}
                             &lt;/span>
                             &lt;section className="dashboard__card-stats">
-                              &lt;span>{(diagrama.nodes ? diagrama.nodes.length : 0)} nodos&lt;/span>
+                              &lt;span>{(diagram.nodes ? diagram.nodes.length : 0)} nodos&lt;/span>
                               &lt;span className="dashboard__stat-separator">•&lt;/span>
-                              &lt;span>{(diagrama.edges ? diagrama.edges.length : 0)} conexiones&lt;/span>
+                              &lt;span>{(diagram.edges ? diagram.edges.length : 0)} conexiones&lt;/span>
                             &lt;/section>
                           &lt;/section>
                         &lt;/footer>
@@ -415,34 +415,34 @@ function Dashboard() {
             &lt;/section>
 
             {/* Recent activity */}
-            &lt;section className="dashboard__seccion">
-              &lt;header className="dashboard__seccion-header">
+            &lt;section className="dashboard__section">
+              &lt;header className="dashboard__section-header">
                 &lt;section>
-                  &lt;h2 className="dashboard__titulo">Actividad reciente&lt;/h2>
-                  &lt;p className="dashboard__descripcion">
+                  &lt;h2 className="dashboard__title">Actividad reciente&lt;/h2>
+                  &lt;p className="dashboard__description">
                     Tus últimas acciones
                   &lt;/p>
                 &lt;/section>
               &lt;/header>
 
               {activities.length > 0 ? (
-                &lt;ul className="dashboard__actividad-lista">
-                  {activities.map((actividad) => (
-                    &lt;li key={actividad.id} className="dashboard__actividad-item">
-                      &lt;figure className="dashboard__actividad-icono">
+                &lt;ul className="dashboard__activity-list">
+                  {activities.map((activity) => (
+                    &lt;li key={activity.id} className="dashboard__activity-item">
+                      &lt;figure className="dashboard__activity-icon">
                         &lt;FiClock />
                       &lt;/figure>
-                      &lt;article className="dashboard__actividad-contenido">
-                        &lt;p className="dashboard__actividad-texto">
-                          &lt;span className="dashboard__actividad-accion">
-                            {actividad.tipo === 'creacion' &amp;&amp; 'Creaste'}
-                            {actividad.tipo === 'edicion' &amp;&amp; 'Editaste'}
-                            {actividad.tipo === 'eliminacion' &amp;&amp; 'Eliminaste'}
-                            {actividad.tipo === 'visualizacion' &amp;&amp; 'Visualizaste'}
+                      &lt;article className="dashboard__activity-content">
+                        &lt;p className="dashboard__activity-text">
+                          &lt;span className="dashboard__activity-action">
+                            {activity.type === 'creation' &amp;&amp; 'Creaste'}
+                            {activity.type === 'edition' &amp;&amp; 'Editaste'}
+                            {activity.type === 'deletion' &amp;&amp; 'Eliminaste'}
+                            {activity.type === 'view' &amp;&amp; 'Visualizaste'}
                           &lt;/span>
-                          {' '}&lt;span className="dashboard__actividad-diagrama">{actividad.diagrama}&lt;/span>
+                          {' '}&lt;span className="dashboard__activity-diagram">{activity.diagram}&lt;/span>
                         &lt;/p>
-                        &lt;span className="dashboard__actividad-fecha">{actividad.fechaFormateada}&lt;/span>
+                        &lt;span className="dashboard__activity-date">{activity.formattedDate}&lt;/span>
                       &lt;/article>
                     &lt;/li>
                   ))}
@@ -456,20 +456,20 @@ function Dashboard() {
           &lt;/>
         )}
 
-        {activeMenu === 'mis-diagramas' &amp;&amp; (
-          &lt;section className="dashboard__seccion">
-            &lt;header className="dashboard__seccion-header">
+        {activeMenu === 'my-diagrams' &amp;&amp; (
+          &lt;section className="dashboard__section">
+            &lt;header className="dashboard__section-header">
               &lt;section>
-                &lt;h2 className="dashboard__titulo">Mis Diagramas&lt;/h2>
-                &lt;p className="dashboard__descripcion">
+                &lt;h2 className="dashboard__title">Mis Diagramas&lt;/h2>
+                &lt;p className="dashboard__description">
                   Gestiona y crea tus diagramas
                 &lt;/p>
               &lt;/section>
               &lt;button
                 onClick={() => setIsModalOpen(true)}
-                className="dashboard__boton-nuevo"
+                className="dashboard__new-button"
               >
-                &lt;FiPlus className="dashboard__boton-icono" />
+                &lt;FiPlus className="dashboard__button-icon" />
                 Nuevo diagrama
               &lt;/button>
             &lt;/header>
@@ -491,24 +491,24 @@ function Dashboard() {
 
       &lt;nav className="dashboard__mobile-nav">
         &lt;button
-          className={`dashboard__mobile-nav-item ${activeMenu === 'inicio' ? 'dashboard__mobile-nav-item--activo' : ''}`}
-          onClick={() => setActiveMenu('inicio')}
+          className={`dashboard__mobile-nav-item ${activeMenu === 'home' ? 'dashboard__mobile-nav-item--active' : ''}`}
+          onClick={() => setActiveMenu('home')}
           aria-label="Inicio"
         >
           &lt;FiHome />
           &lt;span>Inicio&lt;/span>
         &lt;/button>
         &lt;button
-          className={`dashboard__mobile-nav-item ${activeMenu === 'mis-diagramas' ? 'dashboard__mobile-nav-item--activo' : ''}`}
-          onClick={() => setActiveMenu('mis-diagramas')}
+          className={`dashboard__mobile-nav-item ${activeMenu === 'my-diagrams' ? 'dashboard__mobile-nav-item--active' : ''}`}
+          onClick={() => setActiveMenu('my-diagrams')}
           aria-label="Mis diagramas"
         >
           &lt;FiFileText />
           &lt;span>Diagramas&lt;/span>
         &lt;/button>
         &lt;button
-          className={`dashboard__mobile-nav-item ${activeMenu === 'plantillas' ? 'dashboard__mobile-nav-item--activo' : ''}`}
-          onClick={() => { setActiveMenu('plantillas'); navigate('/dashboard/plantillas'); }}
+          className={`dashboard__mobile-nav-item ${activeMenu === 'templates' ? 'dashboard__mobile-nav-item--active' : ''}`}
+          onClick={() => { setActiveMenu('templates'); navigate('/dashboard/templates'); }}
           aria-label="Plantillas"
         >
           &lt;FiLayers />
@@ -522,23 +522,23 @@ function Dashboard() {
           &lt;FiPlus />
         &lt;/button>
         &lt;button
-          className={`dashboard__mobile-nav-item ${activeMenu === 'comentarios' ? 'dashboard__mobile-nav-item--activo' : ''}`}
-          onClick={() => setActiveMenu('comentarios')}
+          className={`dashboard__mobile-nav-item ${activeMenu === 'comments' ? 'dashboard__mobile-nav-item--active' : ''}`}
+          onClick={() => setActiveMenu('comments')}
           aria-label="Comentarios"
         >
           &lt;FiMessageSquare />
           &lt;span>Comentarios&lt;/span>
         &lt;/button>
         &lt;button
-          className={`dashboard__mobile-nav-item ${activeMenu === 'colaboraciones' ? 'dashboard__mobile-nav-item--activo' : ''}`}
-          onClick={() => setActiveMenu('colaboraciones')}
+          className={`dashboard__mobile-nav-item ${activeMenu === 'collaborations' ? 'dashboard__mobile-nav-item--active' : ''}`}
+          onClick={() => setActiveMenu('collaborations')}
           aria-label="Colaboraciones"
         >
           &lt;FiUsers />
           &lt;span>Colaborar&lt;/span>
         &lt;/button>
         &lt;button
-          className={`dashboard__mobile-nav-item ${activeMenu === 'configuracion' ? 'dashboard__mobile-nav-item--activo' : ''}`}
+          className={`dashboard__mobile-nav-item ${activeMenu === 'settings' ? 'dashboard__mobile-nav-item--active' : ''}`}
           onClick={() => navigate('/settings')}
           aria-label="Configuración"
         >
@@ -563,7 +563,7 @@ export default Dashboard;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 08:57:27 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 09:11:42 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

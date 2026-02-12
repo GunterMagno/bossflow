@@ -117,14 +117,14 @@ function Navbar() {
   }, [menuOpen]);
 
   return (
-    &lt;header className="encabezado">
-      &lt;nav className="encabezado__navbar">
+    &lt;header className="header">
+      &lt;nav className="header__navbar">
         &lt;Link to="/" className="navbar__logo">
           &lt;img src="/logo.png" alt="BossFlow" className="navbar__logo-img" />
         &lt;/Link>
 
         &lt;button
-          className="navbar__hamburguesa"
+          className="navbar__hamburger"
           onClick={toggleMobileMenu}
           aria-label="Menú"
         >
@@ -132,74 +132,74 @@ function Navbar() {
         &lt;/button>
 
         &lt;ul
-          className={`navbar__enlaces ${mobileMenuOpen ? 'navbar__enlaces--visible' : ''}`}
+          className={`navbar__links ${mobileMenuOpen ? 'navbar__links--visible' : ''}`}
         >
-          &lt;li className="navbar__elemento">
+          &lt;li className="navbar__item">
             &lt;Link
               to="/"
-              className="navbar__enlace"
+              className="navbar__link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Inicio
             &lt;/Link>
           &lt;/li>
-          &lt;li className="navbar__elemento">
+          &lt;li className="navbar__item">
             &lt;Link
               to="/dashboard"
-              className="navbar__enlace"
+              className="navbar__link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Dashboard
             &lt;/Link>
           &lt;/li>
-          &lt;li className="navbar__elemento">
+          &lt;li className="navbar__item">
             &lt;Link
               to="/community"
-              className="navbar__enlace"
+              className="navbar__link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Comunidad
             &lt;/Link>
           &lt;/li>
 
-          &lt;li className="navbar__elemento navbar__elemento--auth-movil">
+          &lt;li className="navbar__item navbar__item--auth-mobile">
             {!isAuthenticated ? (
-              &lt;section className="navbar__botones-auth-movil">
+              &lt;section className="navbar__auth-buttons-mobile">
                 &lt;Link
                   to="/login"
-                  className="navbar__boton-login"
+                  className="navbar__login-button"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Iniciar sesión
                 &lt;/Link>
                 &lt;Link
                   to="/register"
-                  className="navbar__boton-registro"
+                  className="navbar__register-button"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Registrarse
                 &lt;/Link>
               &lt;/section>
             ) : (
-              &lt;section className="navbar__usuario-movil">
-                &lt;h3 className="navbar__seccion-titulo">Cuenta&lt;/h3>
+              &lt;section className="navbar__user-mobile">
+                &lt;h3 className="navbar__section-title">Cuenta&lt;/h3>
                 &lt;Link
                   to="/profile"
-                  className="navbar__enlace"
+                  className="navbar__link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   &lt;FiUser /> Perfil
                 &lt;/Link>
                 &lt;Link
                   to="/settings"
-                  className="navbar__enlace"
+                  className="navbar__link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   &lt;FiSettings /> Configuración
                 &lt;/Link>
                 &lt;button
                   onClick={handleLogout}
-                  className="navbar__enlace navbar__enlace--logout"
+                  className="navbar__link navbar__link--logout"
                 >
                   &lt;FiLogOut /> Cerrar sesión
                 &lt;/button>
@@ -208,19 +208,19 @@ function Navbar() {
           &lt;/li>
         &lt;/ul>
 
-        &lt;section className="navbar__usuario-menu" ref={menuRef}>
+        &lt;section className="navbar__user-menu" ref={menuRef}>
           {!isAuthenticated ? (
-              &lt;section className="navbar__botones-auth">
-              &lt;Link to="/login" className="navbar__boton-login">
+              &lt;section className="navbar__auth-buttons">
+              &lt;Link to="/login" className="navbar__login-button">
                 Iniciar sesión
               &lt;/Link>
-              &lt;Link to="/register" className="navbar__boton-registro">
+              &lt;Link to="/register" className="navbar__register-button">
                 Registrarse
               &lt;/Link>
             &lt;/section>
           ) : (
             &lt;>
-              &lt;button className="navbar__usuario" onClick={toggleMenu}>
+              &lt;button className="navbar__user" onClick={toggleMenu}>
                 &lt;span className="navbar__avatar">
                   {user?.avatar ? (
                     &lt;img src={user.avatar} alt={user.username} className="navbar__avatar-img" />
@@ -228,41 +228,41 @@ function Navbar() {
                     &lt;FiUser />
                   )}
                 &lt;/span>
-                &lt;span className="navbar__nombre">
+                &lt;span className="navbar__name">
                   {user?.username || user?.email}
                 &lt;/span>
                 &lt;span
-                  className={`navbar__flecha ${menuOpen ? 'navbar__flecha--arriba' : ''}`}
+                  className={`navbar__arrow ${menuOpen ? 'navbar__arrow--up' : ''}`}
                 >
                   &lt;FiChevronDown />
                 &lt;/span>
               &lt;/button>
 
               {menuOpen &amp;&amp; (
-                &lt;ul className="menu-desplegable">
-                  &lt;li className="menu-desplegable__elemento">
-                    &lt;Link to="/profile" className="menu-desplegable__enlace">
-                      &lt;span className="menu-desplegable__icono">
+                &lt;ul className="dropdown-menu">
+                  &lt;li className="dropdown-menu__item">
+                    &lt;Link to="/profile" className="dropdown-menu__link">
+                      &lt;span className="dropdown-menu__icon">
                         &lt;FiUser />
                       &lt;/span>
                       &lt;span>Perfil&lt;/span>
                     &lt;/Link>
                   &lt;/li>
-                  &lt;li className="menu-desplegable__elemento">
-                    &lt;Link to="/settings" className="menu-desplegable__enlace">
-                      &lt;span className="menu-desplegable__icono">
+                  &lt;li className="dropdown-menu__item">
+                    &lt;Link to="/settings" className="dropdown-menu__link">
+                      &lt;span className="dropdown-menu__icon">
                         &lt;FiSettings />
                       &lt;/span>
                       &lt;span>Configuración&lt;/span>
                     &lt;/Link>
                   &lt;/li>
-                  &lt;li className="menu-desplegable__separador">&lt;/li>
-                  &lt;li className="menu-desplegable__elemento">
+                  &lt;li className="dropdown-menu__separator">&lt;/li>
+                  &lt;li className="dropdown-menu__item">
                     &lt;button
                       onClick={handleLogout}
-                      className="menu-desplegable__enlace menu-desplegable__enlace--cerrar"
+                      className="dropdown-menu__link dropdown-menu__link--logout"
                     >
-                      &lt;span className="menu-desplegable__icono">
+                      &lt;span className="dropdown-menu__icon">
                         &lt;FiLogOut />
                       &lt;/span>
                       &lt;span>Cerrar sesión&lt;/span>
@@ -291,7 +291,7 @@ export default Navbar;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 08:57:27 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 09:11:42 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

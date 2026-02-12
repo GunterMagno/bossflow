@@ -66,9 +66,9 @@ function Login() {
   }, [isAuthenticated, navigate]);
 
   const [formData, setFormData] = useState({
-    correo: '',
-    contrasena: '',
-    recordarme: false,
+    email: '',
+    password: '',
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -101,20 +101,20 @@ function Login() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.correo) {
-      newErrors.correo = 'Es obligatorio introducir un correo electrónico.';
+    if (!formData.email) {
+      newErrors.email = 'Es obligatorio introducir un correo electrónico.';
     } else if (
       !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        formData.correo
+        formData.email
       )
     ) {
-      newErrors.correo = 'El correo electrónico no es válido.';
+      newErrors.email = 'El correo electrónico no es válido.';
     }
 
-    if (!formData.contrasena) {
-      newErrors.contrasena = 'Es obligatorio introducir una contraseña.';
-    } else if (formData.contrasena.length &lt; 8) {
-      newErrors.contrasena =
+    if (!formData.password) {
+      newErrors.password = 'Es obligatorio introducir una contraseña.';
+    } else if (formData.password.length &lt; 8) {
+      newErrors.password =
         'La contraseña debe tener al menos 8 caracteres.';
     }
 
@@ -139,9 +139,9 @@ function Login() {
       setLoading(true);
 
       const result = await login(
-        formData.correo,
-        formData.contrasena,
-        formData.recordarme
+        formData.email,
+        formData.password,
+        formData.rememberMe
       );
 
       if (result.success) {
@@ -158,86 +158,86 @@ function Login() {
 
   return (
     &lt;main className="login">
-      &lt;article className="login__contenedor">
-        &lt;section className="login__encabezado">
-          &lt;h3 className="login__titulo">Iniciar sesión&lt;/h3>
-          &lt;p className="login__subtitulo">
+      &lt;article className="login__container">
+        &lt;section className="login__header">
+          &lt;h3 className="login__title">Iniciar sesión&lt;/h3>
+          &lt;p className="login__subtitle">
             Por favor inicia sesión en tu cuenta
           &lt;/p>
         &lt;/section>
 
-        &lt;form onSubmit={handleSubmit} className="login__formulario">
+        &lt;form onSubmit={handleSubmit} className="login__form">
           {errors.submit &amp;&amp; (
             &lt;section className="login__error" role="alert">
               {errors.submit}
             &lt;/section>
           )}
 
-          &lt;fieldset className="login__campo">
-            &lt;label htmlFor="correo" className="login__etiqueta">
+          &lt;fieldset className="login__field">
+            &lt;label htmlFor="email" className="login__label">
               Correo Electrónico
             &lt;/label>
             &lt;input
               type="text"
-              id="correo"
-              name="correo"
-              value={formData.correo}
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               placeholder="tu@ejemplo.com"
-              className={`login__input ${errors.correo ? 'login__input--error' : ''}`}
+              className={`login__input ${errors.email ? 'login__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.correo &amp;&amp; (
-              &lt;span className="login__mensaje-error" role="alert">
-                {errors.correo}
+            {errors.email &amp;&amp; (
+              &lt;span className="login__error-message" role="alert">
+                {errors.email}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;fieldset className="login__campo">
-            &lt;section className="login__etiqueta-con-enlace">
-              &lt;label htmlFor="contrasena" className="login__etiqueta">
+          &lt;fieldset className="login__field">
+            &lt;section className="login__label-with-link">
+              &lt;label htmlFor="password" className="login__label">
                 Contraseña
               &lt;/label>
               &lt;Link
-                to="/recuperar-contrasena"
-                className="login__enlace-recuperar"
+                to="/recover-password"
+                className="login__recover-link"
               >
                 ¿Olvidaste tu contraseña?
               &lt;/Link>
             &lt;/section>
             &lt;input
               type="password"
-              id="contrasena"
-              name="contrasena"
-              value={formData.contrasena}
+              id="password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               placeholder="********"
-              className={`login__input ${errors.contrasena ? 'login__input--error' : ''}`}
+              className={`login__input ${errors.password ? 'login__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.contrasena &amp;&amp; (
-              &lt;span className="login__mensaje-error" role="alert">
-                {errors.contrasena}
+            {errors.password &amp;&amp; (
+              &lt;span className="login__error-message" role="alert">
+                {errors.password}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;fieldset className="login__recordar">
+          &lt;fieldset className="login__remember">
             &lt;label className="login__checkbox">
               &lt;input
                 type="checkbox"
-                id="recordarme"
-                name="recordarme"
-                checked={formData.recordarme}
+                id="rememberMe"
+                name="rememberMe"
+                checked={formData.rememberMe}
                 onChange={handleChange}
                 className="login__checkbox-input"
               />
-              &lt;span className="login__checkbox-texto">Recordarme&lt;/span>
+              &lt;span className="login__checkbox-text">Recordarme&lt;/span>
             &lt;/label>
           &lt;/fieldset>
 
-          &lt;button type="submit" className="login__boton" disabled={loading}>
+          &lt;button type="submit" className="login__button" disabled={loading}>
             {loading ? (
               &lt;>
                 &lt;span className="login__spinner" aria-label="Cargando">&lt;/span>
@@ -248,10 +248,10 @@ function Login() {
             )}
           &lt;/button>
 
-          &lt;section className="login__pie">
-            &lt;p className="login__pie-texto">
+          &lt;section className="login__footer">
+            &lt;p className="login__footer-text">
               ¿Aún no tienes cuenta?{' '}
-              &lt;Link to="/register" className="login__enlace-registro">
+              &lt;Link to="/register" className="login__register-link">
                 Regístrate aquí
               &lt;/Link>
             &lt;/p>
@@ -275,7 +275,7 @@ export default Login;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 08:57:27 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 09:11:42 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

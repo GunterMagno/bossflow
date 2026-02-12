@@ -73,10 +73,10 @@ function Register() {
   }, [isAuthenticated, navigate]);
 
   const [formData, setFormData] = useState({
-    nombreUsuario: '',
-    correo: '',
-    contrasena: '',
-    confirmarContrasena: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -115,45 +115,45 @@ function Register() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.nombreUsuario) {
-      newErrors.nombreUsuario =
+    if (!formData.username) {
+      newErrors.username =
         'Es obligatorio introducir un nombre de usuario.';
-    } else if (formData.nombreUsuario.length &lt; 3) {
-      newErrors.nombreUsuario =
+    } else if (formData.username.length &lt; 3) {
+      newErrors.username =
         'El nombre de usuario debe tener al menos 3 caracteres.';
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.nombreUsuario)) {
-      newErrors.nombreUsuario =
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username =
         'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos.';
     }
 
-    if (!formData.correo) {
-      newErrors.correo = 'Es obligatorio introducir un correo electrónico.';
+    if (!formData.email) {
+      newErrors.email = 'Es obligatorio introducir un correo electrónico.';
     } else if (
       !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        formData.correo
+        formData.email
       )
     ) {
-      newErrors.correo = 'El correo electrónico no es válido.';
+      newErrors.email = 'El correo electrónico no es válido.';
     }
 
-    if (!formData.contrasena) {
-      newErrors.contrasena = 'Es obligatorio introducir una contraseña.';
-    } else if (formData.contrasena.length &lt; 8) {
-      newErrors.contrasena =
+    if (!formData.password) {
+      newErrors.password = 'Es obligatorio introducir una contraseña.';
+    } else if (formData.password.length &lt; 8) {
+      newErrors.password =
         'La contraseña debe tener al menos 8 caracteres.';
     }
 
-    if (!formData.confirmarContrasena) {
-      newErrors.confirmarContrasena =
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword =
         'Es obligatorio confirmar la contraseña.';
     } else if (
-      formData.contrasena !== formData.confirmarContrasena
+      formData.password !== formData.confirmPassword
     ) {
-      newErrors.confirmarContrasena = 'Las contraseñas no coinciden.';
+      newErrors.confirmPassword = 'Las contraseñas no coinciden.';
     }
 
     if (!acceptTerms) {
-      newErrors.terminos = 'Debes aceptar los Términos de Uso y la Política de Privacidad.';
+      newErrors.terms = 'Debes aceptar los Términos de Uso y la Política de Privacidad.';
     }
 
     return newErrors;
@@ -179,9 +179,9 @@ function Register() {
       setLoading(true);
 
       const result = await registerUser(
-        formData.nombreUsuario,
-        formData.correo,
-        formData.contrasena
+        formData.username,
+        formData.email,
+        formData.password
       );
 
       if (result.success) {
@@ -198,137 +198,137 @@ function Register() {
 
   return (
     &lt;main className="register">
-      &lt;article className="register__contenedor">
-        &lt;section className="register__encabezado">
-          &lt;h3 className="register__titulo">Crear cuenta&lt;/h3>
-          &lt;p className="register__subtitulo">Regístrate para comenzar&lt;/p>
+      &lt;article className="register__container">
+        &lt;section className="register__header">
+          &lt;h3 className="register__title">Crear cuenta&lt;/h3>
+          &lt;p className="register__subtitle">Regístrate para comenzar&lt;/p>
         &lt;/section>
 
-        &lt;form onSubmit={handleSubmit} className="register__formulario">
+        &lt;form onSubmit={handleSubmit} className="register__form">
           {errors.submit &amp;&amp; (
             &lt;section className="register__error" role="alert">
               {errors.submit}
             &lt;/section>
           )}
 
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="nombreUsuario" className="register__etiqueta">
+          &lt;fieldset className="register__field">
+            &lt;label htmlFor="username" className="register__label">
               Nombre de Usuario
             &lt;/label>
             &lt;input
               type="text"
-              id="nombreUsuario"
-              name="nombreUsuario"
-              value={formData.nombreUsuario}
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               placeholder="usuario123"
-              className={`register__input ${errors.nombreUsuario ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.username ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.nombreUsuario &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.nombreUsuario}
+            {errors.username &amp;&amp; (
+              &lt;span className="register__error-message" role="alert">
+                {errors.username}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="correo" className="register__etiqueta">
+          &lt;fieldset className="register__field">
+            &lt;label htmlFor="email" className="register__label">
               Correo Electrónico
             &lt;/label>
             &lt;input
               type="text"
-              id="correo"
-              name="correo"
-              value={formData.correo}
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               placeholder="tu@ejemplo.com"
-              className={`register__input ${errors.correo ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.email ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.correo &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.correo}
+            {errors.email &amp;&amp; (
+              &lt;span className="register__error-message" role="alert">
+                {errors.email}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="contrasena" className="register__etiqueta">
+          &lt;fieldset className="register__field">
+            &lt;label htmlFor="password" className="register__label">
               Contraseña
             &lt;/label>
             &lt;input
               type="password"
-              id="contrasena"
-              name="contrasena"
-              value={formData.contrasena}
+              id="password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               placeholder="********"
-              className={`register__input ${errors.contrasena ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.password ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.contrasena &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.contrasena}
+            {errors.password &amp;&amp; (
+              &lt;span className="register__error-message" role="alert">
+                {errors.password}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="confirmarContrasena" className="register__etiqueta">
+          &lt;fieldset className="register__field">
+            &lt;label htmlFor="confirmPassword" className="register__label">
               Confirmar Contraseña
             &lt;/label>
             &lt;input
               type="password"
-              id="confirmarContrasena"
-              name="confirmarContrasena"
-              value={formData.confirmarContrasena}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="********"
-              className={`register__input ${errors.confirmarContrasena ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.confirmPassword ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.confirmarContrasena &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.confirmarContrasena}
+            {errors.confirmPassword &amp;&amp; (
+              &lt;span className="register__error-message" role="alert">
+                {errors.confirmPassword}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;fieldset className="register__terminos">
+          &lt;fieldset className="register__terms">
             &lt;label className="register__checkbox">
               &lt;input
                 type="checkbox"
-                id="terminos"
+                id="terms"
                 className="register__checkbox-input"
                 checked={acceptTerms}
                 onChange={(e) => {
                   setAcceptTerms(e.target.checked);
-                  if (errors.terminos) {
-                    setErrors((prev) => ({ ...prev, terminos: '' }));
+                  if (errors.terms) {
+                    setErrors((prev) => ({ ...prev, terms: '' }));
                   }
                 }}
                 disabled={loading}
               />
-              &lt;span className="register__checkbox-texto">
+              &lt;span className="register__checkbox-text">
                 Acepto los{' '}
-                &lt;Link to="/legal/terminos" className="register__enlace-terminos" target="_blank">
+                &lt;Link to="/legal/terms" className="register__terms-link" target="_blank">
                   Términos de Uso
                 &lt;/Link>{' '}
                 y la{' '}
-                &lt;Link to="/legal/privacidad" className="register__enlace-terminos" target="_blank">
+                &lt;Link to="/legal/privacy" className="register__terms-link" target="_blank">
                   Política de Privacidad
                 &lt;/Link>
               &lt;/span>
             &lt;/label>
-            {errors.terminos &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.terminos}
+            {errors.terms &amp;&amp; (
+              &lt;span className="register__error-message" role="alert">
+                {errors.terms}
               &lt;/span>
             )}
           &lt;/fieldset>
 
-          &lt;button type="submit" className="register__boton" disabled={loading}>
+          &lt;button type="submit" className="register__button" disabled={loading}>
             {loading ? (
               &lt;>
                 &lt;span className="register__spinner">&lt;/span>
@@ -340,10 +340,10 @@ function Register() {
           &lt;/button>
         &lt;/form>
 
-        &lt;section className="register__pie">
-          &lt;p className="register__pie-texto">
+        &lt;section className="register__footer">
+          &lt;p className="register__footer-text">
             ¿Ya tienes una cuenta?{' '}
-            &lt;Link to="/login" className="register__enlace-login">
+            &lt;Link to="/login" className="register__login-link">
               Inicia sesión
             &lt;/Link>
           &lt;/p>
@@ -366,7 +366,7 @@ export default Register;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 08:57:27 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 09:11:42 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
