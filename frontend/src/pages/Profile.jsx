@@ -25,7 +25,7 @@ import {
   FiTrash2,
   FiShield,
 } from 'react-icons/fi';
-import ConfirmModal from '../components/ConfirmModal/ConfirmModal';
+import ConfirmModal from '../components/confirm-modal/ConfirmModal';
 import './Profile.css';
 
 /**

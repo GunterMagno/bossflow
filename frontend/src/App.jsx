@@ -10,13 +10,13 @@ import Status from './pages/Status';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
+import Login from './components/login/Login';
+import Register from './components/register/Register';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import CookiesPolicy from './pages/CookiesPolicy';
 import Layout from './layouts/Layout';
-import CookieBanner from './components/CookieBanner/CookieBanner';
+import CookieBanner from './components/cookie-banner/CookieBanner';
 
 /**
  * Componente principal de la aplicación BossFlow.

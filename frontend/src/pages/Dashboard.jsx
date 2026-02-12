@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { getDiagrams } from '../services/diagramService';
 import { getStats } from '../services/profileService';
 import { getFormattedActivities } from '../services/activityService';
-import DiagramList from '../components/DiagramList/DiagramList';
-import NewDiagramModal from '../components/NewDiagramModal/NewDiagramModal';
+import DiagramList from '../components/diagram-list/DiagramList';
+import NewDiagramModal from '../components/new-diagram-modal/NewDiagramModal';
 import {
   FiHome,
   FiFileText,

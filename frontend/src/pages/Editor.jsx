@@ -2,15 +2,15 @@ import "./Editor.css";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ReactFlowProvider } from 'reactflow'
 import { useParams, useNavigate } from 'react-router-dom'
-import FlowMap from "../components/FlowMap/FlowMap";
-import Toolbar from "../components/Toolbar/Toolbar";
-import EditorSidebar from "../components/EditorSidebar/EditorSidebar";
-import MobileNodePanel from "../components/MobileNodePanel/MobileNodePanel";
-import NodeEditModal from "../components/NodeEditModal/NodeEditModal";
-import ConfirmDialog from "../components/ConfirmDialog/ConfirmDialog";
-import UploadImageModal from "../components/UploadImageModal/UploadImageModal";
-import NewDiagramModal from "../components/NewDiagramModal/NewDiagramModal";
-import ExportModal from "../components/ExportModal/ExportModal";
+import FlowMap from "../components/flow-map/FlowMap";
+import Toolbar from "../components/toolbar/Toolbar";
+import EditorSidebar from "../components/editor-sidebar/EditorSidebar";
+import MobileNodePanel from "../components/mobile-node-panel/MobileNodePanel";
+import NodeEditModal from "../components/node-edit-modal/NodeEditModal";
+import ConfirmDialog from "../components/confirm-dialog/ConfirmDialog";
+import UploadImageModal from "../components/upload-image-modal/UploadImageModal";
+import NewDiagramModal from "../components/new-diagram-modal/NewDiagramModal";
+import ExportModal from "../components/export-modal/ExportModal";
 import { useExportDiagram } from "../hooks/useExportDiagram";
 import { getDiagramById, updateDiagram } from '../services/diagramService';
 import { deleteImage } from '../services/imageService';

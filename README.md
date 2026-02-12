@@ -100,43 +100,43 @@ BossFlow está construido sobre el stack MERN como base (MongoDB, Express, React
 
 1. Al acceder a la aplicación (home y banner):
 
-![Imagen 1](./docs/img-app/img1.png)
+![Imagen 1](./docs/app-images/img1.png)
 
 2. Pantalla de registro:
 
-![Imagen 2](./docs/img-app/img2.png)
+![Imagen 2](./docs/app-images/img2.png)
 
 3. Polica de privacidad (vista a página políticas):
 
-![Imagen 3](./docs/img-app/img3.png)
+![Imagen 3](./docs/app-images/img3.png)
 
 4. Modal para crear diagrama:
 
-![Imagen 4](./docs/img-app/img4.png)
+![Imagen 4](./docs/app-images/img4.png)
 
 5. Editor:
 
-![Imagen 5](./docs/img-app/img5.png)
+![Imagen 5](./docs/app-images/img5.png)
 
 6. Modal de exportación de diagramas:
 
-![Imagen 6](./docs/img-app/img6.png.png)
+![Imagen 6](./docs/app-images/img6.png.png)
 
 7. Modal de importación de diagramas:
 
-![Imagen 7](./docs/img-app/img7.png)
+![Imagen 7](./docs/app-images/img7.png)
 
 8. Vista Dashboard: 
 
-![Imagen 8](./docs/img-app/img10.png)
+![Imagen 8](./docs/app-images/img10.png)
 
 9. Perfil de usuario:
 
-![Imagen 0](./docs/img-app/img8.png)
+![Imagen 0](./docs/app-images/img8.png)
 
 10. Modal eliminación de cuenta:
 
-![Imagen 10](./docs/img-app/img9.png) 
+![Imagen 10](./docs/app-images/img9.png) 
 
 
 ## Instalación y ejecución

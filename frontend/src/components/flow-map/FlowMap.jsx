@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DecisionNode, ActionNode, PhaseNode, EffectNode, StartNode, EndNode, PositionNode, TimerNode, AbilityNode } from "../nodes/Nodes";
-import ImageNode from "../nodes/ImageNode/ImageNode";
+import ImageNode from "../nodes/image-node/ImageNode";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -13,8 +13,8 @@ import ReactFlow, {
 
 import "reactflow/dist/style.css";
 import "./FlowMap.css";
-import CustomEdge from '../customEdge/CustomEdge';
-import NodeDescriptionPopup from '../NodeDescriptionPopup/NodeDescriptionPopup';
+import CustomEdge from '../custom-edge/CustomEdge';
+import NodeDescriptionPopup from '../node-description-popup/NodeDescriptionPopup';
 import { useToast } from '../../context/ToastContext';
 import useRecentNodes from '../../hooks/useRecentNodes';
 

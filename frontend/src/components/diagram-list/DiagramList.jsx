@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getDiagrams, deleteDiagram } from '../../services/diagramService';
 import { registerActivity, ACTIVITY_TYPES } from '../../services/activityService';
 import { useToast } from '../../context/ToastContext';
-import ConfirmModal from '../ConfirmModal/ConfirmModal';
-import DiagramCard from '../DiagramCard/DiagramCard';
+import ConfirmModal from '../confirm-modal/ConfirmModal';
+import DiagramCard from '../diagram-card/DiagramCard';
 import { FiFileText, FiAlertCircle } from 'react-icons/fi';
 import './DiagramList.css';
 

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getTemplates, deleteTemplate } from '../services/diagramService';
-import TemplateList from '../components/TemplateList/TemplateList';
-import NewDiagramModal from '../components/NewDiagramModal/NewDiagramModal';
-import NewTemplateModal from '../components/NewTemplateModal/NewTemplateModal';
-import ConfirmModal from '../components/ConfirmModal/ConfirmModal';
+import TemplateList from '../components/template-list/TemplateList';
+import NewDiagramModal from '../components/new-diagram-modal/NewDiagramModal';
+import NewTemplateModal from '../components/new-template-modal/NewTemplateModal';
+import ConfirmModal from '../components/confirm-modal/ConfirmModal';
 import { DEFAULT_TEMPLATES } from '../data/defaultTemplates';
 import { useToast } from '../context/ToastContext';
 import {

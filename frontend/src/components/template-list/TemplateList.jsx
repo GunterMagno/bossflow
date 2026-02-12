@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import TemplateCard from '../TemplateCard/TemplateCard';
-import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import TemplateCard from '../template-card/TemplateCard';
+import ConfirmModal from '../confirm-modal/ConfirmModal';
 import { FiFileText, FiAlertCircle } from 'react-icons/fi';
 import './TemplateList.css';
 

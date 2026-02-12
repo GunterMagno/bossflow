@@ -6,10 +6,10 @@
 
 Diseño técnico del sistema.
 
-- [Base de Datos - Diseño](arquitectura/base-de-datos.md)
-- [Diagrama ER](arquitectura/diagrama-er.png)
-- [Flujo de Autenticación](arquitectura/auth-flujo.md)
-- [Estrategia de Logout](arquitectura/estrategia-logout.md)
+- [Base de Datos - Diseño](architecture/base-de-datos.md)
+- [Diagrama ER](architecture/diagrama-er.png)
+- [Flujo de Autenticación](architecture/auth-flujo.md)
+- [Estrategia de Logout](architecture/estrategia-logout.md)
 
 ---
 
@@ -50,7 +50,7 @@ Guías de configuración y deployment.
 Diseño de interfaz y experiencia de usuario.
 
 - [Diseño en Figma](ui-ux/figma.md)
-- [Capturas de Pantalla](ui-ux/capturas/)
+- [Capturas de Pantalla](ui-ux/screenshots/)
 
 ---
 
