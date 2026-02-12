@@ -210,9 +210,11 @@ Enlace a la demo de la aplicación: [https://youtu.be/gMY0KOfktd0](https://youtu
 
 ## Cómo contribuir
 
-- Crea un fork y abre un Pull Request.
-- Sigue las buenas prácticas: prueba correcto funcionamiento, linting y formato.
-- Documenta lo realizado.
+¡BossFlow es un proyecto de código abierto y nos encanta recibir contribuciones! Ya sea que quieras corregir un error, añadir un nuevo tipo de nodo al editor o mejorar la documentación, tu ayuda es bienvenida.
+
+Para mantener la calidad y consistencia del proyecto, hemos preparado una guía detallada:
+
+**[Consulta nuestra Guía de Contribución completa aquí](CONTRIBUTING.md)**
 
 ## Contacto
 
