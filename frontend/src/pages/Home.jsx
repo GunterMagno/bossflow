@@ -92,9 +92,8 @@ function Home() {
           </section>
           <aside className="hero-visual">
             <figure className="visual-card">
-              <section className="card-glow">
+              <section className="card-glow" />
               <FiGitBranch className="visual-icon" />
-              </section>
             </figure>
           </aside>
         </section>
