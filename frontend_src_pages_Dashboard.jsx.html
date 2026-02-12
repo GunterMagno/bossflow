@@ -39,7 +39,11 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useEffect, useState } from 'react';
+            <pre class="prettyprint source linenums"><code>// ============================================================
+// File: Dashboard.jsx
+// Description: Main user dashboard displaying statistics, recent diagrams, and activity feed.
+// ============================================================
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getDiagrams } from '../services/diagramService';
@@ -93,7 +97,6 @@ function Dashboard() {
       const response = await getDiagrams();
       setDiagrams(response.diagrams || []);
     } catch (error) {
-      console.error('Error loading diagrams:', error);
       setError('Could not load diagrams. The endpoint is not yet available.');
       setDiagrams([]);
     } finally {
@@ -109,7 +112,7 @@ function Dashboard() {
       const response = await getStats();
       setUserStats(response.stats);
     } catch (error) {
-      console.error('Error loading statistics:', error);
+      // Statistics loading failed silently
     }
   };
 
@@ -181,21 +184,21 @@ function Dashboard() {
     }
   };
 
-  const estadisticas = userStats ? {
-    totalDiagramas: userStats.diagramsCreated || diagrams.length,
-    totalNodos: userStats.nodesCreated || 0,
-    colaboraciones: userStats.collaborations || 0,
-    plantillas: 0,
-    comentariosPendientes: 0,
+  const statistics = userStats ? {
+    totalDiagrams: userStats.diagramsCreated || diagrams.length,
+    totalNodes: userStats.nodesCreated || 0,
+    collaborations: userStats.collaborations || 0,
+    templates: 0,
+    pendingComments: 0,
   } : {
-    totalDiagramas: diagrams.length,
-    totalNodos: 0,
-    colaboraciones: 0,
-    plantillas: 0,
-    comentariosPendientes: 0,
+    totalDiagrams: diagrams.length,
+    totalNodes: 0,
+    collaborations: 0,
+    templates: 0,
+    pendingComments: 0,
   };
 
-  const diagramasRecientes = diagrams.slice(0, 3);
+  const recentDiagrams = diagrams.slice(0, 3);
 
   return (
     &lt;section className="dashboard">
@@ -280,11 +283,11 @@ function Dashboard() {
         &lt;/section>
       &lt;/aside>
 
-      {/* Contenido principal */}
+      {/* Main content */}
       &lt;main className="dashboard__main">
         {activeMenu === 'inicio' &amp;&amp; (
           &lt;>
-            {/* Estadísticas */}
+            {/* Statistics */}
             &lt;section className="dashboard__seccion">
               &lt;header className="dashboard__seccion-header">
                 &lt;section>
@@ -301,7 +304,7 @@ function Dashboard() {
                     &lt;FiFileText />
                   &lt;/figure>
                   &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{estadisticas.totalDiagramas}&lt;/h3>
+                    &lt;h3 className="dashboard__stat-numero">{statistics.totalDiagrams}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Mis diagramas&lt;/p>
                   &lt;/section>
                 &lt;/article>
@@ -311,7 +314,7 @@ function Dashboard() {
                     &lt;FiUsers />
                   &lt;/figure>
                   &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{estadisticas.colaboraciones}&lt;/h3>
+                    &lt;h3 className="dashboard__stat-numero">{statistics.collaborations}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Colaboraciones&lt;/p>
                   &lt;/section>
                 &lt;/article>
@@ -321,7 +324,7 @@ function Dashboard() {
                     &lt;FiCopy />
                   &lt;/figure>
                   &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{estadisticas.totalNodos}&lt;/h3>
+                    &lt;h3 className="dashboard__stat-numero">{statistics.totalNodes}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Nodos creados&lt;/p>
                   &lt;/section>
                 &lt;/article>
@@ -331,14 +334,14 @@ function Dashboard() {
                     &lt;FiMessageSquare />
                   &lt;/figure>
                   &lt;section className="dashboard__stat-contenido">
-                    &lt;h3 className="dashboard__stat-numero">{estadisticas.comentariosPendientes}&lt;/h3>
+                    &lt;h3 className="dashboard__stat-numero">{statistics.pendingComments}&lt;/h3>
                     &lt;p className="dashboard__stat-label">Comentarios&lt;/p>
                   &lt;/section>
                 &lt;/article>
               &lt;/section>
             &lt;/section>
 
-            {/* Acceso rápido */}
+            {/* Quick access */}
             &lt;section className="dashboard__seccion">
               &lt;header className="dashboard__seccion-header">
                 &lt;section>
@@ -367,9 +370,9 @@ function Dashboard() {
                 &lt;article className="dashboard__error">
                   &lt;p className="dashboard__error-message">{error}&lt;/p>
                 &lt;/article>
-              ) : diagramasRecientes.length > 0 ? (
+              ) : recentDiagrams.length > 0 ? (
                 &lt;section className="dashboard__grid">
-                  {diagramasRecientes.map((diagrama) => (
+                  {recentDiagrams.map((diagrama) => (
                     &lt;Link
                       key={diagrama.id}
                       to={`/editor/${diagrama.id}`}
@@ -411,7 +414,7 @@ function Dashboard() {
               )}
             &lt;/section>
 
-            {/* Actividad reciente */}
+            {/* Recent activity */}
             &lt;section className="dashboard__seccion">
               &lt;header className="dashboard__seccion-header">
                 &lt;section>
@@ -479,7 +482,7 @@ function Dashboard() {
         )}
       &lt;/main>
 
-      {/* Modal para crear nuevo diagrama */}
+      {/* Modal for creating a new diagram */}
       &lt;NewDiagramModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -560,7 +563,7 @@ export default Dashboard;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 08:00:56 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
