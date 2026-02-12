@@ -384,7 +384,7 @@ function PrivacyPolicy() {
         <footer className="legal-page__footer">
           <p>
             ¿Tienes dudas? Consulta también nuestros{' '}
-            <Link to="/legal/terminos" className="legal-page__link">
+            <Link to="/legal/terms" className="legal-page__link">
               Términos de Uso
             </Link>{' '}
             y la{' '}

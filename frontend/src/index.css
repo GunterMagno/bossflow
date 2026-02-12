@@ -1,77 +1,77 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
-/* Variables globales */
+/* Global variables */
 :root {
-  /* Colores principales */
-  --primario: #1F2D44;
-  --secundario: #EAB308;
+  /* Primary colors */
+  --primary: #1F2D44;
+  --secondary: #EAB308;
   
-  /* Variaciones de primario */
+  /* Primary variations */
   --hover: #1D3254;
   --focus: #1E293B;
   
-  /* Variaciones de secundario */
-  --secundario-hover: #D6A50A;
-  --secundario-focus: #B48B09;
+  /* Secondary variations */
+  --secondary-hover: #D6A50A;
+  --secondary-focus: #B48B09;
   
-  /* Escala de grises */
-  --blanco: #F8FAFC;
-  --gris1: #E4E4E4;
-  --gris2: #BFBFBF;
-  --gris3: #A2A2A2;
-  --gris4: #818181;
-  --gris5: #6D6D6D;
-  --gris6: #505050;
-  --gris7: #464646;
-  --negro: #2E2E2E;
+  /* Grayscale */
+  --white: #F8FAFC;
+  --gray-1: #E4E4E4;
+  --gray-2: #BFBFBF;
+  --gray-3: #A2A2A2;
+  --gray-4: #818181;
+  --gray-5: #6D6D6D;
+  --gray-6: #505050;
+  --gray-7: #464646;
+  --black: #2E2E2E;
 
   /* Error */
   --error: #E60303;
   
-  /* Espaciado */
-  --espaciado-xs: 0.25rem;   
-  --espaciado-sm: 0.5rem;    
-  --espaciado-md: 1rem;      
-  --espaciado-lg: 2rem;      
-  --espaciado-xl: 3rem;      
-  --espaciado-xxl: 4rem;     
+  /* Spacing */
+  --spacing-xs: 0.25rem;   
+  --spacing-sm: 0.5rem;    
+  --spacing-md: 1rem;      
+  --spacing-lg: 2rem;      
+  --spacing-xl: 3rem;      
+  --spacing-xxl: 4rem;     
   
   /* Border radius */
-  --radio-sm: 0.25rem;
-  --radio-md: 0.5rem;
-  --radio-lg: 1rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
   
-  /* Sombras */
-  --sombra-sm: 0 0.125rem 0.5rem rgba(31, 45, 68, 0.1);
-  --sombra-md: 0 0.25rem 1rem rgba(31, 45, 68, 0.1);
-  --sombra-lg: 0 0.5rem 2rem rgba(31, 45, 68, 0.15);
+  /* Shadows */
+  --shadow-sm: 0 0.125rem 0.5rem rgba(31, 45, 68, 0.1);
+  --shadow-md: 0 0.25rem 1rem rgba(31, 45, 68, 0.1);
+  --shadow-lg: 0 0.5rem 2rem rgba(31, 45, 68, 0.15);
   
-  /* Transiciones */
-  --transicion-rapida: 0.15s ease;
-  --transicion-normal: 0.3s ease;
-  --transicion-lenta: 0.5s ease;
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 
-  /* Colores para tipos de nodos (usados por los iconos y handles via variables CSS) */
+  /* Node type colors (used by icons and handles via CSS variables) */
   --node-decision: #4da6ff;
   --node-action: #33cc33;
   --node-phase: #ffcc00;
   --node-effect: #9b59b6;
   --node-default: #eee;
   --handle-default: #555;
-  /* Fondo de los nodos */
+  /* Node backgrounds */
   --node-decision-bg: rgba(77,166,255,0.2);
   --node-action-bg: rgba(51,204,51,0.2);
   --node-phase-bg: rgba(255,204,0,0.2);
   --node-effect-bg: rgba(155,89,182,0.2);
-  /* Start/End nodes (evento) */
+  /* Start/End nodes */
   --node-start-end: #888888;
   --node-start-end-bg: rgba(136,136,136,0.12);
-  /* Aliases para MiniMap y consistencia por tipo */
+  /* Aliases for MiniMap and type consistency */
   --node-start: var(--node-start-end);
   --node-end: var(--node-start-end);
   --node-start-bg: var(--node-start-end-bg);
   --node-end-bg: var(--node-start-end-bg);
-  /* Nodos específicos del juego */
+  /* Game-specific nodes */
   --node-position: #ff6b6b;
   --node-position-bg: rgba(255,107,107,0.2);
   --node-timer: #4ecdc4;
@@ -95,19 +95,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
   line-height: 1.5;
-  color: var(--gris7);
-  background: var(--primario);
+  color: var(--gray-7);
+  background: var(--primary);
   overflow-x: hidden;
 }
 
-/* Eliminar bordes de fieldsets */
+/* Remove fieldset borders */
 fieldset {
   border: none;
   padding: 0;
   margin: 0;
 }
 
-/* Estilos globales para la tipografía */
+/* Global typography styles */
 h1 {
   font-size: 4rem; 
   font-weight: 700;

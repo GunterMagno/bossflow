@@ -134,7 +134,7 @@ function Editor() {
 
         setDiagramTitle(diagram.title || '');
         try {
-          registerActivity(ACTIVITY_TYPES.VIEW, diagram.title || 'Diagrama', diagram.id);
+          registerActivity(ACTIVITY_TYPES.VIEW, diagram.title || 'Diagram', diagram.id);
         } catch (e) {
           // View activity registration failed
         }
@@ -228,7 +228,7 @@ function Editor() {
         toast.success('Diagrama guardado correctamente');
       }
         try {
-          registerActivity(ACTIVITY_TYPES.EDIT, diagramTitle || 'Diagrama', diagramId);
+          registerActivity(ACTIVITY_TYPES.EDIT, diagramTitle || 'Diagram', diagramId);
         } catch (e) {
           // Edit activity registration failed
         }

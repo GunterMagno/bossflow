@@ -37,11 +37,11 @@ router.get("/health", (req, res) => {
 /**
  * Simple profile route
  * Returns authenticated user data.
- * @route GET /perfil
+ * @route GET /profile/simple
  * @middleware auth - Requires valid JWT token.
  * @returns {Object} Authenticated user data.
  */
-router.get("/perfil", auth, (req, res) => {
+router.get("/profile/simple", auth, (req, res) => {
   res.json({ user: req.user });
 });
 
@@ -140,10 +140,10 @@ router.put("/diagrams/:id", auth, (req, res, next) => {
 /**
  * Echo route for testing
  * Returns the request body sent (development mode only).
- * @route POST /eco
+ * @route POST /echo
  * @param {Object} body - Request body.
  */
-router.post("/eco", (req, res) => {
+router.post("/echo", (req, res) => {
   res.json(req.body);
 });
 

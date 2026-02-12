@@ -1,5 +1,5 @@
 .toolbar {
-    background: linear-gradient(180deg, var(--primario) 0%, var(--hover) 100%);
+    background: linear-gradient(180deg, var(--primary) 0%, var(--hover) 100%);
     display: flex;
     gap: 1rem;
     padding: 0.5rem 1rem;
@@ -17,23 +17,23 @@
 
 .toolbar__button {
     padding: 0.625rem 1.25rem;
-    border: 2px solid var(--secundario);
-    border-radius: var(--radio-md);
-    background-color: var(--secundario);
-    color: var(--primario);
+    border: 2px solid var(--secondary);
+    border-radius: var(--radius-md);
+    background-color: var(--secondary);
+    color: var(--primary);
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: var(--transicion-normal);
+    transition: var(--transition-normal);
     box-shadow: none;
 }
 
 .toolbar__button:hover:not(:disabled) {
-    background-color: var(--secundario-hover);
-    border-color: var(--secundario-hover);
+    background-color: var(--secondary-hover);
+    border-color: var(--secondary-hover);
 }
 
 .toolbar__button:disabled {
@@ -53,19 +53,19 @@
 }
 
 .toolbar__button--save {
-    background-color: var(--secundario);
-    border-color: var(--secundario);
+    background-color: var(--secondary);
+    border-color: var(--secondary);
 }
 
 .toolbar__button--save:hover:not(:disabled) {
-    background-color: var(--secundario-hover);
-    border-color: var(--secundario-hover);
+    background-color: var(--secondary-hover);
+    border-color: var(--secondary-hover);
 }
 
 .toolbar__button--clear {
     background-color: #e74c3c;
     border-color: #e74c3c;
-    color: var(--blanco);
+    color: var(--white);
 }
 
 .toolbar__button--clear:hover:not(:disabled) {
@@ -80,7 +80,7 @@
     border-radius: 8px;
     background: transparent;
     border-color: transparent;
-    color: var(--blanco);
+    color: var(--white);
 }
 
 @media (max-width: 765px) {

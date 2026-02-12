@@ -1,20 +1,20 @@
-/* Layout principal */
+/* Main layout */
 .layout {
   display: flex;
   flex-direction: column;
   width: 100vw;
   min-height: 100vh;
-  background: var(--primario);
+  background: var(--primary);
   overflow-x: hidden;
 }
 
-.layout__contenido {
+.layout__content {
   flex: 1;
   width: 100%;
   animation: fadeIn 0.8s ease-out;
 }
 
-/* Animación de entrada */
+/* Entry animation */
 @keyframes fadeIn {
   from {
     opacity: 0;

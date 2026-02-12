@@ -71,7 +71,7 @@ function Templates() {
    * Loads templates when switching to the my templates tab.
    */
   useEffect(() => {
-    if (activeTab === 'mis-plantillas') {
+    if (activeTab === 'my-templates') {
       fetchTemplates();
     }
   }, [activeTab]);
@@ -156,13 +156,13 @@ function Templates() {
     ? DEFAULT_TEMPLATES
     : templates;
 
-  const isLoading = activeTab === 'mis-plantillas' && loadingTemplates;
-  const currentError = activeTab === 'mis-plantillas' ? errorTemplates : null;
+  const isLoading = activeTab === 'my-templates' && loadingTemplates;
+  const currentError = activeTab === 'my-templates' ? errorTemplates : null;
 
   return (
     <section className="dashboard">
       <aside className="dashboard__sidebar">
-        <section className="dashboard__sidebar-contenido">
+        <section className="dashboard__sidebar-content">
           <header className="dashboard__logo">
             <h2>BossFlow</h2>
           </header>
@@ -172,7 +172,7 @@ function Templates() {
               to="/dashboard"
               className="dashboard__nav-item"
             >
-              <FiHome className="dashboard__nav-icono" />
+              <FiHome className="dashboard__nav-icon" />
               <span>Inicio</span>
             </Link>
 
@@ -180,31 +180,31 @@ function Templates() {
               to="/dashboard"
               className="dashboard__nav-item"
             >
-              <FiFileText className="dashboard__nav-icono" />
+              <FiFileText className="dashboard__nav-icon" />
               <span>Mis diagramas</span>
             </Link>
 
             <Link
-              to="/dashboard/colaboraciones"
+              to="/dashboard/collaborations"
               className="dashboard__nav-item"
             >
-              <FiUsers className="dashboard__nav-icono" />
+              <FiUsers className="dashboard__nav-icon" />
               <span>Colaboraciones</span>
             </Link>
 
             <Link
-              to="/dashboard/plantillas"
-              className="dashboard__nav-item dashboard__nav-item--activo"
+              to="/dashboard/templates"
+              className="dashboard__nav-item dashboard__nav-item--active"
             >
-              <FiLayers className="dashboard__nav-icono" />
+              <FiLayers className="dashboard__nav-icon" />
               <span>Plantillas</span>
             </Link>
 
             <Link
-              to="/dashboard/comentarios"
+              to="/dashboard/comments"
               className="dashboard__nav-item"
             >
-              <FiMessageSquare className="dashboard__nav-icono" />
+              <FiMessageSquare className="dashboard__nav-icon" />
               <span>Comentarios</span>
             </Link>
 
@@ -212,13 +212,13 @@ function Templates() {
               to="/settings"
               className="dashboard__nav-item"
             >
-              <FiSettings className="dashboard__nav-icono" />
+              <FiSettings className="dashboard__nav-icon" />
               <span>Configuración</span>
             </Link>
           </nav>
 
           <button className="dashboard__logout" onClick={handleLogout}>
-            <FiLogOut className="dashboard__nav-icono" />
+            <FiLogOut className="dashboard__nav-icon" />
             <span>Cerrar sesión</span>
           </button>
         </section>
@@ -226,19 +226,19 @@ function Templates() {
 
       {/* Main content */}
       <main className="dashboard__main">
-        <section className="dashboard__seccion">
-          <header className="dashboard__seccion-header">
+        <section className="dashboard__section">
+          <header className="dashboard__section-header">
             <section>
-              <h2 className="dashboard__titulo">Plantillas</h2>
-              <p className="dashboard__descripcion">
+              <h2 className="dashboard__title">Plantillas</h2>
+              <p className="dashboard__description">
                 Crea diagramas rápidamente usando plantillas predefinidas
               </p>
             </section>
             <button
               onClick={() => setIsTemplateModalOpen(true)}
-              className="dashboard__boton-nuevo"
+              className="dashboard__new-button"
             >
-              <FiPlus className="dashboard__boton-icono" />
+              <FiPlus className="dashboard__button-icon" />
               Nueva plantilla
             </button>
           </header>
@@ -252,8 +252,8 @@ function Templates() {
               Predeterminadas
             </button>
             <button
-              className={`dashboard__tab ${activeTab === 'mis-plantillas' ? 'dashboard__tab--active' : ''}`}
-              onClick={() => setActiveTab('mis-plantillas')}
+              className={`dashboard__tab ${activeTab === 'my-templates' ? 'dashboard__tab--active' : ''}`}
+              onClick={() => setActiveTab('my-templates')}
             >
               Mis plantillas
             </button>
@@ -268,7 +268,7 @@ function Templates() {
             onDeleteTemplate={handleDeleteTemplate}
             onRetry={fetchTemplates}
             onCreateTemplate={() => setIsTemplateModalOpen(true)}
-            showCreateButton={activeTab === 'mis-plantillas'}
+            showCreateButton={activeTab === 'my-templates'}
             isSystemTemplates={activeTab === 'predeterminadas'}
           />
         </section>
@@ -305,7 +305,7 @@ function Templates() {
         }
         initialDescription={editingTemplate?.description || ''}
         editingTemplateId={
-          activeTab === 'mis-plantillas' && editingTemplate 
+          activeTab === 'my-templates' && editingTemplate 
             ? editingTemplate.id
             : null
         }

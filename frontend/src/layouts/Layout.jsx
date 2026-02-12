@@ -16,7 +16,7 @@ function Layout() {
   return (
     <section className="layout">
       <Navbar />
-      <main className="layout__contenido">
+      <main className="layout__content">
         <Outlet />
       </main>
       <Footer />

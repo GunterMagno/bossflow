@@ -5,9 +5,9 @@
   position: relative;
   gap: 6px;
   padding: 10px 14px;
-  border-radius: var(--radio-md) 0 var(--radio-md) 0;
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
   font-weight: bold;
-  color: var(--blanco);
+  color: var(--white);
   height: 100%;
   text-align: center;
 }
@@ -20,7 +20,7 @@
 .start-node { border: 2px solid var(--node-start-end); background: var(--node-start-end-bg); border-radius: 50%;}
 .end-node { border: 2px solid var(--node-start-end); background: var(--node-start-end-bg); border-radius: 50%;}
 
-/* Nodos específicos del juego */
+/* Game-specific nodes */
 .position-node { border: 2px solid var(--node-position); background: var(--node-position-bg); }
 .timer-node { border: 2px solid var(--node-timer); background: var(--node-timer-bg); }
 .ability-node { border: 2px solid var(--node-ability); background: var(--node-ability-bg); }
@@ -45,8 +45,7 @@
   user-select: none;
 }
 
-/* Aumenta grosor y visibilidad del marco de redimensionamiento de React Flow */
+/* Increase thickness and visibility of React Flow resize frame */
 .react-flow__resize-control {
-  border-width: 2px !important; /* Grosor de la línea */
+  border-width: 2px !important; /* Line thickness */
 }
-

@@ -1,14 +1,14 @@
-/* Bloque: not-found */
+/* Block: not-found */
 .not-found {
   min-height: calc(100vh - 75px - 200px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--espaciado-xxl) var(--espaciado-lg);
+  padding: var(--spacing-xxl) var(--spacing-lg);
 }
 
-/* Elemento: contenedor */
-.not-found__contenedor {
+/* Element: container */
+.not-found__container {
   max-width: 600px;
   text-align: center;
   animation: fadeInUp 0.6s ease-out;
@@ -25,11 +25,11 @@
   }
 }
 
-/* Elemento: icono */
-.not-found__icono {
+/* Element: icon */
+.not-found__icon {
   font-size: 5rem;
-  color: var(--secundario);
-  margin-bottom: var(--espaciado-lg);
+  color: var(--secondary);
+  margin-bottom: var(--spacing-lg);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -45,87 +45,87 @@
   }
 }
 
-/* Elemento: codigo */
-.not-found__codigo {
+/* Element: code */
+.not-found__code {
   font-size: 8rem;
   font-weight: 800;
-  color: var(--blanco);
+  color: var(--white);
   margin: 0;
   line-height: 1;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Elemento: titulo */
-.not-found__titulo {
+/* Element: title */
+.not-found__title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--blanco);
-  margin: var(--espaciado-lg) 0 var(--espaciado-md);
+  color: var(--white);
+  margin: var(--spacing-lg) 0 var(--spacing-md);
 }
 
-/* Elemento: mensaje */
-.not-found__mensaje {
+/* Element: message */
+.not-found__message {
   font-size: 1.125rem;
-  color: var(--gris2);
-  margin-bottom: var(--espaciado-xxl);
+  color: var(--gray-2);
+  margin-bottom: var(--spacing-xxl);
   line-height: 1.6;
 }
 
-/* Elemento: sugerencias */
-.not-found__sugerencias {
+/* Element: suggestions */
+.not-found__suggestions {
   background: var(--focus);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--radio-md) 0 var(--radio-md) 0;
-  padding: var(--espaciado-lg);
-  margin-bottom: var(--espaciado-xxl);
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xxl);
   text-align: left;
 }
 
-.not-found__sugerencias-titulo {
+.not-found__suggestions-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--blanco);
-  margin-bottom: var(--espaciado-md);
+  color: var(--white);
+  margin-bottom: var(--spacing-md);
 }
 
-/* Elemento: lista */
-.not-found__lista {
+/* Element: list */
+.not-found__list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.not-found__lista li {
-  color: var(--gris2);
+.not-found__list li {
+  color: var(--gray-2);
   font-size: 0.95rem;
-  padding: var(--espaciado-sm) 0;
-  padding-left: var(--espaciado-lg);
+  padding: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
   position: relative;
 }
 
-.not-found__lista li::before {
+.not-found__list li::before {
   content: '•';
   position: absolute;
-  left: var(--espaciado-sm);
-  color: var(--secundario);
+  left: var(--spacing-sm);
+  color: var(--secondary);
   font-weight: bold;
 }
 
-/* Elemento: acciones */
-.not-found__acciones {
+/* Element: actions */
+.not-found__actions {
   display: flex;
-  gap: var(--espaciado-md);
+  gap: var(--spacing-md);
   justify-content: center;
   flex-wrap: wrap;
 }
 
-/* Elemento: boton */
-.not-found__boton {
+/* Element: button */
+.not-found__button {
   display: flex;
   align-items: center;
-  gap: var(--espaciado-sm);
-  padding: var(--espaciado-md) var(--espaciado-xl);
-  border-radius: var(--radio-md) 0 var(--radio-md) 0;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -133,61 +133,61 @@
   border: none;
 }
 
-.not-found__boton--primario {
-  background: var(--secundario);
-  color: var(--primario);
+.not-found__button--primary {
+  background: var(--secondary);
+  color: var(--primary);
 }
 
-.not-found__boton--primario:hover {
-  background: var(--secundario-hover);
+.not-found__button--primary:hover {
+  background: var(--secondary-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
 }
 
-.not-found__boton--secundario {
+.not-found__button--secondary {
   background: transparent;
-  color: var(--blanco);
-  border: 2px solid var(--blanco);
+  color: var(--white);
+  border: 2px solid var(--white);
 }
 
-.not-found__boton--secundario:hover {
-  background: var(--blanco);
-  color: var(--primario);
+.not-found__button--secondary:hover {
+  background: var(--white);
+  color: var(--primary);
   transform: translateY(-2px);
 }
 
-.not-found__boton:active {
+.not-found__button:active {
   transform: scale(0.98);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .not-found {
-    padding: var(--espaciado-lg) var(--espaciado-md);
+    padding: var(--spacing-lg) var(--spacing-md);
     min-height: calc(100vh - 65px - 180px);
   }
 
-  .not-found__icono {
+  .not-found__icon {
     font-size: 4rem;
   }
 
-  .not-found__codigo {
+  .not-found__code {
     font-size: 6rem;
   }
 
-  .not-found__titulo {
+  .not-found__title {
     font-size: 1.75rem;
   }
 
-  .not-found__mensaje {
+  .not-found__message {
     font-size: 1rem;
   }
 
-  .not-found__acciones {
+  .not-found__actions {
     flex-direction: column;
   }
 
-  .not-found__boton {
+  .not-found__button {
     width: 100%;
     justify-content: center;
   }
@@ -195,39 +195,39 @@
 
 @media (max-width: 480px) {
   .not-found {
-    padding: var(--espaciado-md);
+    padding: var(--spacing-md);
   }
 
-  .not-found__icono {
+  .not-found__icon {
     font-size: 3rem;
   }
 
-  .not-found__codigo {
+  .not-found__code {
     font-size: 4.5rem;
   }
 
-  .not-found__titulo {
+  .not-found__title {
     font-size: 1.5rem;
   }
 
-  .not-found__mensaje {
+  .not-found__message {
     font-size: 0.9375rem;
   }
 
-  .not-found__sugerencias {
-    padding: var(--espaciado-md);
+  .not-found__suggestions {
+    padding: var(--spacing-md);
   }
 
-  .not-found__sugerencias-titulo {
+  .not-found__suggestions-title {
     font-size: 0.9375rem;
   }
 
-  .not-found__lista li {
+  .not-found__list li {
     font-size: 0.875rem;
   }
 
-  .not-found__boton {
+  .not-found__button {
     font-size: 0.9375rem;
-    padding: var(--espaciado-sm) var(--espaciado-lg);
+    padding: var(--spacing-sm) var(--spacing-lg);
   }
 }

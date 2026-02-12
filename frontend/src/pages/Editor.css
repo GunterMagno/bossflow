@@ -1,6 +1,6 @@
 .editor__page {
   display: grid;
-  grid-template-rows: 1fr; /* solo área principal */
+  grid-template-rows: 1fr; /* main area only */
   grid-template-columns: 280px 1fr;
   gap: 0;
   width: 100%;
@@ -12,12 +12,12 @@
   display: none;
 }
 
-/* EditorSidebar - columna izquierda */
+/* EditorSidebar - left column */
 .editor-sidebar {
   grid-area: 1 / 1 / 2 / 2;
 }
 
-/* Canvas - columna derecha */
+/* Canvas - right column */
 .editor__canvas {
   grid-area: 1 / 2 / 2 / 3;
   display: flex;
@@ -37,7 +37,7 @@
   width: 100%;
   height: 100%;
   font-size: 1.2rem;
-  color: var(--gris-oscuro, #666);
+  color: var(--gray-dark, #666);
 }
 
 /* Botones flotantes */
@@ -81,17 +81,17 @@
 }
 
 .editor__floating-button--save {
-  background-color: var(--secundario);
-  color: var(--primario);
+  background-color: var(--secondary);
+  color: var(--primary);
 }
 
 .editor__floating-button--save:hover:not(:disabled) {
-  background-color: var(--secundario-hover);
+  background-color: var(--secondary-hover);
 }
 
 .editor__floating-button--image {
   background-color: #9b59b6;
-  color: var(--blanco);
+  color: var(--white);
 }
 
 .editor__floating-button--image:hover:not(:disabled) {
@@ -100,7 +100,7 @@
 
 .editor__floating-button--export {
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  color: var(--blanco);
+  color: var(--white);
 }
 
 .editor__floating-button--export:hover:not(:disabled) {
@@ -109,7 +109,7 @@
 
 .editor__floating-button--clear {
   background-color: #e74c3c;
-  color: var(--blanco);
+  color: var(--white);
 }
 
 .editor__floating-button--clear:hover:not(:disabled) {
@@ -118,7 +118,7 @@
 
 
 
-/* Responsive: sidebar overlay en móvil */
+/* Responsive: sidebar overlay on mobile */
 @media (max-width: 768px) {
   .editor__page {
     grid-template-columns: 1fr;

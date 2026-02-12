@@ -11,10 +11,10 @@ import './ConfirmModal.css';
  * @param {boolean} props.isOpen - Controls the visibility of the modal
  * @param {Function} props.onClose - Callback executed when closing the modal
  * @param {Function} props.onConfirm - Callback executed when confirming the action
- * @param {string} [props.title='¿Estás seguro?'] - Title shown in the modal
- * @param {string} [props.message='Esta acción no se puede deshacer.'] - Descriptive message
- * @param {string} [props.confirmText='Confirmar'] - Text of the confirmation button
- * @param {string} [props.cancelText='Cancelar'] - Text of the cancel button
+ * @param {string} [props.title='Are you sure?'] - Title shown in the modal
+ * @param {string} [props.message='This action cannot be undone.'] - Descriptive message
+ * @param {string} [props.confirmText='Confirm'] - Text of the confirmation button
+ * @param {string} [props.cancelText='Cancel'] - Text of the cancel button
  * @param {string} [props.type='danger'] - Visual type of the modal (danger, warning, info)
  * @param {boolean} [props.isLoading=false] - Indicates if an operation is in progress
  * @returns {JSX.Element|null} Renders the modal or null if closed
@@ -23,10 +23,10 @@ function ConfirmModal({
   isOpen,
   onClose,
   onConfirm,
-  title = '¿Estás seguro?',
-  message = 'Esta acción no se puede deshacer.',
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
+  title = 'Are you sure?',
+  message = 'This action cannot be undone.',
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   type = 'danger',
   isLoading = false,
 }) {
@@ -92,7 +92,7 @@ function ConfirmModal({
             onClick={onConfirm}
             disabled={isLoading}
           >
-            {isLoading ? 'Procesando...' : confirmText}
+            {isLoading ? 'Processing...' : confirmText}
           </button>
         </nav>
       </article>

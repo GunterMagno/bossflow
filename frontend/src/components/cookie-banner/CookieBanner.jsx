@@ -72,7 +72,7 @@ function CookieBanner() {
           </p>
           <p className="cookie-banner__text">
             Al continuar usando BossFlow, aceptas el uso de localStorage conforme a nuestra{' '}
-            <Link to="/legal/privacidad" className="cookie-banner__link">
+            <Link to="/legal/privacy" className="cookie-banner__link">
               Política de Privacidad
             </Link>{' '}
             y{' '}

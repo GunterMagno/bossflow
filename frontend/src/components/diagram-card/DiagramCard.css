@@ -11,21 +11,21 @@
 .diagram-card {
   background: var(--focus);
   border: 1px solid rgba(234, 179, 8, 0.2);
-  border-radius: var(--radio-md) 0 var(--radio-md) 0;
-  padding: var(--espaciado-lg);
-  transition: all var(--transicion-normal);
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
+  padding: var(--spacing-lg);
+  transition: all var(--transition-normal);
   cursor: pointer;
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-md);
+  gap: var(--spacing-md);
 }
 
 .diagram-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(234, 179, 8, 0.2);
-  border-color: var(--secundario);
+  border-color: var(--secondary);
   background: var(--hover);
 }
 
@@ -35,12 +35,12 @@
 .diagram-card__icon {
   width: 50px;
   height: 50px;
-  background: var(--primario);
-  border-radius: var(--radio-sm) 0 var(--radio-sm) 0;
+  background: var(--primary);
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--secundario);
+  color: var(--secondary);
   font-size: 1.5rem;
   border: 1px solid rgba(234, 179, 8, 0.3);
   flex-shrink: 0;
@@ -52,21 +52,21 @@
 .diagram-card__content {
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-sm);
+  gap: var(--spacing-sm);
   flex: 1;
 }
 
 .diagram-card__title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--blanco);
+  color: var(--white);
   margin: 0;
   line-height: 1.4;
 }
 
 .diagram-card__description {
   font-size: 0.875rem;
-  color: var(--blanco);
+  color: var(--white);
   opacity: 0.6;
   margin: 0;
   line-height: 1.5;
@@ -81,22 +81,22 @@
    ============================================ */
 .diagram-card__footer {
   margin-top: auto;
-  padding-top: var(--espaciado-sm);
-  border-top: 1px solid var(--gris1);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--gray-1);
 }
 
 .diagram-card__info {
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-xs);
+  gap: var(--spacing-xs);
 }
 
 .diagram-card__date {
   display: flex;
   align-items: center;
-  gap: var(--espaciado-sm);
+  gap: var(--spacing-sm);
   font-size: 0.85rem;
-  color: var(--blanco);
+  color: var(--white);
   opacity: 0.7;
 }
 
@@ -107,9 +107,9 @@
 .diagram-card__stats {
   display: flex;
   align-items: center;
-  gap: var(--espaciado-xs);
+  gap: var(--spacing-xs);
   font-size: 0.75rem;
-  color: var(--blanco);
+  color: var(--white);
   opacity: 0.7;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .diagram-card__stat-separator {
-  color: var(--secundario);
+  color: var(--secondary);
   opacity: 0.5;
 }
 
@@ -127,12 +127,12 @@
    ============================================ */
 .diagram-card__actions {
   position: absolute;
-  top: var(--espaciado-sm);
-  right: var(--espaciado-sm);
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
   display: flex;
-  gap: var(--espaciado-xs);
+  gap: var(--spacing-xs);
   opacity: 0;
-  transition: opacity var(--transicion-rapida);
+  transition: opacity var(--transition-fast);
 }
 
 .diagram-card-wrapper:hover .diagram-card__actions {
@@ -148,10 +148,10 @@
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   border: 1px solid;
-  border-radius: var(--radio-sm) 0 var(--radio-sm) 0;
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
   font-size: 1rem;
   cursor: pointer;
-  transition: all var(--transicion-rapida);
+  transition: all var(--transition-fast);
 }
 
 /* Edit button */
@@ -189,7 +189,7 @@
    ============================================ */
 @media (max-width: 768px) {
   .diagram-card {
-    padding: var(--espaciado-md);
+    padding: var(--spacing-md);
   }
 
   .diagram-card__icon {
@@ -202,7 +202,7 @@
     font-size: 1rem;
   }
 
-  /* Mostrar botones siempre en móvil */
+  /* Always show buttons on mobile */
   .diagram-card__actions {
     opacity: 1;
   }

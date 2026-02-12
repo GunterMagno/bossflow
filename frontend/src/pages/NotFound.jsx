@@ -24,37 +24,37 @@ function NotFound() {
 
   return (
     <main className="not-found">
-      <article className="not-found__contenedor">
-        <section className="not-found__icono">
+      <article className="not-found__container">
+        <section className="not-found__icon">
           <FiAlertCircle />
         </section>
 
-        <h1 className="not-found__codigo">404</h1>
+        <h1 className="not-found__code">404</h1>
 
-        <h2 className="not-found__titulo">Boss no encontrado</h2>
-        <p className="not-found__mensaje">
+        <h2 className="not-found__title">Boss no encontrado</h2>
+        <p className="not-found__message">
           La página que buscas ha sido derrotada o nunca existió en este reino.
         </p>
 
-        <section className="not-found__sugerencias">
-          <p className="not-found__sugerencias-titulo">Posibles razones:</p>
-          <ul className="not-found__lista">
+        <section className="not-found__suggestions">
+          <p className="not-found__suggestions-title">Posibles razones:</p>
+          <ul className="not-found__list">
             <li>La URL fue escrita incorrectamente</li>
             <li>La página fue movida o eliminada</li>
             <li>El enlace está desactualizado</li>
           </ul>
         </section>
 
-        <section className="not-found__acciones">
+        <section className="not-found__actions">
           <button
-            className="not-found__boton not-found__boton--primario"
+            className="not-found__button not-found__button--primary"
             onClick={() => navigate('/')}
           >
             <FiHome />
             <span>Volver al inicio</span>
           </button>
           <button
-            className="not-found__boton not-found__boton--secundario"
+            className="not-found__button not-found__button--secondary"
             onClick={() => navigate(-1)}
           >
             <span>Página anterior</span>

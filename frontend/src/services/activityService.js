@@ -15,10 +15,10 @@ const MAX_ACTIVITIES = 10; // Maximum number of activities to keep
  * Activity types
  */
 export const ACTIVITY_TYPES = {
-  CREATE: 'creacion',
-  EDIT: 'edicion',
-  DELETE: 'eliminacion',
-  VIEW: 'visualizacion',
+  CREATE: 'creation',
+  EDIT: 'edition',
+  DELETE: 'deletion',
+  VIEW: 'view',
 };
 
 /**
@@ -69,11 +69,11 @@ export const getActivities = () => {
 
 /**
  * Registers a new activity.
- * @param {string} tipo - Activity type (CREATE, EDIT, DELETE, VIEW).
- * @param {string} diagramaTitle - Diagram title.
- * @param {string} diagramaId - Diagram ID.
+ * @param {string} type - Activity type (CREATE, EDIT, DELETE, VIEW).
+ * @param {string} diagramTitle - Diagram title.
+ * @param {string} diagramId - Diagram ID.
  */
-export const registerActivity = (tipo, diagramaTitle, diagramaId) => {
+export const registerActivity = (type, diagramTitle, diagramId) => {
   try {
     const storageKey = getStorageKey();
     if (!storageKey) return null;
@@ -82,10 +82,10 @@ export const registerActivity = (tipo, diagramaTitle, diagramaId) => {
 
     const newActivity = {
       id: Date.now(),
-      tipo,
-      diagrama: diagramaTitle,
-      diagramaId,
-      fecha: new Date().toISOString(),
+      type,
+      diagram: diagramTitle,
+      diagramId,
+      date: new Date().toISOString(),
     };
 
     activities.unshift(newActivity);
@@ -150,7 +150,7 @@ export const getFormattedActivities = () => {
   const activities = getActivities();
   return activities.map((activity) => ({
     ...activity,
-    fechaFormateada: formatRelativeDate(activity.fecha),
+    formattedDate: formatRelativeDate(activity.date),
   }));
 };
 

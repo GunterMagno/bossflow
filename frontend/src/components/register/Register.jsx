@@ -32,10 +32,10 @@ function Register() {
   }, [isAuthenticated, navigate]);
 
   const [formData, setFormData] = useState({
-    nombreUsuario: '',
-    correo: '',
-    contrasena: '',
-    confirmarContrasena: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -74,45 +74,45 @@ function Register() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.nombreUsuario) {
-      newErrors.nombreUsuario =
+    if (!formData.username) {
+      newErrors.username =
         'Es obligatorio introducir un nombre de usuario.';
-    } else if (formData.nombreUsuario.length < 3) {
-      newErrors.nombreUsuario =
+    } else if (formData.username.length < 3) {
+      newErrors.username =
         'El nombre de usuario debe tener al menos 3 caracteres.';
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.nombreUsuario)) {
-      newErrors.nombreUsuario =
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username =
         'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos.';
     }
 
-    if (!formData.correo) {
-      newErrors.correo = 'Es obligatorio introducir un correo electrónico.';
+    if (!formData.email) {
+      newErrors.email = 'Es obligatorio introducir un correo electrónico.';
     } else if (
       !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        formData.correo
+        formData.email
       )
     ) {
-      newErrors.correo = 'El correo electrónico no es válido.';
+      newErrors.email = 'El correo electrónico no es válido.';
     }
 
-    if (!formData.contrasena) {
-      newErrors.contrasena = 'Es obligatorio introducir una contraseña.';
-    } else if (formData.contrasena.length < 8) {
-      newErrors.contrasena =
+    if (!formData.password) {
+      newErrors.password = 'Es obligatorio introducir una contraseña.';
+    } else if (formData.password.length < 8) {
+      newErrors.password =
         'La contraseña debe tener al menos 8 caracteres.';
     }
 
-    if (!formData.confirmarContrasena) {
-      newErrors.confirmarContrasena =
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword =
         'Es obligatorio confirmar la contraseña.';
     } else if (
-      formData.contrasena !== formData.confirmarContrasena
+      formData.password !== formData.confirmPassword
     ) {
-      newErrors.confirmarContrasena = 'Las contraseñas no coinciden.';
+      newErrors.confirmPassword = 'Las contraseñas no coinciden.';
     }
 
     if (!acceptTerms) {
-      newErrors.terminos = 'Debes aceptar los Términos de Uso y la Política de Privacidad.';
+      newErrors.terms = 'Debes aceptar los Términos de Uso y la Política de Privacidad.';
     }
 
     return newErrors;
@@ -138,9 +138,9 @@ function Register() {
       setLoading(true);
 
       const result = await registerUser(
-        formData.nombreUsuario,
-        formData.correo,
-        formData.contrasena
+        formData.username,
+        formData.email,
+        formData.password
       );
 
       if (result.success) {
@@ -157,137 +157,137 @@ function Register() {
 
   return (
     <main className="register">
-      <article className="register__contenedor">
-        <section className="register__encabezado">
-          <h3 className="register__titulo">Crear cuenta</h3>
-          <p className="register__subtitulo">Regístrate para comenzar</p>
+      <article className="register__container">
+        <section className="register__header">
+          <h3 className="register__title">Crear cuenta</h3>
+          <p className="register__subtitle">Regístrate para comenzar</p>
         </section>
 
-        <form onSubmit={handleSubmit} className="register__formulario">
+        <form onSubmit={handleSubmit} className="register__form">
           {errors.submit && (
             <section className="register__error" role="alert">
               {errors.submit}
             </section>
           )}
 
-          <fieldset className="register__campo">
-            <label htmlFor="nombreUsuario" className="register__etiqueta">
+          <fieldset className="register__field">
+            <label htmlFor="username" className="register__label">
               Nombre de Usuario
             </label>
             <input
               type="text"
-              id="nombreUsuario"
-              name="nombreUsuario"
-              value={formData.nombreUsuario}
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               placeholder="usuario123"
-              className={`register__input ${errors.nombreUsuario ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.username ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.nombreUsuario && (
-              <span className="register__mensaje-error" role="alert">
-                {errors.nombreUsuario}
+            {errors.username && (
+              <span className="register__error-message" role="alert">
+                {errors.username}
               </span>
             )}
           </fieldset>
 
-          <fieldset className="register__campo">
-            <label htmlFor="correo" className="register__etiqueta">
+          <fieldset className="register__field">
+            <label htmlFor="email" className="register__label">
               Correo Electrónico
             </label>
             <input
               type="text"
-              id="correo"
-              name="correo"
-              value={formData.correo}
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               placeholder="tu@ejemplo.com"
-              className={`register__input ${errors.correo ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.email ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.correo && (
-              <span className="register__mensaje-error" role="alert">
-                {errors.correo}
+            {errors.email && (
+              <span className="register__error-message" role="alert">
+                {errors.email}
               </span>
             )}
           </fieldset>
 
-          <fieldset className="register__campo">
-            <label htmlFor="contrasena" className="register__etiqueta">
+          <fieldset className="register__field">
+            <label htmlFor="password" className="register__label">
               Contraseña
             </label>
             <input
               type="password"
-              id="contrasena"
-              name="contrasena"
-              value={formData.contrasena}
+              id="password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               placeholder="********"
-              className={`register__input ${errors.contrasena ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.password ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.contrasena && (
-              <span className="register__mensaje-error" role="alert">
-                {errors.contrasena}
+            {errors.password && (
+              <span className="register__error-message" role="alert">
+                {errors.password}
               </span>
             )}
           </fieldset>
 
-          <fieldset className="register__campo">
-            <label htmlFor="confirmarContrasena" className="register__etiqueta">
+          <fieldset className="register__field">
+            <label htmlFor="confirmPassword" className="register__label">
               Confirmar Contraseña
             </label>
             <input
               type="password"
-              id="confirmarContrasena"
-              name="confirmarContrasena"
-              value={formData.confirmarContrasena}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="********"
-              className={`register__input ${errors.confirmarContrasena ? 'register__input--error' : ''}`}
+              className={`register__input ${errors.confirmPassword ? 'register__input--error' : ''}`}
               disabled={loading}
             />
-            {errors.confirmarContrasena && (
-              <span className="register__mensaje-error" role="alert">
-                {errors.confirmarContrasena}
+            {errors.confirmPassword && (
+              <span className="register__error-message" role="alert">
+                {errors.confirmPassword}
               </span>
             )}
           </fieldset>
 
-          <fieldset className="register__terminos">
+          <fieldset className="register__terms">
             <label className="register__checkbox">
               <input
                 type="checkbox"
-                id="terminos"
+                id="terms"
                 className="register__checkbox-input"
                 checked={acceptTerms}
                 onChange={(e) => {
                   setAcceptTerms(e.target.checked);
-                  if (errors.terminos) {
-                    setErrors((prev) => ({ ...prev, terminos: '' }));
+                  if (errors.terms) {
+                    setErrors((prev) => ({ ...prev, terms: '' }));
                   }
                 }}
                 disabled={loading}
               />
-              <span className="register__checkbox-texto">
+              <span className="register__checkbox-text">
                 Acepto los{' '}
-                <Link to="/legal/terminos" className="register__enlace-terminos" target="_blank">
+                <Link to="/legal/terms" className="register__terms-link" target="_blank">
                   Términos de Uso
                 </Link>{' '}
                 y la{' '}
-                <Link to="/legal/privacidad" className="register__enlace-terminos" target="_blank">
+                <Link to="/legal/privacy" className="register__terms-link" target="_blank">
                   Política de Privacidad
                 </Link>
               </span>
             </label>
-            {errors.terminos && (
-              <span className="register__mensaje-error" role="alert">
-                {errors.terminos}
+            {errors.terms && (
+              <span className="register__error-message" role="alert">
+                {errors.terms}
               </span>
             )}
           </fieldset>
 
-          <button type="submit" className="register__boton" disabled={loading}>
+          <button type="submit" className="register__button" disabled={loading}>
             {loading ? (
               <>
                 <span className="register__spinner"></span>
@@ -299,10 +299,10 @@ function Register() {
           </button>
         </form>
 
-        <section className="register__pie">
-          <p className="register__pie-texto">
+        <section className="register__footer">
+          <p className="register__footer-text">
             ¿Ya tienes una cuenta?{' '}
-            <Link to="/login" className="register__enlace-login">
+            <Link to="/login" className="register__login-link">
               Inicia sesión
             </Link>
           </p>

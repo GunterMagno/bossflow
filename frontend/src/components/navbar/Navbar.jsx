@@ -76,14 +76,14 @@ function Navbar() {
   }, [menuOpen]);
 
   return (
-    <header className="encabezado">
-      <nav className="encabezado__navbar">
+    <header className="header">
+      <nav className="header__navbar">
         <Link to="/" className="navbar__logo">
           <img src="/logo.png" alt="BossFlow" className="navbar__logo-img" />
         </Link>
 
         <button
-          className="navbar__hamburguesa"
+          className="navbar__hamburger"
           onClick={toggleMobileMenu}
           aria-label="Menú"
         >
@@ -91,74 +91,74 @@ function Navbar() {
         </button>
 
         <ul
-          className={`navbar__enlaces ${mobileMenuOpen ? 'navbar__enlaces--visible' : ''}`}
+          className={`navbar__links ${mobileMenuOpen ? 'navbar__links--visible' : ''}`}
         >
-          <li className="navbar__elemento">
+          <li className="navbar__item">
             <Link
               to="/"
-              className="navbar__enlace"
+              className="navbar__link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Inicio
             </Link>
           </li>
-          <li className="navbar__elemento">
+          <li className="navbar__item">
             <Link
               to="/dashboard"
-              className="navbar__enlace"
+              className="navbar__link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Dashboard
             </Link>
           </li>
-          <li className="navbar__elemento">
+          <li className="navbar__item">
             <Link
               to="/community"
-              className="navbar__enlace"
+              className="navbar__link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Comunidad
             </Link>
           </li>
 
-          <li className="navbar__elemento navbar__elemento--auth-movil">
+          <li className="navbar__item navbar__item--auth-mobile">
             {!isAuthenticated ? (
-              <section className="navbar__botones-auth-movil">
+              <section className="navbar__auth-buttons-mobile">
                 <Link
                   to="/login"
-                  className="navbar__boton-login"
+                  className="navbar__login-button"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Iniciar sesión
                 </Link>
                 <Link
                   to="/register"
-                  className="navbar__boton-registro"
+                  className="navbar__register-button"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Registrarse
                 </Link>
               </section>
             ) : (
-              <section className="navbar__usuario-movil">
-                <h3 className="navbar__seccion-titulo">Cuenta</h3>
+              <section className="navbar__user-mobile">
+                <h3 className="navbar__section-title">Cuenta</h3>
                 <Link
                   to="/profile"
-                  className="navbar__enlace"
+                  className="navbar__link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <FiUser /> Perfil
                 </Link>
                 <Link
                   to="/settings"
-                  className="navbar__enlace"
+                  className="navbar__link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <FiSettings /> Configuración
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="navbar__enlace navbar__enlace--logout"
+                  className="navbar__link navbar__link--logout"
                 >
                   <FiLogOut /> Cerrar sesión
                 </button>
@@ -167,19 +167,19 @@ function Navbar() {
           </li>
         </ul>
 
-        <section className="navbar__usuario-menu" ref={menuRef}>
+        <section className="navbar__user-menu" ref={menuRef}>
           {!isAuthenticated ? (
-              <section className="navbar__botones-auth">
-              <Link to="/login" className="navbar__boton-login">
+              <section className="navbar__auth-buttons">
+              <Link to="/login" className="navbar__login-button">
                 Iniciar sesión
               </Link>
-              <Link to="/register" className="navbar__boton-registro">
+              <Link to="/register" className="navbar__register-button">
                 Registrarse
               </Link>
             </section>
           ) : (
             <>
-              <button className="navbar__usuario" onClick={toggleMenu}>
+              <button className="navbar__user" onClick={toggleMenu}>
                 <span className="navbar__avatar">
                   {user?.avatar ? (
                     <img src={user.avatar} alt={user.username} className="navbar__avatar-img" />
@@ -187,41 +187,41 @@ function Navbar() {
                     <FiUser />
                   )}
                 </span>
-                <span className="navbar__nombre">
+                <span className="navbar__name">
                   {user?.username || user?.email}
                 </span>
                 <span
-                  className={`navbar__flecha ${menuOpen ? 'navbar__flecha--arriba' : ''}`}
+                  className={`navbar__arrow ${menuOpen ? 'navbar__arrow--up' : ''}`}
                 >
                   <FiChevronDown />
                 </span>
               </button>
 
               {menuOpen && (
-                <ul className="menu-desplegable">
-                  <li className="menu-desplegable__elemento">
-                    <Link to="/profile" className="menu-desplegable__enlace">
-                      <span className="menu-desplegable__icono">
+                <ul className="dropdown-menu">
+                  <li className="dropdown-menu__item">
+                    <Link to="/profile" className="dropdown-menu__link">
+                      <span className="dropdown-menu__icon">
                         <FiUser />
                       </span>
                       <span>Perfil</span>
                     </Link>
                   </li>
-                  <li className="menu-desplegable__elemento">
-                    <Link to="/settings" className="menu-desplegable__enlace">
-                      <span className="menu-desplegable__icono">
+                  <li className="dropdown-menu__item">
+                    <Link to="/settings" className="dropdown-menu__link">
+                      <span className="dropdown-menu__icon">
                         <FiSettings />
                       </span>
                       <span>Configuración</span>
                     </Link>
                   </li>
-                  <li className="menu-desplegable__separador"></li>
-                  <li className="menu-desplegable__elemento">
+                  <li className="dropdown-menu__separator"></li>
+                  <li className="dropdown-menu__item">
                     <button
                       onClick={handleLogout}
-                      className="menu-desplegable__enlace menu-desplegable__enlace--cerrar"
+                      className="dropdown-menu__link dropdown-menu__link--logout"
                     >
-                      <span className="menu-desplegable__icono">
+                      <span className="dropdown-menu__icon">
                         <FiLogOut />
                       </span>
                       <span>Cerrar sesión</span>

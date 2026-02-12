@@ -9,16 +9,16 @@ import { CURRENT_VERSION } from '../utils/jsonValidator';
 
 /**
  * Custom hook for exporting diagrams in different formats.
- * @param {string} [diagramName='diagrama'] - Base name for exported files
+ * @param {string} [diagramName='diagram'] - Base name for exported files
  * @returns {Object} Object with export methods (PNG, JSON) and references to SVG and PDF (disabled)
  */
-export function useExportDiagram(diagramName = 'diagrama') {
+export function useExportDiagram(diagramName = 'diagram') {
   const { getNodes, getEdges } = useReactFlow();
 
   /**
    * Generates a filename with timestamp.
    * @param {string} extension - File extension (png, json, svg, pdf)
-   * @returns {string} Filename with format 'diagrama_YYYY-MM-DD_HH-MM.extension'
+   * @returns {string} Filename with format 'diagram_YYYY-MM-DD_HH-MM.extension'
    */
   const generateFileName = (extension) => {
     const now = new Date();

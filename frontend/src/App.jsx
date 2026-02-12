@@ -42,8 +42,8 @@ function App() {
               <Route path="/register" element={<Register />} />
 
               {/* Legal pages */}
-              <Route path="/legal/privacidad" element={<PrivacyPolicy />} />
-              <Route path="/legal/terminos" element={<TermsOfUse />} />
+              <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+              <Route path="/legal/terms" element={<TermsOfUse />} />
               <Route path="/legal/cookies" element={<CookiesPolicy />} />
 
               <Route path="/editor/:diagramId" element={
@@ -61,7 +61,7 @@ function App() {
                   <Dashboard />
                 </PrivateRoute>} />
 
-              <Route path="/dashboard/plantillas" element={
+              <Route path="/dashboard/templates" element={
                 <PrivateRoute>
                   <Templates />
                 </PrivateRoute>} />

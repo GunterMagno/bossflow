@@ -320,7 +320,7 @@ function TermsOfUse() {
             <p>
               Para información detallada sobre qué datos recogemos, cómo los utilizamos y cuáles
               son sus derechos, consulte nuestra{' '}
-              <Link to="/legal/privacidad" className="legal-page__link">
+              <Link to="/legal/privacy" className="legal-page__link">
                 Política de Privacidad
               </Link>.
             </p>
@@ -436,7 +436,7 @@ function TermsOfUse() {
           </p>
           <p>
             Consulta también nuestra{' '}
-            <Link to="/legal/privacidad" className="legal-page__link">
+            <Link to="/legal/privacy" className="legal-page__link">
               Política de Privacidad
             </Link>{' '}
             y{' '}

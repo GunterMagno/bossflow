@@ -11,19 +11,19 @@
 .template-card {
   background: var(--focus);
   border: 1px solid rgba(234, 179, 8, 0.2);
-  border-radius: var(--radio-md) 0 var(--radio-md) 0;
-  padding: var(--espaciado-lg);
-  transition: all var(--transicion-normal);
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
+  padding: var(--spacing-lg);
+  transition: all var(--transition-normal);
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-md);
+  gap: var(--spacing-md);
   position: relative;
 }
 
 .template-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(234, 179, 8, 0.2);
-  border-color: var(--secundario);
+  border-color: var(--secondary);
   background: var(--hover);
 }
 
@@ -32,10 +32,10 @@
    ============================================ */
 .template-card__badge {
   position: absolute;
-  top: var(--espaciado-sm);
-  right: var(--espaciado-sm);
-  background: linear-gradient(135deg, var(--primario), var(--secundario));
-  color: var(--negro);
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--black);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 10px;
@@ -50,12 +50,12 @@
 .template-card__icon {
   width: 50px;
   height: 50px;
-  background: var(--primario);
-  border-radius: var(--radio-sm) 0 var(--radio-sm) 0;
+  background: var(--primary);
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--secundario);
+  color: var(--secondary);
   font-size: 1.5rem;
   border: 1px solid rgba(234, 179, 8, 0.3);
   flex-shrink: 0;
@@ -67,21 +67,21 @@
 .template-card__content {
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-sm);
+  gap: var(--spacing-sm);
   flex: 1;
 }
 
 .template-card__title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--blanco);
+  color: var(--white);
   margin: 0;
   line-height: 1.4;
 }
 
 .template-card__description {
   font-size: 0.875rem;
-  color: var(--blanco);
+  color: var(--white);
   opacity: 0.6;
   margin: 0;
   line-height: 1.5;
@@ -97,22 +97,22 @@
    ============================================ */
 .template-card__footer {
   margin-top: auto;
-  padding-top: var(--espaciado-sm);
-  border-top: 1px solid var(--gris1);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--gray-1);
 }
 
 .template-card__info {
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-xs);
+  gap: var(--spacing-xs);
 }
 
 .template-card__date {
   display: flex;
   align-items: center;
-  gap: var(--espaciado-sm);
+  gap: var(--spacing-sm);
   font-size: 0.85rem;
-  color: var(--blanco);
+  color: var(--white);
   opacity: 0.7;
 }
 
@@ -123,9 +123,9 @@
 .template-card__stats {
   display: flex;
   align-items: center;
-  gap: var(--espaciado-xs);
+  gap: var(--spacing-xs);
   font-size: 0.75rem;
-  color: var(--blanco);
+  color: var(--white);
   opacity: 0.7;
 }
 
@@ -134,7 +134,7 @@
 }
 
 .template-card__stat-separator {
-  color: var(--secundario);
+  color: var(--secondary);
   opacity: 0.5;
 }
 
@@ -143,8 +143,8 @@
    ============================================ */
 .template-card__delete-button {
   position: absolute;
-  top: var(--espaciado-sm);
-  right: var(--espaciado-sm);
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
   width: 36px;
   height: 36px;
   display: flex;
@@ -153,11 +153,11 @@
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: var(--radio-sm) 0 var(--radio-sm) 0;
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
   font-size: 1rem;
   color: #ef4444;
   cursor: pointer;
-  transition: all var(--transicion-rapida);
+  transition: all var(--transition-fast);
   z-index: 2;
 }
 
@@ -176,9 +176,9 @@
    ============================================ */
 .template-card__actions {
   display: flex;
-  gap: var(--espaciado-sm);
-  margin-top: var(--espaciado-sm);
-  padding-top: var(--espaciado-sm);
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
 }
 
 .template-card__action-button {
@@ -186,36 +186,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--espaciado-xs);
-  padding: var(--espaciado-sm) var(--espaciado-md);
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
   border: 1px solid transparent;
-  border-radius: var(--radio-sm);
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--transicion-normal);
+  transition: all var(--transition-normal);
   background: transparent;
-  color: var(--blanco);
+  color: var(--white);
 }
 
 .template-card__action-button--use {
   border-color: rgba(234, 179, 8, 0.3);
-  color: var(--secundario);
+  color: var(--secondary);
 }
 
 .template-card__action-button--use:hover {
   background: rgba(234, 179, 8, 0.1);
-  border-color: var(--secundario);
+  border-color: var(--secondary);
 }
 
 .template-card__action-button--copy {
   border-color: rgba(234, 179, 8, 0.3);
-  color: var(--secundario);
+  color: var(--secondary);
 }
 
 .template-card__action-button--copy:hover {
   background: rgba(234, 179, 8, 0.1);
-  border-color: var(--secundario);
+  border-color: var(--secondary);
 }
 
 .template-card__action-button--edit {
@@ -238,7 +238,7 @@
    ============================================ */
 @media (max-width: 768px) {
   .template-card {
-    padding: var(--espaciado-md);
+    padding: var(--spacing-md);
   }
 
   .template-card__icon {
@@ -261,14 +261,14 @@
 
   .template-card__action-button {
     justify-content: center;
-    padding-left: var(--espaciado-sm);
+    padding-left: var(--spacing-sm);
   }
 
   .template-card__action-button svg {
-    margin-right: var(--espaciado-xs);
+    margin-right: var(--spacing-xs);
   }
 
-  /* Mostrar botón eliminar siempre en móvil */
+  /* Always show delete button on mobile */
   .template-card__delete-button {
     opacity: 1;
   }

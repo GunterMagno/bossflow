@@ -10,7 +10,7 @@
   border-color: #4a90e2;
 }
 
-/* Asegurar que los handles no interfieren con el layout ni el resize */
+/* Ensure handles don't interfere with layout or resize */
 .image-node .react-flow__handle {
   pointer-events: auto;
   width: 10px;
@@ -82,6 +82,6 @@
   }
 
   .image-node-delete {
-    opacity: 1; /* Siempre visible en móvil */
+    opacity: 1; /* Always visible on mobile */
   }
 }

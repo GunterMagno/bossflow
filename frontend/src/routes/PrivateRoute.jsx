@@ -26,7 +26,7 @@ function PrivateRoute({ children }) {
     return (
       <article className="private-route__loading">
         <figure className="private-route__spinner"></figure>
-        <p className="private-route__texto">Verificando autenticación...</p>
+        <p className="private-route__text">Verificando autenticación...</p>
       </article>
     );
   }

@@ -266,7 +266,7 @@ function EditorSidebar({ onAddNode, className = '', onCloseSidebar, recentNodes 
       </section>
 
       <button className="editor-sidebar__exit-button" onClick={handleExit}>
-        <FiLogOut className="editor-sidebar__nav-icono" />
+        <FiLogOut className="editor-sidebar__nav-icon" />
         <span>Salir</span>
       </button>
     </aside>

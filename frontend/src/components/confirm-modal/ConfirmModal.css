@@ -29,9 +29,9 @@
    CONFIRM MODAL CONTAINER
    ============================================ */
 .confirm-modal {
-  background: var(--blanco);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-xl);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
   width: 90%;
   max-width: 450px;
   animation: slideUp 0.3s ease-out;
@@ -55,7 +55,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: var(--espaciado-lg) var(--espaciado-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
   padding-bottom: 0;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .confirm-modal--info .confirm-modal__icon {
-  color: var(--primario);
+  color: var(--primary);
 }
 
 .confirm-modal__close-button {
@@ -104,16 +104,16 @@
   justify-content: center;
   background: transparent;
   border: none;
-  border-radius: var(--radio-sm);
-  color: var(--gris3);
+  border-radius: var(--radius-sm);
+  color: var(--gray-3);
   font-size: 1.25rem;
   cursor: pointer;
-  transition: all var(--transicion-rapida);
+  transition: all var(--transition-fast);
 }
 
 .confirm-modal__close-button:hover:not(:disabled) {
-  background: var(--gris1);
-  color: var(--gris4);
+  background: var(--gray-1);
+  color: var(--gray-4);
 }
 
 .confirm-modal__close-button:disabled {
@@ -125,19 +125,19 @@
    CONTENT
    ============================================ */
 .confirm-modal__content {
-  padding: var(--espaciado-lg) var(--espaciado-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
 }
 
 .confirm-modal__title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--gris4);
-  margin: 0 0 var(--espaciado-sm) 0;
+  color: var(--gray-4);
+  margin: 0 0 var(--spacing-sm) 0;
 }
 
 .confirm-modal__message {
   font-size: 0.95rem;
-  color: var(--gris3);
+  color: var(--gray-3);
   line-height: 1.5;
   margin: 0;
 }
@@ -147,20 +147,20 @@
    ============================================ */
 .confirm-modal__actions {
   display: flex;
-  gap: var(--espaciado-sm);
-  padding: var(--espaciado-lg) var(--espaciado-xl);
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) var(--spacing-xl);
   padding-top: 0;
 }
 
 .confirm-modal__button {
   flex: 1;
-  padding: var(--espaciado-md) var(--espaciado-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
   font-size: 0.95rem;
   font-weight: 600;
   border: none;
-  border-radius: var(--radio-md) 0 var(--radio-md) 0;
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
   cursor: pointer;
-  transition: all var(--transicion-rapida);
+  transition: all var(--transition-fast);
   font-family: inherit;
 }
 
@@ -171,30 +171,30 @@
 
 /* Cancel button */
 .confirm-modal__button--cancel {
-  background: var(--gris1);
-  color: var(--gris4);
+  background: var(--gray-1);
+  color: var(--gray-4);
 }
 
 .confirm-modal__button--cancel:hover:not(:disabled) {
-  background: var(--gris2);
+  background: var(--gray-2);
 }
 
 /* Confirm buttons */
 .confirm-modal__button--confirm {
-  background: var(--secundario);
-  color: var(--primario);
+  background: var(--secondary);
+  color: var(--primary);
   box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
 }
 
 .confirm-modal__button--confirm:hover:not(:disabled) {
-  background: var(--secundario-hover);
+  background: var(--secondary-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
 }
 
 .confirm-modal__button--danger {
   background: #ef4444;
-  color: var(--blanco);
+  color: var(--white);
 }
 
 .confirm-modal__button--danger:hover:not(:disabled) {
@@ -205,7 +205,7 @@
 
 .confirm-modal__button--warning {
   background: #f59e0b;
-  color: var(--blanco);
+  color: var(--white);
 }
 
 .confirm-modal__button--warning:hover:not(:disabled) {
@@ -215,12 +215,12 @@
 }
 
 .confirm-modal__button--info {
-  background: var(--primario);
-  color: var(--blanco);
+  background: var(--primary);
+  color: var(--white);
 }
 
 .confirm-modal__button--info:hover:not(:disabled) {
-  background: var(--primario-oscuro);
+  background: var(--primary-dark);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
@@ -234,16 +234,16 @@
   }
 
   .confirm-modal__header {
-    padding: var(--espaciado-md) var(--espaciado-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
     padding-bottom: 0;
   }
 
   .confirm-modal__content {
-    padding: var(--espaciado-md) var(--espaciado-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 
   .confirm-modal__actions {
-    padding: var(--espaciado-md) var(--espaciado-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
     padding-top: 0;
   }
 

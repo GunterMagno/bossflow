@@ -1,27 +1,27 @@
 .node-description-tooltip {
   background: var(--popup-bg, #1e293b);
   border: 1px solid var(--popup-border, #475569);
-  border-radius: var(--radio-lg, 12px);
+  border-radius: var(--radius-lg, 12px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.3);
   max-width: 400px;
   width: auto;
   padding: 16px;
-  
-  /* Animación: invisible por defecto */
+
+  /* Animation: invisible by default */
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
   pointer-events: none;
 }
 
-/* Estado visible */
+/* Visible state */
 .node-description-tooltip.is-visible {
   opacity: 1;
   transform: scale(1);
   pointer-events: auto;
 }
 
-/* Animaciones (deprecated pero mantenidas para compatibilidad) */
+/* Animations (deprecated but kept for compatibility) */
 @keyframes tooltipFadeIn {
   from {
     opacity: 0;
@@ -44,7 +44,7 @@
   }
 }
 
-/* Arrow/Flecha hacia el nodo */
+/* Arrow pointing to the node */
 .node-description-tooltip__arrow {
   position: absolute;
   width: 0;
@@ -67,7 +67,7 @@
   border-bottom: 8px solid var(--popup-bg, #1e293b);
 }
 
-/* Layout: imagen derecha + texto izquierda, o texto centrado */
+/* Layout: image right + text left, or centered text */
 .node-description-tooltip__content {
   display: flex;
   gap: 12px;
@@ -84,7 +84,7 @@
   align-items: center;
 }
 
-/* Contenedor de imagen: ancho limitado, altura automática */
+/* Image container: limited width, automatic height */
 .node-description-tooltip__image-container {
   flex-shrink: 0;
   width: 100px;
@@ -102,7 +102,7 @@
   display: block;
 }
 
-/* Contenedor de texto */
+/* Text container */
 .node-description-tooltip__text {
   flex: 0 1 auto;
   min-width: 0;
@@ -126,7 +126,7 @@
   white-space: pre-wrap;
 }
 
-/* Responsive: en móviles, imagen arriba, texto abajo */
+/* Responsive: on mobile, image on top, text below */
 @media (max-width: 640px) {
   .node-description-tooltip {
     max-width: 100%;
