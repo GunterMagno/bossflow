@@ -1,3 +1,7 @@
+// ============================================================
+// File: ToastContext.jsx
+// Description: Toast notification context provider with methods for success, error, warning, and info notifications.
+// ============================================================
 import { createContext, useContext, useState, useCallback } from 'react';
 import Toast from '../components/toast/Toast';
 

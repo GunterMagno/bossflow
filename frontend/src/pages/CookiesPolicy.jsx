@@ -1,10 +1,14 @@
+// ============================================================
+// File: CookiesPolicy.jsx
+// Description: Cookie policy legal page.
+// ============================================================
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './LegalPages.css';
 
 /**
- * Página de Política de Cookies.
- * Explica el uso (o no uso) de cookies en BossFlow.
+ * Cookie Policy page.
+ * Explains the use (or non-use) of cookies in BossFlow.
  */
 function CookiesPolicy() {
   useEffect(() => {

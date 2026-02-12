@@ -1,3 +1,7 @@
+// ============================================================
+// File: EditorSidebar.jsx
+// Description: Editor sidebar with node palette and drag-and-drop support.
+// ============================================================
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -28,10 +32,10 @@ const nodeIconMap = {
 };
 
 /**
- * Panel lateral del editor con biblioteca de nodos disponibles
- * @param {Object} props - Propiedades del componente
- * @param {Function} props.onAddNode - Callback ejecutado al añadir un nodo
- * @param {string} [props.className=''] - Clases CSS adicionales
+ * Editor sidebar panel with available node library.
+ * @param {Object} props - Component properties
+ * @param {Function} props.onAddNode - Callback executed when adding a node
+ * @param {string} [props.className=''] - Additional CSS classes
  * @param {Function} props.onCloseSidebar - Callback to close sidebar on mobile
  * @param {Array} props.recentNodes - Array of recently used nodes
  * @returns {JSX.Element} Sidebar with draggable node categories
@@ -45,7 +49,7 @@ function EditorSidebar({ onAddNode, className = '', onCloseSidebar, recentNodes 
   });
 
   /**
-   * Alterna la expansión de una sección del sidebar
+   * Toggles the expansion of a sidebar section.
    * @param {string} section - Section identifier to toggle
    */
   const toggleSection = (section) => {
@@ -118,8 +122,8 @@ function EditorSidebar({ onAddNode, className = '', onCloseSidebar, recentNodes 
   ];
 
   /**
-   * Gestiona el clic sobre un tipo de nodo para añadirlo al canvas
-   * @param {Object} nodeType - Tipo de nodo a añadir
+   * Handles click on a node type to add it to the canvas.
+   * @param {Object} nodeType - Node type to add
    */
   const handleNodeClick = (nodeType) => {
     if (onAddNode) {
@@ -128,16 +132,16 @@ function EditorSidebar({ onAddNode, className = '', onCloseSidebar, recentNodes 
   };
 
   /**
-   * Navega a la página anterior al salir del editor
+   * Navigates to the previous page when exiting the editor.
    */
   const handleExit = () => {
     navigate(-1);
   };
 
   /**
-   * Inicia el arrastre de un nodo preparando los datos a transferir
-   * @param {DragEvent} event - Evento de arrastre
-   * @param {Object} nodeData - Datos del nodo a arrastrar
+   * Initiates node drag by preparing the data to transfer.
+   * @param {DragEvent} event - Drag event
+   * @param {Object} nodeData - Data of the node to drag
    */
   const onDragStart = (event, nodeData) => {
     const nodeInfo = {
@@ -147,7 +151,6 @@ function EditorSidebar({ onAddNode, className = '', onCloseSidebar, recentNodes 
       color: nodeData.color
     };
 
-    console.log('Drag started with data:', nodeInfo);
     event.dataTransfer.setData('application/reactflow', JSON.stringify(nodeInfo));
     event.dataTransfer.effectAllowed = 'move';
   };

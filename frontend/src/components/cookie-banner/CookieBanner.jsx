@@ -1,10 +1,14 @@
+// ============================================================
+// File: CookieBanner.jsx
+// Description: Cookie consent banner with accept and settings options.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './CookieBanner.css';
 
 /**
- * Componente de banner de consentimiento de cookies/localStorage.
- * Se muestra en la primera visita del usuario y puede ser aceptado o rechazado.
+ * Cookie/localStorage consent banner component.
+ * Displayed on the user's first visit and can be accepted or rejected.
  */
 function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
@@ -35,7 +39,7 @@ function CookieBanner() {
   }, []);
 
   /**
-   * Gestiona la aceptación del uso de localStorage
+   * Handles accepting the use of localStorage
    */
   const handleAccept = () => {
     localStorage.setItem('cookieConsent', 'accepted');
@@ -43,8 +47,8 @@ function CookieBanner() {
   };
 
   /**
-   * Gestiona el rechazo del uso de localStorage
-   * Nota: El rechazo se registra para esta sesión, pero volverá a aparecer en la próxima visita
+   * Handles rejecting the use of localStorage
+   * Note: The rejection is recorded for this session, but the banner will reappear on the next visit
    */
   const handleReject = () => {
     localStorage.setItem('cookieConsent', 'rejected');

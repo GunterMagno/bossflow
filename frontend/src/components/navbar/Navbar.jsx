@@ -1,3 +1,7 @@
+// ============================================================
+// File: Navbar.jsx
+// Description: Application navigation bar with responsive menu and authentication controls.
+// ============================================================
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -44,7 +48,6 @@ function Navbar() {
    * Closes all open menus, executes logout and redirects to home page.
    */
   const handleLogout = () => {
-    console.log('Logging out...');
     setMenuOpen(false);
     setMobileMenuOpen(false);
     logout();

@@ -1,3 +1,7 @@
+// ============================================================
+// File: Footer.jsx
+// Description: Application footer with navigation links and copyright.
+// ============================================================
 import './Footer.css';
 import {
   FaFacebookF,
@@ -7,8 +11,8 @@ import {
 } from 'react-icons/fa6';
 
 /**
- * Pie de página de la aplicación con información corporativa y enlaces
- * @returns {JSX.Element} Footer con marca, enlaces, redes sociales y copyright
+ * Application footer with corporate information and links
+ * @returns {JSX.Element} Footer with branding, links, social media and copyright
  */
 function Footer() {
   return (

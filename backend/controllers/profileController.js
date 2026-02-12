@@ -1,3 +1,7 @@
+// ============================================================
+// File: profileController.js
+// Description: Handles user profile operations including viewing, updating, statistics, data export, and account deletion.
+// ============================================================
 const User = require("../models/User");
 const Diagram = require("../models/Diagram");
 const bcrypt = require("bcrypt");
@@ -23,7 +27,6 @@ exports.getProfile = async (req, res) => {
 
     res.json({ user });
   } catch (error) {
-    console.error("Error fetching profile:", error);
     res.status(500).json({ error: "Error fetching profile" });
   }
 };
@@ -113,8 +116,6 @@ exports.updateProfile = async (req, res) => {
       user: updatedUser,
     });
   } catch (error) {
-    console.error("Error updating profile:", error);
-
     if (error.code === 11000) {
       return res
         .status(400)
@@ -149,7 +150,6 @@ exports.getStats = async (req, res) => {
       achievements: user.achievements,
     });
   } catch (error) {
-    console.error("Error fetching statistics:", error);
     res.status(500).json({ error: "Error fetching statistics" });
   }
 };
@@ -225,7 +225,6 @@ exports.exportUserData = async (req, res) => {
 
     res.json(exportData);
   } catch (error) {
-    console.error("Error exporting data:", error);
     res.status(500).json({ error: "Error exporting user data" });
   }
 };
@@ -296,7 +295,6 @@ exports.deleteAccount = async (req, res) => {
                 fs.unlinkSync(imagePath);
               }
             } catch (err) {
-              console.error("Error deleting image:", err);
               // Continue deletion even if removing an image fails
             }
           }
@@ -310,17 +308,12 @@ exports.deleteAccount = async (req, res) => {
     // Delete the user
     await User.findByIdAndDelete(userId);
 
-    console.log(
-      `✅ Account deleted: User ${user.username} (${user.email})`
-    );
-
     res.json({
       message: "Your account and all your data have been permanently deleted",
       deletedUser: user.username,
       deletedDiagrams: diagrams.length,
     });
   } catch (error) {
-    console.error("Error deleting account:", error);
     res.status(500).json({ error: "Error deleting account" });
   }
 };

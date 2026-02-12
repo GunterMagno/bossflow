@@ -1,20 +1,24 @@
+// ============================================================
+// File: DiagramCard.jsx
+// Description: Individual diagram card displaying preview, title, and action buttons.
+// ============================================================
 import { Link } from 'react-router-dom';
 import { FiFileText, FiClock, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import './DiagramCard.css';
 
 /**
- * Tarjeta que muestra la información resumida de un diagrama
- * @param {Object} props - Propiedades del componente
- * @param {Object} props.diagram - Objeto con los datos del diagrama
- * @param {Function} props.onDelete - Callback ejecutado al eliminar el diagrama
- * @param {Function} props.onEdit - Callback ejecutado al editar el diagrama
+ * Card that displays summarized diagram information
+ * @param {Object} props - Component properties
+ * @param {Object} props.diagram - Object with diagram data
+ * @param {Function} props.onDelete - Callback executed when deleting the diagram
+ * @param {Function} props.onEdit - Callback executed when editing the diagram
  * @returns {JSX.Element} Interactive card with diagram information
  */
 function DiagramCard({ diagram, onDelete, onEdit }) {
   /**
-   * Formatea una fecha en formato relativo (hace X minutos/horas/días)
-   * @param {string|Date} date - Fecha a formatear
-   * @returns {string} Fecha formateada en formato relativo o fecha absoluta
+   * Formats a date in relative format (X minutes/hours/days ago)
+   * @param {string|Date} date - Date to format
+   * @returns {string} Date formatted in relative format or absolute date
    */
   const formatRelativeDate = (date) => {
     const now = new Date();
@@ -40,8 +44,8 @@ function DiagramCard({ diagram, onDelete, onEdit }) {
   };
 
   /**
-   * Gestiona el clic en el botón de eliminar
-   * @param {Event} e - Evento del clic
+   * Handles the click on the delete button
+   * @param {Event} e - Click event
    */
   const handleDeleteClick = (e) => {
     e.preventDefault();
@@ -52,8 +56,8 @@ function DiagramCard({ diagram, onDelete, onEdit }) {
   };
 
   /**
-   * Gestiona el clic en el botón de editar
-   * @param {Event} e - Evento del clic
+   * Handles the click on the edit button
+   * @param {Event} e - Click event
    */
   const handleEditClick = (e) => {
     e.preventDefault();

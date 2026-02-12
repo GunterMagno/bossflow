@@ -1,3 +1,7 @@
+// ============================================================
+// File: emailService.js
+// Description: Email service for sending verification and welcome emails via Nodemailer.
+// ============================================================
 const nodemailer = require("nodemailer");
 
 /**
@@ -46,12 +50,12 @@ const sendVerificationEmail = async (
   try {
     const transporter = createTransporter();
 
-    // URL de verificación (ajustar según el frontend)
+    // Verification URL (adjust according to the frontend)
     const verificationUrl = `${
       process.env.FRONTEND_URL || "http://localhost:5173"
     }/verify-email/${verificationToken}`;
 
-    // Opciones del email
+    // Email options
     const mailOptions = {
       from: `"BossFlow" <${process.env.EMAIL_FROM || "noreply@bossflow.com"}>`,
       to: userEmail,
@@ -187,22 +191,11 @@ const sendVerificationEmail = async (
     // Send email
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("Verification email sent:", info.messageId);
-
-    // In development with Ethereal, show preview URL
-    if (process.env.NODE_ENV !== "production") {
-      console.log(
-        "Email preview URL:",
-        nodemailer.getTestMessageUrl(info)
-      );
-    }
-
     return {
       success: true,
       messageId: info.messageId,
     };
   } catch (error) {
-    console.error("Error sending verification email:", error);
     throw new Error("Could not send verification email");
   }
 };
@@ -313,9 +306,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log("Welcome email sent to:", userEmail);
   } catch (error) {
-    console.error("Error sending welcome email:", error);
     // Do not throw — welcome email is optional
   }
 };

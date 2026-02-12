@@ -1,3 +1,7 @@
+// ============================================================
+// File: MobileNodePanel.jsx
+// Description: Mobile-optimized bottom panel for node selection and insertion.
+// ============================================================
 import { useState } from 'react';
 import {
   FiZap,
@@ -14,10 +18,10 @@ import {
 import './MobileNodePanel.css';
 
 /**
- * Panel inferior deslizable para dispositivos móviles con todos los tipos de nodos
- * @param {Object} props - Propiedades del componente
- * @param {Function} props.onAddNode - Callback ejecutado al añadir un nodo
- * @returns {JSX.Element} Panel deslizable con scroll horizontal de nodos
+ * Sliding bottom panel for mobile devices with all node types.
+ * @param {Object} props - Component properties
+ * @param {Function} props.onAddNode - Callback executed when adding a node
+ * @returns {JSX.Element} Sliding panel with horizontal node scroll
  */
 function MobileNodePanel({ onAddNode }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -82,8 +86,8 @@ function MobileNodePanel({ onAddNode }) {
   ];
 
   /**
-   * Gestiona el clic sobre un tipo de nodo para añadirlo al canvas
-   * @param {Object} nodeData - Datos del nodo a añadir
+   * Handles click on a node type to add it to the canvas.
+   * @param {Object} nodeData - Data of the node to add
    */
   const handleNodeClick = (nodeData) => {
     if (onAddNode) {
@@ -92,9 +96,9 @@ function MobileNodePanel({ onAddNode }) {
   };
 
   /**
-   * Inicia el arrastre de un nodo preparando los datos a transferir
-   * @param {DragEvent} event - Evento de arrastre
-   * @param {Object} nodeData - Datos del nodo a arrastrar
+   * Initiates node drag by preparing the data to transfer.
+   * @param {DragEvent} event - Drag event
+   * @param {Object} nodeData - Data of the node to drag
    */
   const onDragStart = (event, nodeData) => {
     const nodeInfo = {

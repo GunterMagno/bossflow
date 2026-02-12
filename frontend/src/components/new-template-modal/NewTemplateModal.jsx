@@ -1,3 +1,7 @@
+// ============================================================
+// File: NewTemplateModal.jsx
+// Description: Modal dialog for creating and editing diagram templates.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiX, FiFileText, FiAlignLeft } from 'react-icons/fi';
@@ -7,19 +11,19 @@ import { useToast } from '../../context/ToastContext';
 import './NewTemplateModal.css';
 
 /**
- * Componente modal para crear o editar plantillas de diagramas.
- * Permite definir título y descripción para plantillas reutilizables.
+ * Modal component for creating or editing diagram templates.
+ * Allows defining title and description for reusable templates.
  *
- * @param {Object} props - Propiedades del componente
- * @param {boolean} props.isOpen - Indica si el modal está abierto
- * @param {Function} props.onClose - Función callback para cerrar el modal
- * @param {Function} props.onTemplateCreated - Función callback ejecutada cuando se crea o actualiza una plantilla
- * @param {string} props.initialTitle - Título inicial de la plantilla (para edición)
- * @param {string} props.initialDescription - Descripción inicial de la plantilla (para edición)
- * @param {Array} props.initialNodes - Nodos iniciales de la plantilla
- * @param {Array} props.initialEdges - Conexiones iniciales de la plantilla
- * @param {string|null} props.editingTemplateId - ID de la plantilla si es edición, null si es creación
- * @returns {JSX.Element|null} Elemento modal o null si está cerrado
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Function} props.onTemplateCreated - Callback function executed when a template is created or updated
+ * @param {string} props.initialTitle - Initial template title (for editing)
+ * @param {string} props.initialDescription - Initial template description (for editing)
+ * @param {Array} props.initialNodes - Initial template nodes
+ * @param {Array} props.initialEdges - Initial template connections
+ * @param {string|null} props.editingTemplateId - Template ID if editing, null if creating
+ * @returns {JSX.Element|null} Modal element or null if closed
  */
 function NewTemplateModal({
   isOpen,
@@ -48,10 +52,10 @@ function NewTemplateModal({
   }, [initialTitle, initialDescription, isOpen]);
 
   /**
-   * Maneja los cambios en los campos de entrada del formulario.
-   * Actualiza el estado del formulario y limpia los errores del campo modificado.
+   * Handles changes in form input fields.
+   * Updates the form state and clears errors for the modified field.
    *
-   * @param {Event} e - Evento de cambio del input
+   * @param {Event} e - Input change event
    */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,10 +73,10 @@ function NewTemplateModal({
   };
 
   /**
-   * Valida los campos del formulario antes de enviar.
-   * Verifica que el título esté presente y tenga al menos 3 caracteres.
+   * Validates form fields before submission.
+   * Checks that the title is present and has at least 3 characters.
    *
-   * @returns {boolean} true si el formulario es válido, false en caso contrario
+   * @returns {boolean} true if form is valid, false otherwise
    */
   const validateForm = () => {
     const newErrors = {};
@@ -88,11 +92,11 @@ function NewTemplateModal({
   };
 
   /**
-   * Maneja el envío del formulario para crear o actualizar una plantilla.
-   * Determina si se trata de una creación o actualización según editingTemplateId,
-   * registra la actividad correspondiente y redirige al editor.
+   * Handles form submission to create or update a template.
+   * Determines whether it is a creation or update based on editingTemplateId,
+   * registers the corresponding activity, and redirects to the editor.
    *
-   * @param {Event} e - Evento de envío del formulario
+   * @param {Event} e - Form submission event
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -161,8 +165,6 @@ function NewTemplateModal({
         }
       }
     } catch (error) {
-      console.error('Error al crear plantilla:', error);
-
       if (error.response?.status === 409) {
         setErrors({
           title: 'Ya existe una plantilla con ese título',
@@ -187,8 +189,8 @@ function NewTemplateModal({
   };
 
   /**
-   * Cierra el modal y reinicia el formulario a su estado inicial.
-   * Limpia todos los campos y errores.
+   * Closes the modal and resets the form to its initial state.
+   * Clears all fields and errors.
    */
   const handleClose = () => {
     setFormData({
@@ -200,9 +202,9 @@ function NewTemplateModal({
   };
 
   /**
-   * Maneja el evento de teclado para cerrar el modal con la tecla Escape.
+   * Handles keyboard event to close the modal with the Escape key.
    *
-   * @param {KeyboardEvent} e - Evento de teclado
+   * @param {KeyboardEvent} e - Keyboard event
    */
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {

@@ -1,3 +1,7 @@
+// ============================================================
+// File: Templates.jsx
+// Description: Templates management page for browsing default templates and managing user templates.
+// ============================================================
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -56,7 +60,6 @@ function Templates() {
       const response = await getTemplates();
       setTemplates(response.templates || []);
     } catch (error) {
-      console.error('Error loading templates:', error);
       setErrorTemplates('No se pudieron cargar las plantillas.');
       setTemplates([]);
     } finally {
@@ -143,7 +146,6 @@ function Templates() {
       toast.success('Plantilla eliminada correctamente');
       fetchTemplates();
     } catch (error) {
-      console.error('Error deleting template:', error);
       toast.error('No se pudo eliminar la plantilla');
     } finally {
       setTemplateToDelete(null);
@@ -222,7 +224,7 @@ function Templates() {
         </section>
       </aside>
 
-      {/* Contenido principal */}
+      {/* Main content */}
       <main className="dashboard__main">
         <section className="dashboard__seccion">
           <header className="dashboard__seccion-header">
@@ -241,7 +243,7 @@ function Templates() {
             </button>
           </header>
 
-          {/* Pestañas */}
+          {/* Tabs */}
           <nav className="dashboard__tabs">
             <button
               className={`dashboard__tab ${activeTab === 'predeterminadas' ? 'dashboard__tab--active' : ''}`}
@@ -272,7 +274,7 @@ function Templates() {
         </section>
       </main>
 
-      {/* Modal para crear nuevo diagrama desde plantilla */}
+      {/* Modal for creating a new diagram from a template */}
       <NewDiagramModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -284,7 +286,7 @@ function Templates() {
         initialEdges={templateNodes?.edges}
       />
 
-      {/* Modal para crear nueva plantilla */}
+      {/* Modal for creating a new template */}
       <NewTemplateModal
         isOpen={isTemplateModalOpen}
         onClose={() => {
@@ -309,7 +311,7 @@ function Templates() {
         }
       />
 
-      {/* Modal de confirmación para eliminar */}
+      {/* Confirmation modal for deletion */}
       <ConfirmModal
         isOpen={!!templateToDelete}
         onClose={() => setTemplateToDelete(null)}

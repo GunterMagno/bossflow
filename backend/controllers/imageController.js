@@ -1,3 +1,7 @@
+// ============================================================
+// File: imageController.js
+// Description: Handles image upload, URL validation, and deletion for diagram node images.
+// ============================================================
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
@@ -78,7 +82,6 @@ exports.uploadImage = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("❌ Error uploading image:", error);
     next(error);
   }
 };
@@ -136,7 +139,6 @@ exports.validateImageUrl = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("❌ Error validating URL:", error);
     next(error);
   }
 };
@@ -177,7 +179,6 @@ exports.deleteImage = async (req, res, next) => {
       message: "Referenced image removed (external URL)",
     });
   } catch (error) {
-    console.error("❌ Error deleting image:", error);
     next(error);
   }
 };

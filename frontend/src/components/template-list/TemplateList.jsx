@@ -1,3 +1,7 @@
+// ============================================================
+// File: TemplateList.jsx
+// Description: Template list component with usage confirmation modal.
+// ============================================================
 import { useState, useEffect } from 'react';
 import TemplateCard from '../template-card/TemplateCard';
 import ConfirmModal from '../confirm-modal/ConfirmModal';

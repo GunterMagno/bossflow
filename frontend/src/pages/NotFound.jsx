@@ -1,18 +1,22 @@
+// ============================================================
+// File: NotFound.jsx
+// Description: 404 not found error page.
+// ============================================================
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiHome, FiAlertCircle } from 'react-icons/fi';
 import './NotFound.css';
 
 /**
- * Página de error 404 - Página no encontrada.
- * Muestra un mensaje amigable cuando el usuario intenta acceder a una ruta inexistente.
+ * 404 error page - Page not found.
+ * Displays a friendly message when the user tries to access a non-existent route.
  * @returns {React.ReactElement} The 404 error page component.
  */
 function NotFound() {
   const navigate = useNavigate();
 
   /**
-   * Establece el título de la página cuando el componente se monta.
+   * Sets the page title when the component mounts.
    */
   useEffect(() => {
     document.title = '404 - Página no encontrada | BossFlow';

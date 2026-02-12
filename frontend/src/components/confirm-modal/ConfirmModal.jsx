@@ -1,3 +1,7 @@
+// ============================================================
+// File: ConfirmModal.jsx
+// Description: Reusable confirmation modal component with accept and cancel actions.
+// ============================================================
 import { FiAlertTriangle, FiX } from 'react-icons/fi';
 import './ConfirmModal.css';
 

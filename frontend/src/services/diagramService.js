@@ -1,3 +1,8 @@
+// ============================================================
+// File: diagramService.js
+// Description: Service for diagram and template CRUD operations via the API.
+// ============================================================
+
 import api from './api';
 
 /**
@@ -11,7 +16,6 @@ export const getDiagrams = async () => {
     const response = await api.get('/diagrams');
     return response.data;
   } catch (error) {
-    console.error('Error retrieving diagrams:', error);
     throw error;
   }
 };
@@ -28,7 +32,6 @@ export const createDiagram = async (diagramData) => {
     const response = await api.post('/diagrams', diagramData);
     return response.data;
   } catch (error) {
-    console.error('Error creating diagram:', error);
     throw error;
   }
 };
@@ -45,7 +48,6 @@ export const getDiagramById = async (id) => {
     const response = await api.get(`/diagrams/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error retrieving diagram:', error);
     throw error;
   }
 };
@@ -63,7 +65,6 @@ export const updateDiagram = async (id, diagramData) => {
     const response = await api.put(`/diagrams/${id}`, diagramData);
     return response.data;
   } catch (error) {
-    console.error('Error updating diagram:', error);
     throw error;
   }
 };
@@ -80,7 +81,6 @@ export const deleteDiagram = async (id) => {
     const response = await api.delete(`/diagrams/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting diagram:', error);
     throw error;
   }
 };
@@ -96,7 +96,6 @@ export const getTemplates = async () => {
     const response = await api.get('/templates');
     return response.data;
   } catch (error) {
-    console.error('Error retrieving templates:', error);
     throw error;
   }
 };
@@ -113,7 +112,6 @@ export const deleteTemplate = async (id) => {
     const response = await api.delete(`/diagrams/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting template:', error);
     throw error;
   }
 };

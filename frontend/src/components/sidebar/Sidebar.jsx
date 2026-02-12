@@ -1,3 +1,7 @@
+// ============================================================
+// File: Sidebar.jsx
+// Description: Sidebar navigation component for dashboard pages.
+// ============================================================
 import React from 'react';
 
 /**

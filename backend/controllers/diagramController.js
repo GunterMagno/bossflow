@@ -1,3 +1,7 @@
+// ============================================================
+// File: diagramController.js
+// Description: Handles CRUD operations for diagrams and templates belonging to authenticated users.
+// ============================================================
 const Diagram = require("../models/Diagram");
 const User = require("../models/User");
 const mongoose = require("mongoose");
@@ -84,7 +88,6 @@ exports.createDiagram = async (req, res, next) => {
       });
     }
 
-    console.error("❌ Error creating diagram:", error);
     next(error);
   }
 };
@@ -125,7 +128,6 @@ exports.getDiagrams = async (req, res, next) => {
       })),
     });
     } catch (error) {
-    console.error("❌ Error fetching diagrams:", error);
     next(error);
   }
 };
@@ -166,7 +168,6 @@ exports.getTemplates = async (req, res, next) => {
       })),
     });
     } catch (error) {
-    console.error("❌ Error fetching templates:", error);
     next(error);
   }
 };
@@ -207,7 +208,6 @@ exports.deleteDiagram = async (req, res, next) => {
       message: "Diagram deleted successfully",
     });
   } catch (error) {
-    console.error("❌ Error deleting diagram:", error);
     next(error);
   }
 };
@@ -257,7 +257,6 @@ exports.getDiagramById = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("❌ Error fetching diagram by ID:", error);
     next(error);
   }
 };
@@ -395,7 +394,6 @@ exports.updateDiagram = async (req, res, next) => {
       });
     }
 
-    console.error("❌ Error updating diagram:", error);
     next(error);
   }
 };

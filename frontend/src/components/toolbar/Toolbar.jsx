@@ -1,3 +1,7 @@
+// ============================================================
+// File: Toolbar.jsx
+// Description: Editor toolbar providing save, undo, export, and canvas management actions.
+// ============================================================
 import './Toolbar.css';
 import { FiMenu } from 'react-icons/fi';
 

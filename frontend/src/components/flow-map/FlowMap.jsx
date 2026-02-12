@@ -1,3 +1,7 @@
+// ============================================================
+// File: FlowMap.jsx
+// Description: Interactive flow diagram canvas powered by ReactFlow with drag-and-drop node creation.
+// ============================================================
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DecisionNode, ActionNode, PhaseNode, EffectNode, StartNode, EndNode, PositionNode, TimerNode, AbilityNode } from "../nodes/Nodes";
 import ImageNode from "../nodes/image-node/ImageNode";
@@ -18,7 +22,7 @@ import NodeDescriptionPopup from '../node-description-popup/NodeDescriptionPopup
 import { useToast } from '../../context/ToastContext';
 import useRecentNodes from '../../hooks/useRecentNodes';
 
-const tiposNodos = {
+const nodeTypes = {
   decision: DecisionNode,
   action: ActionNode,
   phase: PhaseNode,
@@ -32,7 +36,7 @@ const tiposNodos = {
   ability: AbilityNode,
   imageNode: ImageNode
 };
-const tiposEdges = { default: CustomEdge };
+const edgeTypes = { default: CustomEdge };
 
 /**
  * Main flow diagram editor component.
@@ -257,20 +261,16 @@ function FlowMap({ initialNodes = [], initialEdges = [], onNodesChange: onNodesC
       const nodeDataString = event.dataTransfer.getData('application/reactflow');
 
       if (!nodeDataString) {
-        console.log('No data in drop');
         return;
       }
 
       try {
         const nodeData = JSON.parse(nodeDataString);
-        console.log('Dropped node data:', nodeData);
 
         const position = screenToFlowPosition({
           x: event.clientX,
           y: event.clientY,
         });
-
-        console.log('Calculated position:', position);
 
         const newNodeId = `${nodeData.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
@@ -285,12 +285,8 @@ function FlowMap({ initialNodes = [], initialEdges = [], onNodesChange: onNodesC
           },
         };
 
-        console.log('New node to create:', newNode);
-
         setNodes((nds) => {
-          console.log('Current nodes:', nds);
           const updated = [...nds, newNode];
-          console.log('Updated nodes:', updated);
           return updated;
         });
 
@@ -298,7 +294,6 @@ function FlowMap({ initialNodes = [], initialEdges = [], onNodesChange: onNodesC
 
         toast.success(`Nodo "${nodeData.label}" agregado al canvas`);
       } catch (error) {
-        console.error('Error processing drop:', error);
         toast.error('Error al agregar el nodo');
       }
     },
@@ -402,8 +397,8 @@ function FlowMap({ initialNodes = [], initialEdges = [], onNodesChange: onNodesC
           onNodeClick={handleNodeClick}
           onNodeMouseEnter={handleNodeMouseEnter}
           onNodeMouseLeave={handleNodeMouseLeave}
-          nodeTypes={tiposNodos}
-          edgeTypes={tiposEdges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           connectionRadius={30}
           nodesDraggable={true}
           nodesConnectable={true}

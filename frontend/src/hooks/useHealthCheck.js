@@ -1,3 +1,7 @@
+// ============================================================
+// File: useHealthCheck.js
+// Description: Custom hook for checking backend server health status on component mount.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { healthCheck } from '../services/api';
 

@@ -1,3 +1,8 @@
+// ============================================================
+// File: authService.js
+// Description: Authentication service handling login and registration API requests.
+// ============================================================
+
 import api from './api';
 
 /**

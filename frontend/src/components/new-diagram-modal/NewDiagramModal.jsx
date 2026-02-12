@@ -1,10 +1,14 @@
+// ============================================================
+// File: NewDiagramModal.jsx
+// Description: Modal dialog for creating new diagrams with name and description inputs.
+// ============================================================
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiX, FiFileText, FiAlignLeft, FiUpload } from 'react-icons/fi';
 import { createDiagram } from '../../services/diagramService';
 import { registerActivity, ACTIVITY_TYPES } from '../../services/activityService';
 import { useToast } from '../../context/ToastContext';
-import ImportJSON from '../ImportJSON/ImportJSON';
+import ImportJSON from '../import-json/ImportJSON';
 import './NewDiagramModal.css';
 
 /**
@@ -141,8 +145,6 @@ function NewDiagramModal({ isOpen, onClose, onDiagramCreated, initialNodes = nul
         navigate(`/editor/${response.diagram.id}`);
       }
     } catch (error) {
-      console.error('Error creating diagram:', error);
-
       if (error.response?.status === 409) {
         setErrors({
           title: 'Ya existe un diagrama con ese título',

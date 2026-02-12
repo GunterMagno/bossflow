@@ -1,3 +1,8 @@
+// ============================================================
+// File: index.js
+// Description: Express router defining all API endpoints for authentication, diagrams, profiles, and images.
+// ============================================================
+
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
@@ -139,9 +144,6 @@ router.put("/diagrams/:id", auth, (req, res, next) => {
  * @param {Object} body - Request body.
  */
 router.post("/eco", (req, res) => {
-  if (process.env.NODE_ENV === "development") {
-    console.log("📨 Echo received:", req.body);
-  }
   res.json(req.body);
 });
 

@@ -1,3 +1,7 @@
+// ============================================================
+// File: DiagramList.jsx
+// Description: Diagram list component with loading, error, and empty states.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getDiagrams, deleteDiagram } from '../../services/diagramService';
@@ -9,11 +13,11 @@ import { FiFileText, FiAlertCircle } from 'react-icons/fi';
 import './DiagramList.css';
 
 /**
- * Lista de diagramas del usuario con opciones de gestión
- * @param {Object} props - Propiedades del componente
- * @param {Function} props.onCreateClick - Callback ejecutado al crear un nuevo diagrama
- * @param {Function} props.onDiagramDeleted - Callback ejecutado tras eliminar un diagrama
- * @returns {JSX.Element} Lista de diagramas con estados de carga, error y vacío
+ * User diagram list with management options.
+ * @param {Object} props - Component properties
+ * @param {Function} props.onCreateClick - Callback executed when creating a new diagram
+ * @param {Function} props.onDiagramDeleted - Callback executed after deleting a diagram
+ * @returns {JSX.Element} Diagram list with loading, error, and empty states
  */
 function DiagramList({ onCreateClick, onDiagramDeleted }) {
   const navigate = useNavigate();
@@ -34,7 +38,6 @@ function DiagramList({ onCreateClick, onDiagramDeleted }) {
       const response = await getDiagrams();
       setDiagrams(response.diagrams || []);
     } catch (err) {
-      console.error('Error al cargar diagramas:', err);
       setError('No se pudieron cargar los diagramas. Por favor, intenta de nuevo.');
     } finally {
       setLoading(false);
@@ -46,23 +49,23 @@ function DiagramList({ onCreateClick, onDiagramDeleted }) {
   }, []);
 
   /**
-   * Prepara la eliminación de un diagrama mostrando el modal de confirmación
-   * @param {Object} diagram - Diagrama a eliminar
+   * Prepares diagram deletion by showing the confirmation modal.
+   * @param {Object} diagram - Diagram to delete
    */
   const handleDeleteClick = (diagram) => {
     setDiagramToDelete(diagram);
   };
 
   /**
-   * Navega al editor con el diagrama seleccionado
-   * @param {Object} diagram - Diagrama a editar
+   * Navigates to the editor with the selected diagram.
+   * @param {Object} diagram - Diagram to edit
    */
   const handleEditClick = (diagram) => {
     navigate(`/editor/${diagram.id}`);
   };
 
   /**
-   * Ejecuta la eliminación del diagrama tras la confirmación
+   * Executes diagram deletion after confirmation.
    */
   const handleConfirmDelete = async () => {
     if (!diagramToDelete) return;
@@ -87,7 +90,6 @@ function DiagramList({ onCreateClick, onDiagramDeleted }) {
 
       setDiagramToDelete(null);
     } catch (error) {
-      console.error('Error al eliminar diagrama:', error);
       toast.error('Error al eliminar el diagrama. Por favor, intenta de nuevo.');
     } finally {
       setIsDeleting(false);
@@ -95,7 +97,7 @@ function DiagramList({ onCreateClick, onDiagramDeleted }) {
   };
 
   /**
-   * Cancela la operación de eliminación cerrando el modal
+   * Cancels the deletion operation by closing the modal.
    */
   const handleCancelDelete = () => {
     if (!isDeleting) {

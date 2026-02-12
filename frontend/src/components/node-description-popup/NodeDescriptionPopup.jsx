@@ -1,3 +1,7 @@
+// ============================================================
+// File: NodeDescriptionPopup.jsx
+// Description: Popup component displaying node description on hover.
+// ============================================================
 import { useEffect, useRef, useState } from 'react';
 import './NodeDescriptionPopup.css';
 

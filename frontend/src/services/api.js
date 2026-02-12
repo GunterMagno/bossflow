@@ -1,3 +1,8 @@
+// ============================================================
+// File: api.js
+// Description: Axios instance with interceptors for authentication and error handling.
+// ============================================================
+
 import axios from 'axios';
 
 /**
@@ -49,27 +54,18 @@ api.interceptors.response.use(
         localStorage.removeItem('user');
 
         window.dispatchEvent(new Event('token-expired'));
-
-        console.warn('Token expired. Session closed automatically.');
       }
     }
 
-    if (error.response) {
-      console.error('Server error:', error.response.data);
-    } else if (error.request) {
-      console.error('No response from server');
-    } else {
-      console.error('Error:', error.message);
-    }
     return Promise.reject(error);
   }
 );
 
 /**
- * Realiza una verificación de salud del servidor.
+ * Performs a server health check.
  * @async
- * @returns {Promise<Object>} Datos de salud del servidor.
- * @throws {Error} Si falla la conexión al servidor.
+ * @returns {Promise<Object>} Server health data.
+ * @throws {Error} If the connection to the server fails.
  */
 export const healthCheck = async () => {
   try {

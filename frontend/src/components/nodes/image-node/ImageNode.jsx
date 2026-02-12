@@ -1,24 +1,28 @@
+// ============================================================
+// File: ImageNode.jsx
+// Description: Custom ReactFlow node component for displaying images in diagrams.
+// ============================================================
 import { memo } from 'react';
 import { Handle, Position, NodeResizer } from 'reactflow';
 import './ImageNode.css';
 
 /**
- * Componente de nodo de imagen para diagramas.
- * Muestra una imagen redimensionable con puntos de conexión invisibles.
- * Incluye capacidad de redimensionado y eliminación cuando está seleccionado.
+ * Image node component for diagrams.
+ * Displays a resizable image with invisible connection handles.
+ * Includes resize and delete capabilities when selected.
  *
- * @param {Object} props - Propiedades del componente
- * @param {Object} props.data - Datos del nodo (imagen, callbacks, etc.)
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @param {string} props.id - ID único del nodo
- * @returns {JSX.Element} Elemento de nodo de imagen
+ * @param {Object} props - Component properties
+ * @param {Object} props.data - Node data (image, callbacks, etc.)
+ * @param {boolean} props.selected - Whether the node is selected
+ * @param {string} props.id - Unique node ID
+ * @returns {JSX.Element} Image node element
  */
 const ImageNode = ({ data, selected, id }) => {
   /**
-   * Maneja la eliminación del nodo de imagen.
-   * Detiene la propagación del evento y ejecuta el callback de eliminación.
+   * Handles image node deletion.
+   * Stops event propagation and executes the deletion callback.
    *
-   * @param {MouseEvent} e - Evento de clic del ratón
+   * @param {MouseEvent} e - Mouse click event
    */
   const handleDelete = (e) => {
     e.stopPropagation();
@@ -28,11 +32,11 @@ const ImageNode = ({ data, selected, id }) => {
   };
 
   /**
-   * Maneja el redimensionado del nodo de imagen.
-   * Guarda las nuevas dimensiones en los datos del nodo.
+   * Handles image node resizing.
+   * Saves the new dimensions in the node data.
    *
-   * @param {Event} event - Evento de redimensionado
-   * @param {Object} params - Parámetros del redimensionado con width y height
+   * @param {Event} event - Resize event
+   * @param {Object} params - Resize parameters with width and height
    */
   const handleResize = (event, params) => {
     if (data.image) {

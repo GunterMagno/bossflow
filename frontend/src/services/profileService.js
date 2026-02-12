@@ -1,3 +1,8 @@
+// ============================================================
+// File: profileService.js
+// Description: Service for user profile operations including retrieval, update, statistics, export, and account deletion.
+// ============================================================
+
 import api from './api';
 
 /**
@@ -11,7 +16,6 @@ export const getProfile = async () => {
     const response = await api.get('/profile');
     return response.data;
   } catch (error) {
-    console.error('Error retrieving profile:', error);
     throw error;
   }
 };
@@ -28,7 +32,6 @@ export const updateProfile = async (profileData) => {
     const response = await api.put('/profile', profileData);
     return response.data;
   } catch (error) {
-    console.error('Error updating profile:', error);
     throw error;
   }
 };
@@ -44,7 +47,6 @@ export const getStats = async () => {
     const response = await api.get('/profile/stats');
     return response.data;
   } catch (error) {
-    console.error('Error retrieving statistics:', error);
     throw error;
   }
 };
@@ -62,7 +64,6 @@ export const exportUserData = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error exporting data:', error);
     throw error;
   }
 };
@@ -81,7 +82,6 @@ export const deleteAccount = async (confirmPassword) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error deleting account:', error);
     throw error;
   }
 };

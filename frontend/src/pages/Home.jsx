@@ -1,3 +1,7 @@
+// ============================================================
+// File: Home.jsx
+// Description: Landing page showcasing application features and call-to-action sections.
+// ============================================================
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -16,15 +20,15 @@ import {
 import './Home.css';
 
 /**
- * Página de inicio de BossFlow.
- * Muestra información sobre la plataforma y opciones para registrarse o iniciar sesión.
+ * BossFlow home page.
+ * Displays information about the platform and options to register or log in.
  * @returns {React.ReactElement} The home page component.
  */
 function Home() {
   const { isAuthenticated } = useAuth();
 
   /**
-   * Establece el título de la página cuando el componente se monta.
+   * Sets the page title when the component mounts.
    */
   useEffect(() => {
     document.title = 'BossFlow - Planifica tus estrategias contra los mejores bosses';

@@ -1,3 +1,8 @@
+// ============================================================
+// File: defaultTemplates.js
+// Description: Default diagram templates provided by BossFlow for common boss strategy patterns.
+// ============================================================
+
 /**
  * Predefined system diagram templates
  * These templates are embedded in the client and are not stored in the database.

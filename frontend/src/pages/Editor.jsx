@@ -1,3 +1,7 @@
+// ============================================================
+// File: Editor.jsx
+// Description: Diagram editor page with interactive canvas, auto-save, node management, and export tools.
+// ============================================================
 import "./Editor.css";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ReactFlowProvider } from 'reactflow'
@@ -113,7 +117,7 @@ function Editor() {
                       try {
                         await deleteImage(imageUrl);
                       } catch (error) {
-                        console.error('Error deleting image from server:', error);
+                        // Image deletion from server failed
                       }
                       setNodes((nds) => nds.filter((n) => n.id !== node.id));
                       toast.success('Imagen eliminada');
@@ -132,11 +136,10 @@ function Editor() {
         try {
           registerActivity(ACTIVITY_TYPES.VIEW, diagram.title || 'Diagrama', diagram.id);
         } catch (e) {
-          console.error('Error registering view activity:', e);
+          // View activity registration failed
         }
       } catch (error) {
         if (!active) return;
-        console.error('Error fetching diagram:', error);
         toast.error('Error al cargar el diagrama');
         setNodes([]);
         setEdges([]);
@@ -151,7 +154,7 @@ function Editor() {
   }, [diagramId]);
 
   /**
-   * Marca el final de la carga inicial cuando los datos se han cargado completamente.
+   * Marks the end of the initial load when data has been fully loaded.
    */
   useEffect(() => {
     if (!loading && diagramId) {
@@ -163,8 +166,8 @@ function Editor() {
   }, [loading, diagramId]);
 
   /**
-   * Configura el guardado automático cuando cambian los nodos o conexiones.
-   * Se guarda automáticamente 2 segundos después de la última modificación.
+   * Configures auto-save when nodes or edges change.
+   * Automatically saves 2 seconds after the last modification.
    */
   useEffect(() => {
     if (isInitialLoadRef.current || !diagramId) return;
@@ -220,8 +223,6 @@ function Editor() {
         edges
       };
       
-      console.log('💾 Saving diagram with nodes:', nodes);
-      
       await updateDiagram(diagramId, diagramData);
       if (!isAutoSave) {
         toast.success('Diagrama guardado correctamente');
@@ -229,10 +230,9 @@ function Editor() {
         try {
           registerActivity(ACTIVITY_TYPES.EDIT, diagramTitle || 'Diagrama', diagramId);
         } catch (e) {
-          console.error('Error registering edit activity:', e);
+          // Edit activity registration failed
         }
     } catch (error) {
-      console.error('Error saving diagram:', error);
       const errorMessage = error.response?.data?.error || 'Error al guardar el diagrama';
       if (!isAutoSave) {
         toast.error(errorMessage);
@@ -262,7 +262,7 @@ function Editor() {
           try {
             await deleteImage(imageData.url);
           } catch (error) {
-            console.error('Error al eliminar imagen del servidor:', error);
+            // Image deletion from server failed
           }
           setNodes((nds) => nds.filter((n) => n.id !== imageId));
           toast.success('Imagen eliminada');
@@ -279,8 +279,6 @@ function Editor() {
    * @param {Object} nodeData - Data of the node to add.
    */
   const handleAddNode = useCallback((nodeData) => {
-    console.log('Adding node:', nodeData);
-
     const newNodeId = `${nodeData.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
     const randomOffset = () => Math.floor(Math.random() * 100) - 50;
@@ -301,7 +299,6 @@ function Editor() {
 
     setNodes((currentNodes) => {
       const updatedNodes = [...currentNodes, newNode];
-      console.log('Nodos actualizados:', updatedNodes);
       return updatedNodes;
     });
 
@@ -309,9 +306,9 @@ function Editor() {
   }, [toast]);
 
   /**
-   * Abre el modal de edición cuando se hace doble clic en un nodo.
-   * @param {Event} _event - Evento del doble clic.
-   * @param {Object} node - Objeto del nodo seleccionado.
+   * Opens the edit modal when a node is double-clicked.
+   * @param {Event} _event - The double-click event.
+   * @param {Object} node - The selected node object.
    */
   const handleNodeDoubleClick = useCallback((_event, node) => {
     if (node.type === 'imageNode') return;
@@ -449,7 +446,7 @@ function Editor() {
   }, [nodes.length, edges.length, toast]);
 
   /**
-   * Confirma la limpieza del lienzo, eliminando todos los nodos y conexiones.
+   * Confirms canvas clearing, removing all nodes and edges.
    */
   const handleConfirmClear = useCallback(() => {
     if (deleteNodesInFlowMapRef.current && nodes.length > 0) {
@@ -465,7 +462,7 @@ function Editor() {
   }, [nodes, toast]);
 
   /**
-   * Cancela la limpieza del lienzo.
+   * Cancels canvas clearing.
    */
   const handleCancelClear = useCallback(() => {
     setIsConfirmClearOpen(false);
@@ -501,7 +498,7 @@ function Editor() {
             />
           )}
 
-          {/* Botones flotantes */}
+          {/* Floating buttons */}
           <aside className="editor__floating-actions">
             <button
               className="editor__floating-button editor__floating-button--image"
@@ -536,7 +533,7 @@ function Editor() {
           </aside>
         </main>
 
-        {/* Panel móvil de nodos */}
+        {/* Mobile node panel */}
         <MobileNodePanel onAddNode={handleAddNode} />
 
         <NodeEditModal
@@ -585,7 +582,7 @@ function Editor() {
           onClose={handleCloseNewDiagramModal}
         />
 
-        {/* Modal de exportación */}
+        {/* Export modal */}
         <ExportHandler
           isOpen={isExportModalOpen}
           onClose={() => setIsExportModalOpen(false)}
@@ -613,7 +610,7 @@ function ExportHandler({ isOpen, onClose, diagramTitle, isExporting, setIsExport
   const { exportToPNG, exportToJSON } = useExportDiagram(diagramTitle || 'diagram');
 
   /**
-   * Exporta el diagrama como archivo PNG.
+   * Exports the diagram as a PNG file.
    */
   const handleExportPNG = async () => {
     setIsExporting(true);
@@ -629,7 +626,7 @@ function ExportHandler({ isOpen, onClose, diagramTitle, isExporting, setIsExport
   };
 
   /**
-   * Exporta el diagrama como archivo JSON.
+   * Exports the diagram as a JSON file.
    */
   const handleExportJSON = async () => {
     setIsExporting(true);

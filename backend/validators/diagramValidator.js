@@ -1,3 +1,8 @@
+// ============================================================
+// File: diagramValidator.js
+// Description: Validation functions for diagram data structure including nodes, edges, and image metadata.
+// ============================================================
+
 /**
  * Validates image metadata.
  * @param {Object} image - Image metadata to validate.

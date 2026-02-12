@@ -1,3 +1,7 @@
+// ============================================================
+// File: useRecentNodes.js
+// Description: Custom hook for managing recently used nodes in the diagram editor via localStorage.
+// ============================================================
 import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'bossflow_recent_nodes';
@@ -20,7 +24,6 @@ const useRecentNodes = () => {
         setRecentNodes(Array.isArray(parsed) ? parsed : []);
       }
     } catch (error) {
-      console.error('Error loading recent nodes:', error);
       setRecentNodes([]);
     }
   }, []);
@@ -33,7 +36,6 @@ const useRecentNodes = () => {
    */
   const addRecentNode = useCallback((nodeData) => {
     if (!nodeData || !nodeData.type) {
-      console.warn('addRecentNode: invalid nodeData', nodeData);
       return;
     }
 
@@ -54,7 +56,7 @@ const useRecentNodes = () => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (error) {
-        console.error('Error saving recent nodes:', error);
+        // Silently fail on localStorage write error
       }
 
       return updated;
@@ -69,7 +71,7 @@ const useRecentNodes = () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-      console.error('Error clearing recent nodes:', error);
+      // Silently fail on localStorage removal error
     }
   }, []);
 

@@ -1,13 +1,18 @@
+// ============================================================
+// File: activityService.js
+// Description: Service for managing user activity history stored in localStorage.
+// ============================================================
+
 /**
- * Servicio para gestionar el registro de actividad del usuario
- * Almacena las actividades en localStorage por usuario
+ * Service for managing user activity records.
+ * Stores activities in localStorage per user.
  */
 
 const ACTIVITY_STORAGE_PREFIX = 'bossflow_activities_';
-const MAX_ACTIVITIES = 10; // Máximo número de actividades a mantener
+const MAX_ACTIVITIES = 10; // Maximum number of activities to keep
 
 /**
- * Tipos de actividad
+ * Activity types
  */
 export const ACTIVITY_TYPES = {
   CREATE: 'creacion',
@@ -29,14 +34,13 @@ const getCurrentUserId = () => {
     const decoded = JSON.parse(atob(payload));
     return decoded.userId;
   } catch (error) {
-    console.error('Error al obtener userId del token:', error);
     return null;
   }
 };
 
 /**
- * Obtener la clave de storage para el usuario actual
- * @returns {string|null} Clave de storage o null si no hay usuario
+ * Gets the storage key for the current user.
+ * @returns {string|null} Storage key or null if no user is logged in.
  */
 const getStorageKey = () => {
   const userId = getCurrentUserId();
@@ -45,8 +49,8 @@ const getStorageKey = () => {
 };
 
 /**
- * Obtener todas las actividades del usuario actual
- * @returns {Array} Array of activities sorted by date (most recent first)
+ * Gets all activities for the current user.
+ * @returns {Array} Array of activities sorted by date (most recent first).
  */
 export const getActivities = () => {
   try {
@@ -59,16 +63,15 @@ export const getActivities = () => {
     }
     return JSON.parse(activities);
   } catch (error) {
-    console.error('Error al obtener actividades:', error);
     return [];
   }
 };
 
 /**
- * Registrar una nueva actividad
- * @param {string} tipo - Tipo de actividad (CREATE, EDIT, DELETE, VIEW)
- * @param {string} diagramaTitle - Diagram title
- * @param {string} diagramaId - Diagram ID
+ * Registers a new activity.
+ * @param {string} tipo - Activity type (CREATE, EDIT, DELETE, VIEW).
+ * @param {string} diagramaTitle - Diagram title.
+ * @param {string} diagramaId - Diagram ID.
  */
 export const registerActivity = (tipo, diagramaTitle, diagramaId) => {
   try {
@@ -93,15 +96,14 @@ export const registerActivity = (tipo, diagramaTitle, diagramaId) => {
 
     return newActivity;
   } catch (error) {
-    console.error('Error al registrar actividad:', error);
     return null;
   }
 };
 
 /**
- * Formatear fecha relativa
- * @param {string} isoDate - Fecha en formato ISO
- * @returns {string} Fecha formateada de forma relativa
+ * Formats a date as a relative time string.
+ * @param {string} isoDate - Date in ISO format.
+ * @returns {string} Relative formatted date string.
  */
 export const formatRelativeDate = (isoDate) => {
   const now = new Date();
@@ -129,7 +131,7 @@ export const formatRelativeDate = (isoDate) => {
 };
 
 /**
- * Limpiar todas las actividades del usuario actual
+ * Clears all activities for the current user.
  */
 export const clearActivities = () => {
   try {
@@ -137,13 +139,12 @@ export const clearActivities = () => {
     if (!storageKey) return;
     localStorage.removeItem(storageKey);
   } catch (error) {
-    console.error('Error al limpiar actividades:', error);
   }
 };
 
 /**
- * Obtener actividades formateadas para mostrar
- * @returns {Array} Array de actividades con fechas formateadas
+ * Gets activities formatted for display.
+ * @returns {Array} Array of activities with formatted dates.
  */
 export const getFormattedActivities = () => {
   const activities = getActivities();

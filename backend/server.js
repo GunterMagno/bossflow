@@ -1,3 +1,8 @@
+// ============================================================
+// File: server.js
+// Description: Express application entry point. Configures middleware, CORS, routes, and starts the server.
+// ============================================================
+
 const path = require("path");
 
 /**
@@ -26,15 +31,13 @@ const app = express();
 const PORT = process.env.BACKEND_PORT || 5000;
 
 /**
- * Inicia el servidor Express después de conectar a la base de datos.
- * Ejecuta tests automáticos en modo desarrollo.
+ * Starts the Express server after connecting to the database.
+ * Runs automatic tests in development mode.
  */
 async function startServer() {
   await connectDB();
 
   app.listen(PORT, async () => {
-    console.log(`✅ Server started on port -> ${PORT}`);
-
     if (process.env.NODE_ENV !== "production") {
       const testRunner = require("./tests/test-runner");
 
@@ -42,7 +45,6 @@ async function startServer() {
         await testRunner.waitForServer();
         await testRunner.runAllTests();
         } catch (error) {
-        console.error("⚠️  Could not run tests:", error.message);
       }
     }
   });
@@ -72,7 +74,6 @@ app.use(
       if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
         } else {
-        console.log(`❌ CORS blocked for origin: ${origin}`);
         callback(null, true);
       }
     },
@@ -99,8 +100,6 @@ app.use("/api", routes);
  * Handles validation errors, JWT errors, duplicate keys and generic errors.
  */
 app.use((err, req, res, next) => {
-  console.error("❌ Error:", err);
-
     if (err.name === "ValidationError") {
     const errors = Object.values(err.errors).map((e) => e.message);
     return res.status(400).json({
@@ -129,6 +128,6 @@ app.use((err, req, res, next) => {
 });
 
 /**
- * Inicia el servidor.
+ * Start the server.
  */
 startServer();

@@ -1,7 +1,11 @@
+// ============================================================
+// File: NodeEditModal.jsx
+// Description: Modal dialog for editing node properties like label, description, and color.
+// ============================================================
 import { useState, useEffect } from 'react';
 import './NodeEditModal.css';
 import { FiX, FiTrash2, FiImage } from 'react-icons/fi';
-import UploadImageModal from '../UploadImageModal/UploadImageModal';
+import UploadImageModal from '../upload-image-modal/UploadImageModal';
 
 /**
  * Modal component for editing diagram node properties.

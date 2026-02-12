@@ -1,18 +1,22 @@
+// ============================================================
+// File: Status.jsx
+// Description: Server health status monitoring page.
+// ============================================================
 import { useHealthCheck } from '../hooks/useHealthCheck';
 import { useEffect } from 'react';
 import { FiCheckCircle, FiXCircle, FiAlertTriangle } from 'react-icons/fi';
 import './Status.css';
 
 /**
- * Página de estado del sistema.
- * Muestra el estado de los servicios y componentes de BossFlow.
+ * System status page.
+ * Displays the status of BossFlow services and components.
  * @returns {React.ReactElement} The status page component.
  */
 function Status() {
   const { loading, data, error, isConnected } = useHealthCheck();
 
   /**
-   * Establece el título de la página cuando el componente se monta.
+   * Sets the page title when the component mounts.
    */
   useEffect(() => {
     document.title = 'Estado del Sistema | BossFlow';

@@ -1,3 +1,7 @@
+// ============================================================
+// File: AuthContext.jsx
+// Description: Authentication context provider managing user login, registration, logout, and token state.
+// ============================================================
 import { createContext, useState, useContext, useEffect } from 'react';
 import api from '../services/api';
 import authService from '../services/authService';
@@ -41,7 +45,6 @@ export const AuthProvider = ({ children }) => {
          * Logs out the user and redirects to login page.
          */
         const handleTokenExpired = () => {
-            console.log('Expired token detected, logging out...');
             logout();
             window.location.href = '/login';
         };
@@ -72,7 +75,6 @@ export const AuthProvider = ({ children }) => {
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
         } catch (error) {
-            console.error('Error verifying authentication:', error);
             localStorage.removeItem('user');
             localStorage.removeItem('token');
         } finally {
@@ -105,7 +107,6 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true, user: userData };
         } catch (error) {
-            console.error('Error in login:', error);
             const errorMessage = error.response?.data?.error || 'Error al iniciar sesión. Inténtalo de nuevo.';
             return { success: false, error: errorMessage };
         } finally {
@@ -144,7 +145,6 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true, user: userData };
         } catch (error) {
-            console.error('Error in register:', error);
             const errorMessage = error.response?.data?.error || 'Error al registrarse. Inténtalo de nuevo.';
             return { success: false, error: errorMessage };
         } finally {
@@ -170,7 +170,6 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true };
         } catch (error) {
-            console.error('Error in logout:', error);
             return { success: false, error: 'Error al cerrar sesión' };
         }
     };

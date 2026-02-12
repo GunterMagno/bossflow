@@ -1,3 +1,7 @@
+// ============================================================
+// File: ImportJSON.jsx
+// Description: JSON diagram import component with file validation and preview.
+// ============================================================
 import { useState, useRef } from 'react';
 import { FiUpload, FiX, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import './ImportJSON.css';
@@ -116,7 +120,6 @@ function ImportJSON({
       toast.success(`Diagrama "${previewData.metadata.title}" importado correctamente`);
       handleClose();
     } catch (error) {
-      console.error('Error al importar JSON:', error);
       toast.error('Error al importar el diagrama: ' + error.message);
     } finally {
       setIsProcessing(false);

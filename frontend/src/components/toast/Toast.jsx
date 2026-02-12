@@ -1,3 +1,7 @@
+// ============================================================
+// File: Toast.jsx
+// Description: Individual toast notification component with auto-dismiss.
+// ============================================================
 import { useEffect } from 'react';
 import { FiCheckCircle, FiXCircle, FiAlertCircle, FiInfo, FiX } from 'react-icons/fi';
 import './Toast.css';

@@ -1,18 +1,22 @@
+// ============================================================
+// File: PrivateRoute.jsx
+// Description: Route guard component that redirects unauthenticated users to the login page.
+// ============================================================
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './PrivateRoute.css';
 
 /**
- * Componente para proteger rutas que requieren autenticación
- * 
- * Uso:
- * <Route 
- *   path="/ruta-protegida" 
+ * Component to protect routes that require authentication.
+ *
+ * Usage:
+ * <Route
+ *   path="/protected-route"
  *   element={
  *     <PrivateRoute>
- *       <ComponenteProtegido />
+ *       <ProtectedComponent />
  *     </PrivateRoute>
- *   } 
+ *   }
  * />
  */
 function PrivateRoute({ children }) {

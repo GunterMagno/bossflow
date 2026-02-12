@@ -1,3 +1,7 @@
+// ============================================================
+// File: App.jsx
+// Description: Root application component defining route structure and context providers.
+// ============================================================
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -19,8 +23,8 @@ import Layout from './layouts/Layout';
 import CookieBanner from './components/cookie-banner/CookieBanner';
 
 /**
- * Componente principal de la aplicación BossFlow.
- * Define la estructura de rutas y configura los proveedores de contexto.
+ * Main BossFlow application component.
+ * Defines the route structure and configures context providers.
  * @returns {React.ReactElement} The main application component.
  */
 function App() {

@@ -1,3 +1,7 @@
+// ============================================================
+// File: authController.js
+// Description: Handles user authentication operations including registration, login, and logout.
+// ============================================================
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");

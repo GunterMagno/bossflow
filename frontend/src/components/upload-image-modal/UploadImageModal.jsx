@@ -1,3 +1,7 @@
+// ============================================================
+// File: UploadImageModal.jsx
+// Description: Modal for uploading and previewing images for diagram nodes.
+// ============================================================
 import { useState, useRef } from 'react';
 import './UploadImageModal.css';
 import { FiUploadCloud } from 'react-icons/fi';

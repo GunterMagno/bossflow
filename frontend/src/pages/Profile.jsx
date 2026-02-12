@@ -1,3 +1,7 @@
+// ============================================================
+// File: Profile.jsx
+// Description: User profile page for viewing and editing personal information, statistics, and data management.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -82,7 +86,6 @@ function Profile() {
         avatar: response.user.avatar || '',
       });
     } catch (error) {
-      console.error('Error loading profile:', error);
       toast.error('Error al cargar el perfil');
     } finally {
       setLoading(false);
@@ -97,7 +100,7 @@ function Profile() {
       const response = await getStats();
       setStats(response.stats);
     } catch (error) {
-      console.error('Error loading statistics:', error);
+      // Statistics loading failed silently
     }
   };
 
@@ -145,7 +148,6 @@ function Profile() {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      console.error('Error updating profile:', error);
       const errorMessage = error.response?.data?.error || 'Error al actualizar el perfil';
       toast.error(errorMessage);
     } finally {
@@ -209,7 +211,6 @@ function Profile() {
 
       toast.success('Datos exportados correctamente');
     } catch (error) {
-      console.error('Error exporting data:', error);
       toast.error('Error al exportar tus datos');
     } finally {
       setIsExporting(false);
@@ -225,33 +226,28 @@ function Profile() {
       return;
     }
 
-    console.log('Attempting to delete account with password...');
     setIsDeleting(true);
-    
+
     try {
       const response = await deleteAccount(deletePassword);
-      console.log('Account deleted successfully:', response);
-      
-      // Cerrar modal primero
+
+      // Close modal first
       setShowDeleteModal(false);
       setDeletePassword('');
       
       toast.success('Cuenta eliminada correctamente. Redirigiendo...');
 
-      // Cerrar sesión y redirigir
+      // Log out and redirect
       setTimeout(() => {
         logout();
         navigate('/');
       }, 2000);
     } catch (error) {
-      console.error('Complete error deleting account:', error);
-      console.error('Error response:', error.response);
-      
       const errorMessage =
         error.response?.data?.error || 'Error al eliminar la cuenta. Verifica tu contraseña.';
       toast.error(errorMessage);
       setIsDeleting(false);
-      // No cerrar el modal en caso de error para que el usuario pueda intentar de nuevo
+      // Do not close the modal on error so the user can try again
     }
   };
 
@@ -503,7 +499,7 @@ function Profile() {
           </article>
         )}
 
-        {/* Sección de Privacidad y Datos */}
+        {/* Privacy and Data Management Section */}
         <article className="profile-section profile-section--danger">
           <h2 className="profile-section-title">
             <FiShield /> Privacidad y Gestión de Datos
@@ -554,7 +550,7 @@ function Profile() {
         </article>
       </section>
 
-      {/* Modal de confirmación para eliminar cuenta */}
+      {/* Confirmation modal for account deletion */}
       <ConfirmModal
         isOpen={showDeleteModal}
         onClose={() => {

@@ -1,3 +1,7 @@
+// ============================================================
+// File: Diagram.js
+// Description: Mongoose schema and model for flow diagrams, including nodes, edges, and image metadata.
+// ============================================================
 const mongoose = require("mongoose");
 
 /**

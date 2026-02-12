@@ -1,3 +1,8 @@
+// ============================================================
+// File: jsonValidator.js
+// Description: Validation utilities for diagram JSON import format, including version compatibility checks.
+// ============================================================
+
 /**
  * Utilities for validating the structure of diagram JSON files.
  */

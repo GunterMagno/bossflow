@@ -1,3 +1,7 @@
+// ============================================================
+// File: ExportModal.jsx
+// Description: Export format selection modal for diagram downloads.
+// ============================================================
 import { FiDownload, FiX, FiImage, FiFile } from 'react-icons/fi';
 import './ExportModal.css';
 

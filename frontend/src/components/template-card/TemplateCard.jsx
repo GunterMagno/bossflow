@@ -1,18 +1,22 @@
+// ============================================================
+// File: TemplateCard.jsx
+// Description: Individual template card displaying preview, title, and action buttons.
+// ============================================================
 import { FiFileText, FiClock, FiEdit2, FiTrash2, FiCopy } from 'react-icons/fi';
 import './TemplateCard.css';
 
 /**
- * Componente de tarjeta de plantilla de diagrama.
- * Muestra información de una plantilla con opciones para usarla, editarla o eliminarla.
- * Diferencia entre plantillas del sistema y plantillas de usuario.
+ * Diagram template card component.
+ * Displays template information with options to use, edit, or delete it.
+ * Differentiates between system templates and user templates.
  *
- * @param {Object} props - Propiedades del componente
- * @param {Object} props.template - Datos de la plantilla a mostrar
- * @param {Function} props.onUseTemplate - Callback al usar la plantilla
- * @param {Function} props.onEditTemplate - Callback al editar la plantilla
- * @param {Function} props.onDeleteTemplate - Callback al eliminar la plantilla
- * @param {boolean} props.isSystemTemplate - Indica si es una plantilla del sistema
- * @returns {JSX.Element} Elemento de tarjeta de plantilla
+ * @param {Object} props - Component properties
+ * @param {Object} props.template - Template data to display
+ * @param {Function} props.onUseTemplate - Callback when using the template
+ * @param {Function} props.onEditTemplate - Callback when editing the template
+ * @param {Function} props.onDeleteTemplate - Callback when deleting the template
+ * @param {boolean} props.isSystemTemplate - Indicates if it is a system template
+ * @returns {JSX.Element} Template card element
  */
 function TemplateCard({
   template,
@@ -22,11 +26,11 @@ function TemplateCard({
   isSystemTemplate = false
 }) {
   /**
-   * Formatea una fecha a formato relativo en español.
-   * Muestra tiempo relativo (minutos, horas, días) o fecha absoluta según antigüedad.
+   * Formats a date to relative format.
+   * Shows relative time (minutes, hours, days) or absolute date based on age.
    *
-   * @param {Date|string} date - Fecha a formatear
-   * @returns {string} Texto con la fecha formateada relativamente
+   * @param {Date|string} date - Date to format
+   * @returns {string} Text with the relatively formatted date
    */
   const formatRelativeDate = (date) => {
     if (!date) return 'Plantilla del sistema';
@@ -54,10 +58,10 @@ function TemplateCard({
   };
 
   /**
-   * Maneja el evento de usar la plantilla.
-   * Previene el comportamiento por defecto y la propagación del evento.
+   * Handles the use template event.
+   * Prevents default behavior and event propagation.
    *
-   * @param {Event} e - Evento de clic del ratón
+   * @param {Event} e - Mouse click event
    */
   const handleUseTemplate = (e) => {
     e.preventDefault();
@@ -68,10 +72,10 @@ function TemplateCard({
   };
 
   /**
-   * Maneja el evento de editar la plantilla.
-   * Previene el comportamiento por defecto y la propagación del evento.
+   * Handles the edit template event.
+   * Prevents default behavior and event propagation.
    *
-   * @param {Event} e - Evento de clic del ratón
+   * @param {Event} e - Mouse click event
    */
   const handleEdit = (e) => {
     e.preventDefault();
@@ -82,10 +86,10 @@ function TemplateCard({
   };
 
   /**
-   * Maneja el evento de eliminar la plantilla.
-   * Previene el comportamiento por defecto y la propagación del evento.
+   * Handles the delete template event.
+   * Prevents default behavior and event propagation.
    *
-   * @param {Event} e - Evento de clic del ratón
+   * @param {Event} e - Mouse click event
    */
   const handleDelete = (e) => {
     e.preventDefault();

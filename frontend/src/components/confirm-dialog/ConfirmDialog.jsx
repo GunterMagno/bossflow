@@ -1,3 +1,7 @@
+// ============================================================
+// File: ConfirmDialog.jsx
+// Description: Confirmation dialog component for destructive actions with customizable messages.
+// ============================================================
 import './ConfirmDialog.css';
 import { FiAlertTriangle } from 'react-icons/fi';
 

@@ -1,3 +1,8 @@
+// ============================================================
+// File: auth.js
+// Description: JWT authentication middleware for protecting API routes.
+// ============================================================
+
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 

@@ -1,3 +1,7 @@
+// ============================================================
+// File: Dashboard.jsx
+// Description: Main user dashboard displaying statistics, recent diagrams, and activity feed.
+// ============================================================
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -52,7 +56,6 @@ function Dashboard() {
       const response = await getDiagrams();
       setDiagrams(response.diagrams || []);
     } catch (error) {
-      console.error('Error loading diagrams:', error);
       setError('Could not load diagrams. The endpoint is not yet available.');
       setDiagrams([]);
     } finally {
@@ -68,7 +71,7 @@ function Dashboard() {
       const response = await getStats();
       setUserStats(response.stats);
     } catch (error) {
-      console.error('Error loading statistics:', error);
+      // Statistics loading failed silently
     }
   };
 
@@ -140,21 +143,21 @@ function Dashboard() {
     }
   };
 
-  const estadisticas = userStats ? {
-    totalDiagramas: userStats.diagramsCreated || diagrams.length,
-    totalNodos: userStats.nodesCreated || 0,
-    colaboraciones: userStats.collaborations || 0,
-    plantillas: 0,
-    comentariosPendientes: 0,
+  const statistics = userStats ? {
+    totalDiagrams: userStats.diagramsCreated || diagrams.length,
+    totalNodes: userStats.nodesCreated || 0,
+    collaborations: userStats.collaborations || 0,
+    templates: 0,
+    pendingComments: 0,
   } : {
-    totalDiagramas: diagrams.length,
-    totalNodos: 0,
-    colaboraciones: 0,
-    plantillas: 0,
-    comentariosPendientes: 0,
+    totalDiagrams: diagrams.length,
+    totalNodes: 0,
+    collaborations: 0,
+    templates: 0,
+    pendingComments: 0,
   };
 
-  const diagramasRecientes = diagrams.slice(0, 3);
+  const recentDiagrams = diagrams.slice(0, 3);
 
   return (
     <section className="dashboard">
@@ -239,11 +242,11 @@ function Dashboard() {
         </section>
       </aside>
 
-      {/* Contenido principal */}
+      {/* Main content */}
       <main className="dashboard__main">
         {activeMenu === 'inicio' && (
           <>
-            {/* Estadísticas */}
+            {/* Statistics */}
             <section className="dashboard__seccion">
               <header className="dashboard__seccion-header">
                 <section>
@@ -260,7 +263,7 @@ function Dashboard() {
                     <FiFileText />
                   </figure>
                   <section className="dashboard__stat-contenido">
-                    <h3 className="dashboard__stat-numero">{estadisticas.totalDiagramas}</h3>
+                    <h3 className="dashboard__stat-numero">{statistics.totalDiagrams}</h3>
                     <p className="dashboard__stat-label">Mis diagramas</p>
                   </section>
                 </article>
@@ -270,7 +273,7 @@ function Dashboard() {
                     <FiUsers />
                   </figure>
                   <section className="dashboard__stat-contenido">
-                    <h3 className="dashboard__stat-numero">{estadisticas.colaboraciones}</h3>
+                    <h3 className="dashboard__stat-numero">{statistics.collaborations}</h3>
                     <p className="dashboard__stat-label">Colaboraciones</p>
                   </section>
                 </article>
@@ -280,7 +283,7 @@ function Dashboard() {
                     <FiCopy />
                   </figure>
                   <section className="dashboard__stat-contenido">
-                    <h3 className="dashboard__stat-numero">{estadisticas.totalNodos}</h3>
+                    <h3 className="dashboard__stat-numero">{statistics.totalNodes}</h3>
                     <p className="dashboard__stat-label">Nodos creados</p>
                   </section>
                 </article>
@@ -290,14 +293,14 @@ function Dashboard() {
                     <FiMessageSquare />
                   </figure>
                   <section className="dashboard__stat-contenido">
-                    <h3 className="dashboard__stat-numero">{estadisticas.comentariosPendientes}</h3>
+                    <h3 className="dashboard__stat-numero">{statistics.pendingComments}</h3>
                     <p className="dashboard__stat-label">Comentarios</p>
                   </section>
                 </article>
               </section>
             </section>
 
-            {/* Acceso rápido */}
+            {/* Quick access */}
             <section className="dashboard__seccion">
               <header className="dashboard__seccion-header">
                 <section>
@@ -326,9 +329,9 @@ function Dashboard() {
                 <article className="dashboard__error">
                   <p className="dashboard__error-message">{error}</p>
                 </article>
-              ) : diagramasRecientes.length > 0 ? (
+              ) : recentDiagrams.length > 0 ? (
                 <section className="dashboard__grid">
-                  {diagramasRecientes.map((diagrama) => (
+                  {recentDiagrams.map((diagrama) => (
                     <Link
                       key={diagrama.id}
                       to={`/editor/${diagrama.id}`}
@@ -370,7 +373,7 @@ function Dashboard() {
               )}
             </section>
 
-            {/* Actividad reciente */}
+            {/* Recent activity */}
             <section className="dashboard__seccion">
               <header className="dashboard__seccion-header">
                 <section>
@@ -438,7 +441,7 @@ function Dashboard() {
         )}
       </main>
 
-      {/* Modal para crear nuevo diagrama */}
+      {/* Modal for creating a new diagram */}
       <NewDiagramModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

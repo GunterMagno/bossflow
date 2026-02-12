@@ -1,3 +1,7 @@
+// ============================================================
+// File: User.js
+// Description: Mongoose schema and model for user accounts, including authentication, profile, and stats.
+// ============================================================
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");

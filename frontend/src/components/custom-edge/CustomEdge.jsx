@@ -1,22 +1,26 @@
+// ============================================================
+// File: CustomEdge.jsx
+// Description: Custom ReactFlow edge component with delete button on selection.
+// ============================================================
 import { useState, useMemo } from 'react';
 import { getSmoothStepPath } from 'reactflow';
 
 /**
- * Arista personalizada para el diagrama de flujo con efectos visuales
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - Identificador único de la arista
- * @param {number} props.sourceX - Coordenada X del punto de origen
- * @param {number} props.sourceY - Coordenada Y del punto de origen
- * @param {number} props.targetX - Coordenada X del punto de destino
- * @param {number} props.targetY - Coordenada Y del punto de destino
- * @param {string} props.sourcePosition - Posición del conector de origen
- * @param {string} props.targetPosition - Posición del conector de destino
- * @param {Object} [props.style={}] - Estilos CSS adicionales
- * @param {string} props.markerEnd - Marcador SVG para el final de la arista
- * @param {Object} [props.data={}] - Datos adicionales de la arista
- * @param {boolean} [props.selected=false] - Indica si la arista está seleccionada
- * @param {boolean} [props.animated=false] - Indica si la arista debe animarse
- * @returns {JSX.Element} Elemento SVG path representando la arista
+ * Custom edge for the flow diagram with visual effects.
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique edge identifier
+ * @param {number} props.sourceX - X coordinate of the source point
+ * @param {number} props.sourceY - Y coordinate of the source point
+ * @param {number} props.targetX - X coordinate of the target point
+ * @param {number} props.targetY - Y coordinate of the target point
+ * @param {string} props.sourcePosition - Position of the source connector
+ * @param {string} props.targetPosition - Position of the target connector
+ * @param {Object} [props.style={}] - Additional CSS styles
+ * @param {string} props.markerEnd - SVG marker for the edge end
+ * @param {Object} [props.data={}] - Additional edge data
+ * @param {boolean} [props.selected=false] - Whether the edge is selected
+ * @param {boolean} [props.animated=false] - Whether the edge should be animated
+ * @returns {JSX.Element} SVG path element representing the edge
  */
 const CustomEdge = ({
 	id,

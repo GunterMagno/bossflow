@@ -1,3 +1,7 @@
+// ============================================================
+// File: Register.jsx
+// Description: User registration form with validation.
+// ============================================================
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';

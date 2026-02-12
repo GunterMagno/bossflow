@@ -1,3 +1,8 @@
+// ============================================================
+// File: imageService.js
+// Description: Service for image deletion operations via the API.
+// ============================================================
+
 import api from './api';
 
 /**
@@ -18,7 +23,6 @@ export const deleteImage = async (imageUrl) => {
     }
     return { message: 'External URL, not deleted from server' };
   } catch (error) {
-    console.error('Error deleting image:', error);
     throw error;
   }
 };

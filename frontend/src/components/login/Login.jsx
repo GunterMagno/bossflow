@@ -1,3 +1,7 @@
+// ============================================================
+// File: Login.jsx
+// Description: User login form with email and password authentication.
+// ============================================================
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
