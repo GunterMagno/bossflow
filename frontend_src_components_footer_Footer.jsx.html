@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/TemplateList/TemplateList.jsx - Documentation</title>
+    <title>frontend/src/components/footer/Footer.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/TemplateList/TemplateList.jsx</h1>
+    <h1 class="page-title">frontend/src/components/footer/Footer.jsx</h1>
     
 
     
@@ -39,157 +39,140 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
-import TemplateCard from '../TemplateCard/TemplateCard';
-import ConfirmModal from '../ConfirmModal/ConfirmModal';
-import { FiFileText, FiAlertCircle } from 'react-icons/fi';
-import './TemplateList.css';
+            <pre class="prettyprint source linenums"><code>import './Footer.css';
+import {
+  FaFacebookF,
+  FaXTwitter,
+  FaInstagram,
+  FaYoutube,
+} from 'react-icons/fa6';
 
 /**
- * Component that displays a list of diagram templates.
- * Manages different states: loading, error, empty and list with templates.
- * Includes modal confirmation before using a template.
- *
- * @param {Object} props - Component properties
- * @param {Array} props.templates - Array of templates to display
- * @param {boolean} props.loading - Indicates if templates are loading
- * @param {string} props.error - Error message if any problem occurs
- * @param {Function} props.onUseTemplate - Callback when using a template
- * @param {Function} props.onEditTemplate - Callback when editing a template
- * @param {Function} props.onDeleteTemplate - Callback when deleting a template
- * @param {Function} props.onRetry - Callback to retry loading after an error
- * @param {Function} props.onCreateTemplate - Callback to create a new template
- * @param {boolean} props.showCreateButton - Indicates if the create template button should be shown
- * @param {boolean} props.isSystemTemplates - Indicates if they are system templates
- * @returns {JSX.Element} Template list element
+ * Pie de página de la aplicación con información corporativa y enlaces
+ * @returns {JSX.Element} Footer con marca, enlaces, redes sociales y copyright
  */
-function TemplateList({
-  templates,
-  loading,
-  error,
-  onUseTemplate,
-  onEditTemplate,
-  onDeleteTemplate,
-  onRetry,
-  onCreateTemplate,
-  showCreateButton,
-  isSystemTemplates = false
-}) {
-  const [templateToUse, setTemplateToUse] = useState(null);
-
-  /**
-   * Handles the click on a template to start the usage process.
-   * Stores the selected template to display the confirmation modal.
-   *
-   * @param {Object} template - Template selected by the user
-   */
-  const handleTemplateClick = (template) => {
-    setTemplateToUse(template);
-  };
-
-  /**
-   * Confirms the use of the selected template.
-   * Executes the usage callback and closes the confirmation modal.
-   */
-  const handleConfirmUse = () => {
-    if (!templateToUse) return;
-    
-    if (onUseTemplate) {
-      onUseTemplate(templateToUse);
-    }
-    
-    setTemplateToUse(null);
-  };
-
-  /**
-   * Cancels the use of the template.
-   * Closes the confirmation modal without executing any action.
-   */
-  const handleCancelUse = () => {
-    setTemplateToUse(null);
-  };
-
-  if (loading) {
-    return (
-      &lt;section className="template-list">
-        &lt;aside className="template-list__loading">
-          &lt;figure className="template-list__spinner">&lt;/figure>
-          &lt;p>Cargando plantillas...&lt;/p>
-        &lt;/aside>
-      &lt;/section>
-    );
-  }
-
-  if (error) {
-    return (
-      &lt;section className="template-list">
-        &lt;aside className="template-list__error">
-          &lt;FiAlertCircle className="template-list__error-icon" />
-          &lt;p className="template-list__error-message">{error}&lt;/p>
-          {onRetry &amp;&amp; (
-            &lt;button
-              className="template-list__retry-button"
-              onClick={onRetry}
-            >
-              Reintentar
-            &lt;/button>
-          )}
-        &lt;/aside>
-      &lt;/section>
-    );
-  }
-
-  if (!templates || templates.length === 0) {
-    return (
-      &lt;section className="template-list">
-        &lt;aside className="template-list__empty">
-          &lt;FiFileText className="template-list__empty-icon" />
-          &lt;h3 className="template-list__empty-title">No hay plantillas disponibles&lt;/h3>
-          &lt;p className="template-list__empty-message">
-            Las plantillas te permiten crear diagramas rápidamente con estructuras predefinidas
-          &lt;/p>
-          {showCreateButton &amp;&amp; onCreateTemplate &amp;&amp; (
-            &lt;button onClick={onCreateTemplate} className="template-list__create-button">
-              Crear plantilla
-            &lt;/button>
-          )}
-        &lt;/aside>
-      &lt;/section>
-    );
-  }
-
+function Footer() {
   return (
-    &lt;>
-      &lt;section className="template-list">
-        &lt;section className="template-list__grid">
-          {templates.map((template) => (
-            &lt;TemplateCard
-              key={template.id || template._id}
-              template={template}
-              onUseTemplate={handleTemplateClick}
-              onEditTemplate={onEditTemplate}
-              onDeleteTemplate={onDeleteTemplate}
-              isSystemTemplate={isSystemTemplates}
+    &lt;footer className="footer">
+      &lt;section className="footer__superior">
+        &lt;section className="footer__seccion footer__seccion--sobre">
+          &lt;section className="footer__marca">
+            &lt;img
+              src="/logo-nt.svg"
+              alt="BossFlow Logo"
+              className="footer__logo"
             />
-          ))}
+            &lt;h3 className="footer__titulo footer__titulo--marca">BossFlow&lt;/h3>
+          &lt;/section>
+          &lt;p className="footer__descripcion">
+            La plataforma para planificar y optimizar tácticas de batallas
+            contra jefes con diagramas de flujos interactivos. Colabora con tu
+            equipo, diseña estrategias visuales y gana fácil contra cualquier
+            boss.
+          &lt;/p>
+        &lt;/section>
+
+        &lt;section className="footer__enlaces">
+          &lt;section className="footer__seccion footer__seccion--enlaces">
+            &lt;h3 className="footer__titulo">Enlaces útiles&lt;/h3>
+            &lt;ul className="footer__lista">
+              &lt;li className="footer__elemento">
+                &lt;a href="/about" className="footer__enlace">
+                  Sobre nosotros
+                &lt;/a>
+              &lt;/li>
+              &lt;li className="footer__elemento">
+                &lt;a href="/features" className="footer__enlace">
+                  Características
+                &lt;/a>
+              &lt;/li>
+              &lt;li className="footer__elemento">
+                &lt;a href="/blog" className="footer__enlace">
+                  Blog
+                &lt;/a>
+              &lt;/li>
+            &lt;/ul>
+          &lt;/section>
+
+          &lt;section className="footer__seccion footer__seccion--enlaces">
+            &lt;h3 className="footer__titulo">Soporte &amp; Legal&lt;/h3>
+            &lt;ul className="footer__lista">
+              &lt;li className="footer__elemento">
+                &lt;a href="/legal/terminos" className="footer__enlace">
+                  Términos de Uso
+                &lt;/a>
+              &lt;/li>
+              &lt;li className="footer__elemento">
+                &lt;a href="/legal/privacidad" className="footer__enlace">
+                  Política de Privacidad
+                &lt;/a>
+              &lt;/li>
+              &lt;li className="footer__elemento">
+                &lt;a href="/legal/cookies" className="footer__enlace">
+                  Política de Cookies
+                &lt;/a>
+              &lt;/li>
+              &lt;li className="footer__elemento">
+                &lt;a href="/status" className="footer__enlace">
+                  Estado del servicio
+                &lt;/a>
+              &lt;/li>
+            &lt;/ul>
+          &lt;/section>
+        &lt;/section>
+
+        &lt;section className="footer__seccion footer__seccion--redes">
+          &lt;h3 className="footer__titulo">Redes sociales&lt;/h3>
+          &lt;section className="footer__redes">
+            &lt;a
+              href="https://www.facebook.com/profile.php?id=61585128865474"
+              className="footer__red"
+              aria-label="Facebook"
+              target="_blank"
+            >
+              &lt;FaFacebookF className="footer__red-icono" />
+            &lt;/a>
+            &lt;a
+              href="https://x.com/Bossflow412981"
+              className="footer__red"
+              aria-label="X"
+              target="_blank"
+            >
+              &lt;FaXTwitter className="footer__red-icono" />
+            &lt;/a>
+            &lt;a
+              href="https://www.instagram.com/bossflowpi/"
+              className="footer__red"
+              aria-label="Instagram"
+              target="_blank"
+            >
+              &lt;FaInstagram className="footer__red-icono" />
+            &lt;/a>
+            &lt;a
+              href="https://www.youtube.com/channel/UC4oVyly7b4UCxzs9ugaDd0w"
+              className="footer__red"
+              aria-label="YouTube"
+              target="_blank"
+            >
+              &lt;FaYoutube className="footer__red-icono" />
+            &lt;/a>
+          &lt;/section>
         &lt;/section>
       &lt;/section>
 
-      &lt;ConfirmModal
-        isOpen={!!templateToUse}
-        onClose={handleCancelUse}
-        onConfirm={handleConfirmUse}
-        title="¿Crear diagrama desde plantilla?"
-        message={`¿Quieres crear un nuevo diagrama basado en la plantilla "${templateToUse?.title}"?`}
-        confirmText="Crear"
-        cancelText="Cancelar"
-        type="success"
-      />
-    &lt;/>
+      &lt;hr className="footer__separador" />
+
+      &lt;section className="footer__inferior">
+        &lt;p className="footer__copyright">
+          © BossFlow 2025. Todos los derechos reservados.
+        &lt;/p>
+        &lt;p className="footer__lema">Planifica. Mejora. Derrota al boss.&lt;/p>
+      &lt;/section>
+    &lt;/footer>
   );
 }
 
-export default TemplateList;
+export default Footer;
 </code></pre>
         </article>
     </section>
@@ -202,7 +185,7 @@ export default TemplateList;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

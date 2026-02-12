@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/Navbar/Navbar.jsx - Documentation</title>
+    <title>frontend/src/components/editor-sidebar/EditorSidebar.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/Navbar/Navbar.jsx</h1>
+    <h1 class="page-title">frontend/src/components/editor-sidebar/EditorSidebar.jsx</h1>
     
 
     
@@ -39,243 +39,279 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  FiUser,
-  FiSettings,
-  FiLogOut,
+  FiZap,
+  FiGitBranch,
+  FiCircle,
+  FiMapPin,
+  FiClock,
   FiChevronDown,
-  FiMenu,
+  FiChevronRight,
+  FiWatch,
+  FiTool,
+  FiStar,
   FiX,
+  FiLogOut,
 } from 'react-icons/fi';
-import './Navbar.css';
+import './EditorSidebar.css';
+
+const nodeIconMap = {
+  action: &lt;FiZap />,
+  decision: &lt;FiGitBranch />,
+  startEnd: &lt;FiCircle />,
+  phase: &lt;FiWatch />,
+  position: &lt;FiMapPin />,
+  timer: &lt;FiClock />,
+  mechanic: &lt;FiTool />,
+  ability: &lt;FiStar />,
+};
 
 /**
- * Main navigation bar component of the application.
- * Provides navigation between pages and user authentication management.
- * Includes responsive menu for mobile devices and user dropdown menu.
- *
- * @returns {JSX.Element} Navigation element with links and user options
+ * Panel lateral del editor con biblioteca de nodos disponibles
+ * @param {Object} props - Propiedades del componente
+ * @param {Function} props.onAddNode - Callback ejecutado al añadir un nodo
+ * @param {string} [props.className=''] - Clases CSS adicionales
+ * @param {Function} props.onCloseSidebar - Callback to close sidebar on mobile
+ * @param {Array} props.recentNodes - Array of recently used nodes
+ * @returns {JSX.Element} Sidebar with draggable node categories
  */
-function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
+function EditorSidebar({ onAddNode, className = '', onCloseSidebar, recentNodes = [] }) {
   const navigate = useNavigate();
-  const menuRef = useRef(null);
+  const [expandedSections, setExpandedSections] = useState({
+    basic: false,
+    game: false,
+    recent: false,
+  });
 
   /**
-   * Toggles the visibility state of the desktop user dropdown menu.
+   * Alterna la expansión de una sección del sidebar
+   * @param {string} section - Section identifier to toggle
    */
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
   };
+
+  const basicNodes = [
+    {
+      type: 'action',
+      label: 'Acción',
+      icon: &lt;FiZap />,
+      description: 'Acción ejecutable',
+      color: '#33cc33',
+    },
+    {
+      type: 'decision',
+      label: 'Decisión',
+      icon: &lt;FiGitBranch />,
+      description: 'Punto de bifurcación',
+      color: '#4da6ff',
+    },
+    {
+      type: 'startEnd',
+      label: 'Evento',
+      icon: &lt;FiCircle />,
+      description: 'Inicio o fin',
+      color: '#888888',
+    },
+    {
+      type: 'phase',
+      label: 'Fase',
+      icon: &lt;FiWatch />,
+      description: 'Fase del boss',
+      color: '#ffcc00',
+    },
+  ];
+
+  const gameNodes = [
+    {
+      type: 'position',
+      label: 'Posición',
+      icon: &lt;FiMapPin />,
+      description: 'Posicionamiento',
+      color: '#ff6b6b',
+    },
+    {
+      type: 'timer',
+      label: 'Temporizador',
+      icon: &lt;FiClock />,
+      description: 'Evento temporizado',
+      color: '#4ecdc4',
+    },
+    {
+      type: 'mechanic',
+      label: 'Mecánica',
+      icon: &lt;FiTool />,
+      description: 'Mecánica especial',
+      color: '#9b59b6',
+    },
+    {
+      type: 'ability',
+      label: 'Habilidad',
+      icon: &lt;FiStar />,
+      description: 'Habilidad especial',
+      color: '#f39c12',
+    },
+  ];
 
   /**
-   * Toggles the visibility state of the mobile hamburger menu.
+   * Gestiona el clic sobre un tipo de nodo para añadirlo al canvas
+   * @param {Object} nodeType - Tipo de nodo a añadir
    */
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  /**
-   * Logs out the current user.
-   * Closes all open menus, executes logout and redirects to home page.
-   */
-  const handleLogout = () => {
-    console.log('Logging out...');
-    setMenuOpen(false);
-    setMobileMenuOpen(false);
-    logout();
-    navigate('/');
-  };
-
-  useEffect(() => {
-    /**
-     * Handles clicks outside the dropdown menu to close it automatically.
-     *
-     * @param {MouseEvent} event - Mouse click event
-     */
-    const handleClickOutside = (event) => {
-      if (menuRef.current &amp;&amp; !menuRef.current.contains(event.target)) {
-        setMenuOpen(false);
-      }
-    };
-
-    if (menuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+  const handleNodeClick = (nodeType) => {
+    if (onAddNode) {
+      onAddNode(nodeType);
     }
+  };
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+  /**
+   * Navega a la página anterior al salir del editor
+   */
+  const handleExit = () => {
+    navigate(-1);
+  };
+
+  /**
+   * Inicia el arrastre de un nodo preparando los datos a transferir
+   * @param {DragEvent} event - Evento de arrastre
+   * @param {Object} nodeData - Datos del nodo a arrastrar
+   */
+  const onDragStart = (event, nodeData) => {
+    const nodeInfo = {
+      type: nodeData.type,
+      label: nodeData.label,
+      description: nodeData.description,
+      color: nodeData.color
     };
-  }, [menuOpen]);
+
+    console.log('Drag started with data:', nodeInfo);
+    event.dataTransfer.setData('application/reactflow', JSON.stringify(nodeInfo));
+    event.dataTransfer.effectAllowed = 'move';
+  };
+
+  /**
+   * Renders a draggable node button
+   * @param {Object} node - Node data to render
+   * @param {number} index - Node index in the list
+   * @returns {JSX.Element} Node button with drag capability
+   */
+  const renderNodeButton = (node, index) => (
+    &lt;button
+      key={`${node.type}-${index}`}
+      className="editor-sidebar__node-button"
+      draggable
+      onDragStart={(event) => onDragStart(event, node)}
+      onClick={() => handleNodeClick(node)}
+      title={node.description}
+      style={{ '--node-color': node.color }}
+    >
+      &lt;span className="editor-sidebar__node-icon" style={{ color: node.color }}>
+        {node.icon}
+      &lt;/span>
+      &lt;span className="editor-sidebar__node-label">{node.label}&lt;/span>
+    &lt;/button>
+  );
 
   return (
-    &lt;header className="encabezado">
-      &lt;nav className="encabezado__navbar">
-        &lt;Link to="/" className="navbar__logo">
-          &lt;img src="/logo.png" alt="BossFlow" className="navbar__logo-img" />
-        &lt;/Link>
+    &lt;aside className={`editor-sidebar ${className}`} aria-label="Biblioteca de nodos">
+      &lt;header className="editor-sidebar__header">
+        &lt;h2 className="editor-sidebar__title">Biblioteca de Nodos&lt;/h2>
+        {onCloseSidebar &amp;&amp; (
+          &lt;button
+            className="editor-sidebar__close-button"
+            onClick={onCloseSidebar}
+            aria-label="Cerrar panel"
+            title="Cerrar panel"
+          >
+            &lt;FiX />
+          &lt;/button>
+        )}
+      &lt;/header>
 
-        &lt;button
-          className="navbar__hamburguesa"
-          onClick={toggleMobileMenu}
-          aria-label="Menú"
-        >
-          {mobileMenuOpen ? &lt;FiX /> : &lt;FiMenu />}
-        &lt;/button>
+      &lt;section className="editor-sidebar__content">
+        &lt;section className="editor-sidebar__section">
+          &lt;button
+            className="editor-sidebar__section-header"
+            onClick={() => toggleSection('basic')}
+            aria-expanded={expandedSections.basic}
+          >
+            &lt;span className="editor-sidebar__section-icon">
+              {expandedSections.basic ? &lt;FiChevronDown /> : &lt;FiChevronRight />}
+            &lt;/span>
+            &lt;h3 className="editor-sidebar__section-title">Nodos Básicos&lt;/h3>
+          &lt;/button>
 
-        &lt;ul
-          className={`navbar__enlaces ${mobileMenuOpen ? 'navbar__enlaces--visible' : ''}`}
-        >
-          &lt;li className="navbar__elemento">
-            &lt;Link
-              to="/"
-              className="navbar__enlace"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Inicio
-            &lt;/Link>
-          &lt;/li>
-          &lt;li className="navbar__elemento">
-            &lt;Link
-              to="/dashboard"
-              className="navbar__enlace"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Dashboard
-            &lt;/Link>
-          &lt;/li>
-          &lt;li className="navbar__elemento">
-            &lt;Link
-              to="/community"
-              className="navbar__enlace"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Comunidad
-            &lt;/Link>
-          &lt;/li>
-
-          &lt;li className="navbar__elemento navbar__elemento--auth-movil">
-            {!isAuthenticated ? (
-              &lt;section className="navbar__botones-auth-movil">
-                &lt;Link
-                  to="/login"
-                  className="navbar__boton-login"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Iniciar sesión
-                &lt;/Link>
-                &lt;Link
-                  to="/register"
-                  className="navbar__boton-registro"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Registrarse
-                &lt;/Link>
-              &lt;/section>
-            ) : (
-              &lt;section className="navbar__usuario-movil">
-                &lt;h3 className="navbar__seccion-titulo">Cuenta&lt;/h3>
-                &lt;Link
-                  to="/profile"
-                  className="navbar__enlace"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  &lt;FiUser /> Perfil
-                &lt;/Link>
-                &lt;Link
-                  to="/settings"
-                  className="navbar__enlace"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  &lt;FiSettings /> Configuración
-                &lt;/Link>
-                &lt;button
-                  onClick={handleLogout}
-                  className="navbar__enlace navbar__enlace--logout"
-                >
-                  &lt;FiLogOut /> Cerrar sesión
-                &lt;/button>
-              &lt;/section>
-            )}
-          &lt;/li>
-        &lt;/ul>
-
-        &lt;section className="navbar__usuario-menu" ref={menuRef}>
-          {!isAuthenticated ? (
-              &lt;section className="navbar__botones-auth">
-              &lt;Link to="/login" className="navbar__boton-login">
-                Iniciar sesión
-              &lt;/Link>
-              &lt;Link to="/register" className="navbar__boton-registro">
-                Registrarse
-              &lt;/Link>
+          {expandedSections.basic &amp;&amp; (
+            &lt;section className="editor-sidebar__section-content">
+              {basicNodes.map((node, index) => renderNodeButton(node, index))}
             &lt;/section>
-          ) : (
-            &lt;>
-              &lt;button className="navbar__usuario" onClick={toggleMenu}>
-                &lt;span className="navbar__avatar">
-                  {user?.avatar ? (
-                    &lt;img src={user.avatar} alt={user.username} className="navbar__avatar-img" />
-                  ) : (
-                    &lt;FiUser />
-                  )}
-                &lt;/span>
-                &lt;span className="navbar__nombre">
-                  {user?.username || user?.email}
-                &lt;/span>
-                &lt;span
-                  className={`navbar__flecha ${menuOpen ? 'navbar__flecha--arriba' : ''}`}
-                >
-                  &lt;FiChevronDown />
-                &lt;/span>
-              &lt;/button>
-
-              {menuOpen &amp;&amp; (
-                &lt;ul className="menu-desplegable">
-                  &lt;li className="menu-desplegable__elemento">
-                    &lt;Link to="/profile" className="menu-desplegable__enlace">
-                      &lt;span className="menu-desplegable__icono">
-                        &lt;FiUser />
-                      &lt;/span>
-                      &lt;span>Perfil&lt;/span>
-                    &lt;/Link>
-                  &lt;/li>
-                  &lt;li className="menu-desplegable__elemento">
-                    &lt;Link to="/settings" className="menu-desplegable__enlace">
-                      &lt;span className="menu-desplegable__icono">
-                        &lt;FiSettings />
-                      &lt;/span>
-                      &lt;span>Configuración&lt;/span>
-                    &lt;/Link>
-                  &lt;/li>
-                  &lt;li className="menu-desplegable__separador">&lt;/li>
-                  &lt;li className="menu-desplegable__elemento">
-                    &lt;button
-                      onClick={handleLogout}
-                      className="menu-desplegable__enlace menu-desplegable__enlace--cerrar"
-                    >
-                      &lt;span className="menu-desplegable__icono">
-                        &lt;FiLogOut />
-                      &lt;/span>
-                      &lt;span>Cerrar sesión&lt;/span>
-                    &lt;/button>
-                  &lt;/li>
-                &lt;/ul>
-              )}
-            &lt;/>
           )}
         &lt;/section>
-      &lt;/nav>
-    &lt;/header>
+
+        &lt;section className="editor-sidebar__section">
+          &lt;button
+            className="editor-sidebar__section-header"
+            onClick={() => toggleSection('game')}
+            aria-expanded={expandedSections.game}
+          >
+            &lt;span className="editor-sidebar__section-icon">
+              {expandedSections.game ? &lt;FiChevronDown /> : &lt;FiChevronRight />}
+            &lt;/span>
+            &lt;h3 className="editor-sidebar__section-title">Específicos del Juego&lt;/h3>
+          &lt;/button>
+
+          {expandedSections.game &amp;&amp; (
+            &lt;section className="editor-sidebar__section-content">
+              {gameNodes.map((node, index) => renderNodeButton(node, index))}
+            &lt;/section>
+          )}
+        &lt;/section>
+
+        &lt;section className="editor-sidebar__section">
+          &lt;button
+            className="editor-sidebar__section-header"
+            onClick={() => toggleSection('recent')}
+            aria-expanded={expandedSections.recent}
+          >
+            &lt;span className="editor-sidebar__section-icon">
+              {expandedSections.recent ? &lt;FiChevronDown /> : &lt;FiChevronRight />}
+            &lt;/span>
+            &lt;h3 className="editor-sidebar__section-title">Nodos Recientes&lt;/h3>
+          &lt;/button>
+
+          {expandedSections.recent &amp;&amp; (
+            &lt;section className="editor-sidebar__section-content">
+              {recentNodes.length === 0 ? (
+                &lt;p className="editor-sidebar__empty-message">
+                  No hay nodos recientes. Arrastra un nodo al canvas para comenzar.
+                &lt;/p>
+              ) : (
+                recentNodes.map((node, index) => {
+                  const nodeWithIcon = {
+                    ...node,
+                    icon: nodeIconMap[node.type] || &lt;FiCircle />
+                  };
+                  return renderNodeButton(nodeWithIcon, index);
+                })
+              )}
+            &lt;/section>
+          )}
+        &lt;/section>
+      &lt;/section>
+
+      &lt;button className="editor-sidebar__exit-button" onClick={handleExit}>
+        &lt;FiLogOut className="editor-sidebar__nav-icono" />
+        &lt;span>Salir&lt;/span>
+      &lt;/button>
+    &lt;/aside>
   );
 }
 
-export default Navbar;
+export default EditorSidebar;
 </code></pre>
         </article>
     </section>
@@ -288,7 +324,7 @@ export default Navbar;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

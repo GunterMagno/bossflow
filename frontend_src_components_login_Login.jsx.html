@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/UploadImageModal/UploadImageModal.jsx - Documentation</title>
+    <title>frontend/src/components/login/Login.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/UploadImageModal/UploadImageModal.jsx</h1>
+    <h1 class="page-title">frontend/src/components/login/Login.jsx</h1>
     
 
     
@@ -39,332 +39,227 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState, useRef } from 'react';
-import './UploadImageModal.css';
-import { FiUploadCloud } from 'react-icons/fi';
+            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import './Login.css';
 
 /**
- * Modal component to upload images from file or URL.
- * Allows drag and drop files, select from explorer or enter a URL.
- * Validates image type and size before uploading to backend.
- *
- * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Indicates if the modal is open
- * @param {Function} props.onClose - Callback function to close the modal
- * @param {Function} props.onImageUploaded - Callback function executed when an image is successfully uploaded
- * @param {string} props.title - Modal title
- * @returns {JSX.Element|null} Modal element or null if closed
+ * Login component with form validation
+ * @returns {JSX.Element} Login form with validation and error handling
  */
-const UploadImageModal = ({ isOpen, onClose, onImageUploaded, title = "Subir imagen" }) => {
-  const [imageUrl, setImageUrl] = useState('');
-  const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState('');
-  const [preview, setPreview] = useState(null);
-  const fileInputRef = useRef(null);
+function Login() {
+  const navigate = useNavigate();
+  const { login, loading: authLoading, isAuthenticated } = useAuth();
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    document.title = 'Iniciar Sesión | BossFlow';
 
-  /**
-   * Closes the modal and resets all states to their initial values.
-   * Clears URL, errors, preview and executes the close callback.
-   */
-  const handleClose = () => {
-    setImageUrl('');
-    setError('');
-    setPreview(null);
-    onClose();
-  };
-
-  /**
-   * Validates the type and size of an image file.
-   * Verifies it is JPEG, PNG, GIF or WEBP and does not exceed 5MB.
-   *
-   * @param {File} file - File to validate
-   * @returns {boolean} true if the file is valid, false otherwise
-   */
-  const validateFile = (file) => {
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024;
-
-    if (!validTypes.includes(file.type)) {
-      setError('Tipo de archivo no válido. Use: JPEG, PNG, GIF o WEBP');
-      return false;
+    if (isAuthenticated) {
+      navigate('/dashboard');
     }
+  }, [isAuthenticated, navigate]);
 
-    if (file.size > maxSize) {
-      setError('La imagen excede el tamaño máximo de 5MB');
-      return false;
-    }
+  const [formData, setFormData] = useState({
+    correo: '',
+    contrasena: '',
+    recordarme: false,
+  });
 
-    setError('');
-    return true;
-  };
+  const [errors, setErrors] = useState({});
+
+  const [loading, setLoading] = useState(false);
 
   /**
-   * Uploads an image file to the backend.
-   * Converts the file to base64 and sends it to the server via a POST request.
-   *
-   * @param {File} file - Image file to upload
-   * @returns {Promise&lt;Object>} Promise that resolves with the uploaded image data
+   * Handles changes in form fields
+   * @param {Event} e - Input change event
    */
-  const uploadFileToBackend = async (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = async (e) => {
-        try {
-          const base64Data = e.target.result;
-          
-          const response = await fetch('/api/images/upload', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({
-              image: base64Data,
-              filename: file.name,
-              mimeType: file.type
-            })
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Error al subir imagen');
-          }
-
-          const data = await response.json();
-          resolve(data.image);
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      reader.onerror = () => reject(new Error('Error al leer el archivo'));
-      reader.readAsDataURL(file);
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
     });
-  };
 
-  /**
-   * Handles the selection of an image file.
-   * Validates the file, uploads it to the backend and executes the callback with the image data.
-   *
-   * @param {File} file - Selected image file
-   */
-  const handleFileSelect = async (file) => {
-    if (!validateFile(file)) return;
-
-    setIsUploading(true);
-    setError('');
-
-    try {
-      const imageData = await uploadFileToBackend(file);
-      const fullUrl = imageData.url;
-      setPreview(fullUrl);
-
-      onImageUploaded({
-        ...imageData,
-        url: fullUrl
-      });
-      
-      handleClose();
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsUploading(false);
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
     }
   };
 
   /**
-   * Handles the file selection event from the input.
-   * Extracts the first selected file and processes it.
-   *
-   * @param {Event} e - File input change event
+   * Validates login form fields
+   * @returns {Object} Object with validation errors found
    */
-  const handleFileInput = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileSelect(file);
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.correo) {
+      newErrors.correo = 'Es obligatorio introducir un correo electrónico.';
+    } else if (
+      !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        formData.correo
+      )
+    ) {
+      newErrors.correo = 'El correo electrónico no es válido.';
     }
-  };
 
-  /**
-   * Handles the event of dragging a file over the drop zone.
-   * Prevents default behavior and activates the dragging state.
-   *
-   * @param {DragEvent} e - Drag event
-   */
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  /**
-   * Handles the event of leaving the drop zone.
-   * Prevents default behavior and deactivates the dragging state.
-   *
-   * @param {DragEvent} e - Drag event
-   */
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  /**
-   * Handles the event of dropping a file in the designated zone.
-   * Prevents default behavior, deactivates the dragging state and processes the file.
-   *
-   * @param {DragEvent} e - Drop event
-   */
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileSelect(file);
+    if (!formData.contrasena) {
+      newErrors.contrasena = 'Es obligatorio introducir una contraseña.';
+    } else if (formData.contrasena.length &lt; 8) {
+      newErrors.contrasena =
+        'La contraseña debe tener al menos 8 caracteres.';
     }
+
+    return newErrors;
   };
 
   /**
-   * Handles the submission of an external image URL.
-   * Validates the URL with the backend and executes the callback if valid.
-   *
-   * @returns {Promise&lt;void>} Promise that resolves when validation completes
+   * Handles login form submission
+   * @param {Event} e - Form submit event
    */
-  const handleUrlSubmit = async () => {
-    if (!imageUrl.trim()) {
-      setError('Por favor, ingrese una URL');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const newErrors = validateForm();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    setIsUploading(true);
-    setError('');
-
     try {
-      const response = await fetch('/api/images/validate-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ url: imageUrl })
-      });
+      setErrors({});
+      setLoading(true);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al validar URL');
+      const result = await login(
+        formData.correo,
+        formData.contrasena,
+        formData.recordarme
+      );
+
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setErrors({ submit: result.error });
       }
-
-      const data = await response.json();
-      setPreview(imageUrl);
-      
-      onImageUploaded(data.image);
-      handleClose();
     } catch (error) {
-      setError(error.message);
+      setErrors({ submit: 'Error al iniciar sesión. Inténtalo de nuevo.' });
     } finally {
-      setIsUploading(false);
+      setLoading(false);
     }
   };
 
   return (
-    &lt;section className="upload-image-modal-overlay" onClick={handleClose}>
-      &lt;article className="upload-image-modal" onClick={(e) => e.stopPropagation()}>
-        &lt;header className="upload-image-modal-header">
-          &lt;h2>{title}&lt;/h2>
-          &lt;button className="close-button" onClick={handleClose}>
-            ✕
-          &lt;/button>
-        &lt;/header>
+    &lt;main className="login">
+      &lt;article className="login__contenedor">
+        &lt;section className="login__encabezado">
+          &lt;h3 className="login__titulo">Iniciar sesión&lt;/h3>
+          &lt;p className="login__subtitulo">
+            Por favor inicia sesión en tu cuenta
+          &lt;/p>
+        &lt;/section>
 
-        &lt;section className="upload-image-modal-body">
-          {error &amp;&amp; (
-            &lt;aside className="upload-error">
-              {error}
-            &lt;/aside>
+        &lt;form onSubmit={handleSubmit} className="login__formulario">
+          {errors.submit &amp;&amp; (
+            &lt;section className="login__error" role="alert">
+              {errors.submit}
+            &lt;/section>
           )}
 
-          &lt;section className="upload-url-section">
-            &lt;h3 className="section-title">Desde URL&lt;/h3>
-            &lt;label htmlFor="image-url-input">URL de la imagen:&lt;/label>
+          &lt;fieldset className="login__campo">
+            &lt;label htmlFor="correo" className="login__etiqueta">
+              Correo Electrónico
+            &lt;/label>
             &lt;input
-              id="image-url-input"
               type="text"
-              className="url-input"
-              placeholder="https://ejemplo.com/imagen.jpg"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' &amp;&amp; handleUrlSubmit()}
+              id="correo"
+              name="correo"
+              value={formData.correo}
+              onChange={handleChange}
+              placeholder="tu@ejemplo.com"
+              className={`login__input ${errors.correo ? 'login__input--error' : ''}`}
+              disabled={loading}
             />
-            
-            {preview &amp;&amp; (
-              &lt;figure className="url-preview">
-                &lt;img src={preview} alt="Vista previa" />
-              &lt;/figure>
+            {errors.correo &amp;&amp; (
+              &lt;span className="login__mensaje-error" role="alert">
+                {errors.correo}
+              &lt;/span>
             )}
+          &lt;/fieldset>
 
-            &lt;button
-              className="url-submit-button"
-              onClick={handleUrlSubmit}
-              disabled={isUploading || !imageUrl.trim()}
-            >
-              {isUploading ? 'Validando...' : 'Usar esta imagen'}
-            &lt;/button>
-          &lt;/section>
-
-          &lt;section className="section-divider">
-
-          &lt;section className="upload-file-section">
-            &lt;h3 className="section-title">Desde archivo&lt;/h3>
-            &lt;section
-              className={`upload-drop-zone ${isDragging ? 'dragging' : ''}`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              tabIndex={0}
-            >
-              &lt;input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp"
-                onChange={handleFileInput}
-                style={{ display: 'none' }}
-              />
-              
-              {isUploading ? (
-                &lt;aside className="upload-loading">
-                  &lt;figure className="spinner">&lt;/figure>
-                  &lt;p>Subiendo imagen...&lt;/p>
-                &lt;/aside>
-              ) : (
-                &lt;>
-                  &lt;FiUploadCloud className="upload-icon" />
-                  &lt;p className="upload-main-text">
-                    Arrastra una imagen aquí
-                  &lt;/p>
-                  &lt;button
-                    className="upload-browse-button"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    Seleccionar archivo
-                  &lt;/button>
-                  &lt;p className="upload-info">
-                    Formatos: JPEG, PNG, GIF, WEBP (máx. 5MB)
-                  &lt;/p>
-                &lt;/>
-              )}
-              &lt;/section>
+          &lt;fieldset className="login__campo">
+            &lt;section className="login__etiqueta-con-enlace">
+              &lt;label htmlFor="contrasena" className="login__etiqueta">
+                Contraseña
+              &lt;/label>
+              &lt;Link
+                to="/recuperar-contrasena"
+                className="login__enlace-recuperar"
+              >
+                ¿Olvidaste tu contraseña?
+              &lt;/Link>
             &lt;/section>
-          &lt;/section>
-        &lt;/section>
-      &lt;/article>
-    &lt;/section>
-  );
-};
+            &lt;input
+              type="password"
+              id="contrasena"
+              name="contrasena"
+              value={formData.contrasena}
+              onChange={handleChange}
+              placeholder="********"
+              className={`login__input ${errors.contrasena ? 'login__input--error' : ''}`}
+              disabled={loading}
+            />
+            {errors.contrasena &amp;&amp; (
+              &lt;span className="login__mensaje-error" role="alert">
+                {errors.contrasena}
+              &lt;/span>
+            )}
+          &lt;/fieldset>
 
-export default UploadImageModal;</code></pre>
+          &lt;fieldset className="login__recordar">
+            &lt;label className="login__checkbox">
+              &lt;input
+                type="checkbox"
+                id="recordarme"
+                name="recordarme"
+                checked={formData.recordarme}
+                onChange={handleChange}
+                className="login__checkbox-input"
+              />
+              &lt;span className="login__checkbox-texto">Recordarme&lt;/span>
+            &lt;/label>
+          &lt;/fieldset>
+
+          &lt;button type="submit" className="login__boton" disabled={loading}>
+            {loading ? (
+              &lt;>
+                &lt;span className="login__spinner" aria-label="Cargando">&lt;/span>
+                Iniciar sesión
+              &lt;/>
+            ) : (
+              'Iniciar sesión'
+            )}
+          &lt;/button>
+
+          &lt;section className="login__pie">
+            &lt;p className="login__pie-texto">
+              ¿Aún no tienes cuenta?{' '}
+              &lt;Link to="/register" className="login__enlace-registro">
+                Regístrate aquí
+              &lt;/Link>
+            &lt;/p>
+          &lt;/section>
+        &lt;/form>
+      &lt;/article>
+    &lt;/main>
+  );
+}
+
+export default Login;
+</code></pre>
         </article>
     </section>
 
@@ -376,7 +271,7 @@ export default UploadImageModal;</code></pre>
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

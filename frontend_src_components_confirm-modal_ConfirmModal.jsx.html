@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/MobileNodePanel/MobileNodePanel.jsx - Documentation</title>
+    <title>frontend/src/components/confirm-modal/ConfirmModal.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/MobileNodePanel/MobileNodePanel.jsx</h1>
+    <h1 class="page-title">frontend/src/components/confirm-modal/ConfirmModal.jsx</h1>
     
 
     
@@ -39,152 +39,105 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
-import {
-  FiZap,
-  FiGitBranch,
-  FiCircle,
-  FiMapPin,
-  FiClock,
-  FiWatch,
-  FiTool,
-  FiStar,
-  FiChevronUp,
-  FiChevronDown,
-} from 'react-icons/fi';
-import './MobileNodePanel.css';
+            <pre class="prettyprint source linenums"><code>import { FiAlertTriangle, FiX } from 'react-icons/fi';
+import './ConfirmModal.css';
 
 /**
- * Panel inferior deslizable para dispositivos móviles con todos los tipos de nodos
- * @param {Object} props - Propiedades del componente
- * @param {Function} props.onAddNode - Callback ejecutado al añadir un nodo
- * @returns {JSX.Element} Panel deslizable con scroll horizontal de nodos
+ * Confirmation modal for actions that require user validation
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Controls the visibility of the modal
+ * @param {Function} props.onClose - Callback executed when closing the modal
+ * @param {Function} props.onConfirm - Callback executed when confirming the action
+ * @param {string} [props.title='¿Estás seguro?'] - Title shown in the modal
+ * @param {string} [props.message='Esta acción no se puede deshacer.'] - Descriptive message
+ * @param {string} [props.confirmText='Confirmar'] - Text of the confirmation button
+ * @param {string} [props.cancelText='Cancelar'] - Text of the cancel button
+ * @param {string} [props.type='danger'] - Visual type of the modal (danger, warning, info)
+ * @param {boolean} [props.isLoading=false] - Indicates if an operation is in progress
+ * @returns {JSX.Element|null} Renders the modal or null if closed
  */
-function MobileNodePanel({ onAddNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const allNodes = [
-    {
-      type: 'action',
-      label: 'Acción',
-      icon: &lt;FiZap />,
-      description: 'Acción ejecutable',
-      color: '#33cc33',
-    },
-    {
-      type: 'decision',
-      label: 'Decisión',
-      icon: &lt;FiGitBranch />,
-      description: 'Punto de bifurcación',
-      color: '#4da6ff',
-    },
-    {
-      type: 'startEnd',
-      label: 'Evento',
-      icon: &lt;FiCircle />,
-      description: 'Inicio o fin',
-      color: '#888888',
-    },
-    {
-      type: 'phase',
-      label: 'Fase',
-      icon: &lt;FiWatch />,
-      description: 'Fase del boss',
-      color: '#ffcc00',
-    },
-    {
-      type: 'position',
-      label: 'Posición',
-      icon: &lt;FiMapPin />,
-      description: 'Posicionamiento',
-      color: '#ff6b6b',
-    },
-    {
-      type: 'timer',
-      label: 'Temporizador',
-      icon: &lt;FiClock />,
-      description: 'Evento temporizado',
-      color: '#4ecdc4',
-    },
-    {
-      type: 'mechanic',
-      label: 'Mecánica',
-      icon: &lt;FiTool />,
-      description: 'Mecánica especial',
-      color: '#9b59b6',
-    },
-    {
-      type: 'ability',
-      label: 'Habilidad',
-      icon: &lt;FiStar />,
-      description: 'Habilidad especial',
-      color: '#f39c12',
-    },
-  ];
-
+function ConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title = '¿Estás seguro?',
+  message = 'Esta acción no se puede deshacer.',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
+  type = 'danger',
+  isLoading = false,
+}) {
   /**
-   * Gestiona el clic sobre un tipo de nodo para añadirlo al canvas
-   * @param {Object} nodeData - Datos del nodo a añadir
+   * Manages closing the modal using the Escape key
+   * @param {KeyboardEvent} e - Keyboard event
    */
-  const handleNodeClick = (nodeData) => {
-    if (onAddNode) {
-      onAddNode(nodeData);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape' &amp;&amp; !isLoading) {
+      onClose();
     }
   };
 
-  /**
-   * Inicia el arrastre de un nodo preparando los datos a transferir
-   * @param {DragEvent} event - Evento de arrastre
-   * @param {Object} nodeData - Datos del nodo a arrastrar
-   */
-  const onDragStart = (event, nodeData) => {
-    const nodeInfo = {
-      type: nodeData.type,
-      label: nodeData.label,
-      description: nodeData.description,
-      color: nodeData.color
-    };
-
-    event.dataTransfer.setData('application/reactflow', JSON.stringify(nodeInfo));
-    event.dataTransfer.effectAllowed = 'move';
-  };
+  if (!isOpen) return null;
 
   return (
-    &lt;aside className={`mobile-node-panel ${isOpen ? 'mobile-node-panel--open' : ''}`}>
-      &lt;button
-        className="mobile-node-panel__toggle"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? 'Ocultar nodos' : 'Mostrar nodos'}
+    &lt;section
+      className="confirm-modal-overlay"
+      onClick={!isLoading ? onClose : undefined}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+    >
+      &lt;article
+        className={`confirm-modal confirm-modal--${type}`}
+        onClick={(e) => e.stopPropagation()}
       >
-        {isOpen ? &lt;FiChevronDown /> : &lt;FiChevronUp />}
-        &lt;span>Nodos&lt;/span>
-      &lt;/button>
+        &lt;header className="confirm-modal__header">
+          &lt;figure className="confirm-modal__icon-wrapper">
+            &lt;FiAlertTriangle className="confirm-modal__icon" />
+          &lt;/figure>
+          &lt;button
+            type="button"
+            className="confirm-modal__close-button"
+            onClick={onClose}
+            disabled={isLoading}
+            aria-label="Cerrar modal"
+          >
+            &lt;FiX />
+          &lt;/button>
+        &lt;/header>
 
-      &lt;section className="mobile-node-panel__content">
-        &lt;section className="mobile-node-panel__scroll">
-          {allNodes.map((node, index) => (
-            &lt;article
-              key={`${node.type}-${index}`}
-              className="mobile-node-panel__node"
-              draggable
-              onDragStart={(event) => onDragStart(event, node)}
-              onClick={() => handleNodeClick(node)}
-              title={node.description}
-              style={{ '--node-color': node.color }}
-            >
-              &lt;span className="mobile-node-panel__node-icon" style={{ color: node.color }}>
-                {node.icon}
-              &lt;/span>
-              &lt;span className="mobile-node-panel__node-label">{node.label}&lt;/span>
-            &lt;/article>
-          ))}
+        &lt;section className="confirm-modal__content">
+          &lt;h2 id="confirm-modal-title" className="confirm-modal__title">
+            {title}
+          &lt;/h2>
+          &lt;p className="confirm-modal__message">{message}&lt;/p>
         &lt;/section>
-      &lt;/section>
-    &lt;/aside>
+
+        &lt;nav className="confirm-modal__actions">
+          &lt;button
+            type="button"
+            className="confirm-modal__button confirm-modal__button--cancel"
+            onClick={onClose}
+            disabled={isLoading}
+          >
+            {cancelText}
+          &lt;/button>
+          &lt;button
+            type="button"
+            className={`confirm-modal__button confirm-modal__button--confirm confirm-modal__button--${type}`}
+            onClick={onConfirm}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Procesando...' : confirmText}
+          &lt;/button>
+        &lt;/nav>
+      &lt;/article>
+    &lt;/section>
   );
 }
 
-export default MobileNodePanel;
+export default ConfirmModal;
 </code></pre>
         </article>
     </section>
@@ -197,7 +150,7 @@ export default MobileNodePanel;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/Login/Login.jsx - Documentation</title>
+    <title>frontend/src/components/template-card/TemplateCard.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/Login/Login.jsx</h1>
+    <h1 class="page-title">frontend/src/components/template-card/TemplateCard.jsx</h1>
     
 
     
@@ -39,226 +39,165 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
-import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import './Login.css';
+            <pre class="prettyprint source linenums"><code>import { FiFileText, FiClock, FiEdit2, FiTrash2, FiCopy } from 'react-icons/fi';
+import './TemplateCard.css';
 
 /**
- * Login component with form validation
- * @returns {JSX.Element} Login form with validation and error handling
+ * Componente de tarjeta de plantilla de diagrama.
+ * Muestra información de una plantilla con opciones para usarla, editarla o eliminarla.
+ * Diferencia entre plantillas del sistema y plantillas de usuario.
+ *
+ * @param {Object} props - Propiedades del componente
+ * @param {Object} props.template - Datos de la plantilla a mostrar
+ * @param {Function} props.onUseTemplate - Callback al usar la plantilla
+ * @param {Function} props.onEditTemplate - Callback al editar la plantilla
+ * @param {Function} props.onDeleteTemplate - Callback al eliminar la plantilla
+ * @param {boolean} props.isSystemTemplate - Indica si es una plantilla del sistema
+ * @returns {JSX.Element} Elemento de tarjeta de plantilla
  */
-function Login() {
-  const navigate = useNavigate();
-  const { login, loading: authLoading, isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    document.title = 'Iniciar Sesión | BossFlow';
-
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const [formData, setFormData] = useState({
-    correo: '',
-    contrasena: '',
-    recordarme: false,
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const [loading, setLoading] = useState(false);
-
+function TemplateCard({
+  template,
+  onUseTemplate,
+  onEditTemplate,
+  onDeleteTemplate,
+  isSystemTemplate = false
+}) {
   /**
-   * Handles changes in form fields
-   * @param {Event} e - Input change event
+   * Formatea una fecha a formato relativo en español.
+   * Muestra tiempo relativo (minutos, horas, días) o fecha absoluta según antigüedad.
+   *
+   * @param {Date|string} date - Fecha a formatear
+   * @returns {string} Texto con la fecha formateada relativamente
    */
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+  const formatRelativeDate = (date) => {
+    if (!date) return 'Plantilla del sistema';
+    
+    const now = new Date();
+    const templateDate = new Date(date);
+    const diffMs = now - templateDate;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
 
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+    if (diffMins &lt; 60) {
+      return `Hace ${diffMins} ${diffMins === 1 ? 'minuto' : 'minutos'}`;
+    } else if (diffHours &lt; 24) {
+      return `Hace ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
+    } else if (diffDays &lt; 7) {
+      return `Hace ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`;
+    } else {
+      return templateDate.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
     }
   };
 
   /**
-   * Validates login form fields
-   * @returns {Object} Object with validation errors found
+   * Maneja el evento de usar la plantilla.
+   * Previene el comportamiento por defecto y la propagación del evento.
+   *
+   * @param {Event} e - Evento de clic del ratón
    */
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.correo) {
-      newErrors.correo = 'Es obligatorio introducir un correo electrónico.';
-    } else if (
-      !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        formData.correo
-      )
-    ) {
-      newErrors.correo = 'El correo electrónico no es válido.';
-    }
-
-    if (!formData.contrasena) {
-      newErrors.contrasena = 'Es obligatorio introducir una contraseña.';
-    } else if (formData.contrasena.length &lt; 8) {
-      newErrors.contrasena =
-        'La contraseña debe tener al menos 8 caracteres.';
-    }
-
-    return newErrors;
-  };
-
-  /**
-   * Handles login form submission
-   * @param {Event} e - Form submit event
-   */
-  const handleSubmit = async (e) => {
+  const handleUseTemplate = (e) => {
     e.preventDefault();
-
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+    e.stopPropagation();
+    if (onUseTemplate) {
+      onUseTemplate(template);
     }
+  };
 
-    try {
-      setErrors({});
-      setLoading(true);
+  /**
+   * Maneja el evento de editar la plantilla.
+   * Previene el comportamiento por defecto y la propagación del evento.
+   *
+   * @param {Event} e - Evento de clic del ratón
+   */
+  const handleEdit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onEditTemplate) {
+      onEditTemplate(template);
+    }
+  };
 
-      const result = await login(
-        formData.correo,
-        formData.contrasena,
-        formData.recordarme
-      );
-
-      if (result.success) {
-        navigate('/dashboard');
-      } else {
-        setErrors({ submit: result.error });
-      }
-    } catch (error) {
-      setErrors({ submit: 'Error al iniciar sesión. Inténtalo de nuevo.' });
-    } finally {
-      setLoading(false);
+  /**
+   * Maneja el evento de eliminar la plantilla.
+   * Previene el comportamiento por defecto y la propagación del evento.
+   *
+   * @param {Event} e - Evento de clic del ratón
+   */
+  const handleDelete = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDeleteTemplate) {
+      onDeleteTemplate(template);
     }
   };
 
   return (
-    &lt;main className="login">
-      &lt;article className="login__contenedor">
-        &lt;section className="login__encabezado">
-          &lt;h3 className="login__titulo">Iniciar sesión&lt;/h3>
-          &lt;p className="login__subtitulo">
-            Por favor inicia sesión en tu cuenta
-          &lt;/p>
+    &lt;article className="template-card-wrapper">
+      &lt;article className="template-card">
+
+        {!isSystemTemplate &amp;&amp; (
+          &lt;button
+            className="template-card__delete-button"
+            onClick={handleDelete}
+            aria-label="Eliminar plantilla"
+            title="Eliminar plantilla"
+          >
+            &lt;FiTrash2 />
+          &lt;/button>
+        )}
+
+        &lt;figure className="template-card__icon">
+          &lt;FiFileText />
+        &lt;/figure>
+
+        &lt;section className="template-card__content">
+          &lt;h3 className="template-card__title">{template.title}&lt;/h3>
+          {template.description &amp;&amp; (
+            &lt;p className="template-card__description">{template.description}&lt;/p>
+          )}
         &lt;/section>
 
-        &lt;form onSubmit={handleSubmit} className="login__formulario">
-          {errors.submit &amp;&amp; (
-            &lt;section className="login__error" role="alert">
-              {errors.submit}
-            &lt;/section>
-          )}
-
-          &lt;fieldset className="login__campo">
-            &lt;label htmlFor="correo" className="login__etiqueta">
-              Correo Electrónico
-            &lt;/label>
-            &lt;input
-              type="text"
-              id="correo"
-              name="correo"
-              value={formData.correo}
-              onChange={handleChange}
-              placeholder="tu@ejemplo.com"
-              className={`login__input ${errors.correo ? 'login__input--error' : ''}`}
-              disabled={loading}
-            />
-            {errors.correo &amp;&amp; (
-              &lt;span className="login__mensaje-error" role="alert">
-                {errors.correo}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="login__campo">
-            &lt;section className="login__etiqueta-con-enlace">
-              &lt;label htmlFor="contrasena" className="login__etiqueta">
-                Contraseña
-              &lt;/label>
-              &lt;Link
-                to="/recuperar-contrasena"
-                className="login__enlace-recuperar"
-              >
-                ¿Olvidaste tu contraseña?
-              &lt;/Link>
-            &lt;/section>
-            &lt;input
-              type="password"
-              id="contrasena"
-              name="contrasena"
-              value={formData.contrasena}
-              onChange={handleChange}
-              placeholder="********"
-              className={`login__input ${errors.contrasena ? 'login__input--error' : ''}`}
-              disabled={loading}
-            />
-            {errors.contrasena &amp;&amp; (
-              &lt;span className="login__mensaje-error" role="alert">
-                {errors.contrasena}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="login__recordar">
-            &lt;label className="login__checkbox">
-              &lt;input
-                type="checkbox"
-                id="recordarme"
-                name="recordarme"
-                checked={formData.recordarme}
-                onChange={handleChange}
-                className="login__checkbox-input"
-              />
-              &lt;span className="login__checkbox-texto">Recordarme&lt;/span>
-            &lt;/label>
-          &lt;/fieldset>
-
-          &lt;button type="submit" className="login__boton" disabled={loading}>
-            {loading ? (
-              &lt;>
-                &lt;span className="login__spinner" aria-label="Cargando">&lt;/span>
-                Iniciar sesión
-              &lt;/>
-            ) : (
-              'Iniciar sesión'
-            )}
+        &lt;nav className="template-card__actions">
+          &lt;button
+            className="template-card__action-button template-card__action-button--use"
+            onClick={handleUseTemplate}
+            title="Crear diagrama desde plantilla"
+          >
+            &lt;FiFileText />
+            &lt;span>Usar&lt;/span>
           &lt;/button>
-
-          &lt;section className="login__pie">
-            &lt;p className="login__pie-texto">
-              ¿Aún no tienes cuenta?{' '}
-              &lt;Link to="/register" className="login__enlace-registro">
-                Regístrate aquí
-              &lt;/Link>
-            &lt;/p>
-          &lt;/section>
-        &lt;/form>
+          
+          {isSystemTemplate ? (
+            &lt;button
+              className="template-card__action-button template-card__action-button--copy"
+              onClick={handleEdit}
+              title="Crear plantilla basada en esta"
+            >
+              &lt;FiCopy />
+              &lt;span>Copiar&lt;/span>
+            &lt;/button>
+          ) : (
+            &lt;button
+              className="template-card__action-button template-card__action-button--edit"
+              onClick={handleEdit}
+              title="Editar plantilla"
+            >
+              &lt;FiEdit2 />
+              &lt;span>Editar&lt;/span>
+            &lt;/button>
+          )}
+        &lt;/nav>
       &lt;/article>
-    &lt;/main>
+    &lt;/article>
   );
 }
 
-export default Login;
+export default TemplateCard;
 </code></pre>
         </article>
     </section>
@@ -271,7 +210,7 @@ export default Login;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

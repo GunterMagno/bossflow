@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/FlowMap/FlowMap.jsx - Documentation</title>
+    <title>frontend/src/components/new-diagram-modal/NewDiagramModal.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/FlowMap/FlowMap.jsx</h1>
+    <h1 class="page-title">frontend/src/components/new-diagram-modal/NewDiagramModal.jsx</h1>
     
 
     
@@ -39,455 +39,333 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useCallback, useEffect, useRef, useState } from "react";
-import { DecisionNode, ActionNode, PhaseNode, EffectNode, StartNode, EndNode, PositionNode, TimerNode, AbilityNode } from "../nodes/Nodes";
-import ImageNode from "../nodes/ImageNode/ImageNode";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  useReactFlow,
-} from "reactflow";
-
-import "reactflow/dist/style.css";
-import "./FlowMap.css";
-import CustomEdge from '../customEdge/CustomEdge';
-import NodeDescriptionPopup from '../NodeDescriptionPopup/NodeDescriptionPopup';
+            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiX, FiFileText, FiAlignLeft, FiUpload } from 'react-icons/fi';
+import { createDiagram } from '../../services/diagramService';
+import { registerActivity, ACTIVITY_TYPES } from '../../services/activityService';
 import { useToast } from '../../context/ToastContext';
-import useRecentNodes from '../../hooks/useRecentNodes';
-
-const tiposNodos = {
-  decision: DecisionNode,
-  action: ActionNode,
-  phase: PhaseNode,
-  effect: EffectNode,
-  start: StartNode,
-  end: EndNode,
-  startEnd: StartNode,
-  position: PositionNode,
-  timer: TimerNode,
-  mechanic: EffectNode,
-  ability: AbilityNode,
-  imageNode: ImageNode
-};
-const tiposEdges = { default: CustomEdge };
+import ImportJSON from '../ImportJSON/ImportJSON';
+import './NewDiagramModal.css';
 
 /**
- * Main flow diagram editor component.
+ * Modal component for creating a new diagram.
+ * Allows creating diagrams from scratch, from templates, or by importing JSON data.
+ *
  * @param {Object} props - Component properties
- * @param {Array} [props.initialNodes=[]] - Initial diagram nodes
- * @param {Array} [props.initialEdges=[]] - Initial diagram connections
- * @param {Function} props.onNodesChange - Callback executed when nodes change
- * @param {Function} props.onEdgesChange - Callback executed when connections change
- * @param {Function} props.onNodeDoubleClick - Callback for double-click on a node
- * @param {Function} props.onEdgeDoubleClick - Callback for double-click on a connection
- * @param {Function} props.onSetUpdateNodeFunction - Exposes the node update function
- * @param {Function} props.onSetDeleteNodesFunction - Exposes the node deletion function
- * @param {Function} props.onDeleteRequest - Callback for deletion requests
- * @param {Function} props.onRecentNodesChange - Callback when recent nodes change
- * @returns {JSX.Element} Interactive diagram editor
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Function} props.onDiagramCreated - Callback function executed when a diagram is created
+ * @param {Array|null} props.initialNodes - Initial nodes for creating from template
+ * @param {Array|null} props.initialEdges - Initial connections for creating from template
+ * @returns {JSX.Element|null} Modal element or null if closed
  */
-function FlowMap({ initialNodes = [], initialEdges = [], onNodesChange: onNodesChangeProp, onEdgesChange: onEdgesChangeProp, onNodeDoubleClick, onEdgeDoubleClick, onSetUpdateNodeFunction, onSetDeleteNodesFunction, onDeleteRequest, onRecentNodesChange }) {
-  const [nodes, setNodes, onNodesChangeInternal] = useNodesState(Array.isArray(initialNodes) ? initialNodes : []);
-  const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(Array.isArray(initialEdges) ? initialEdges : []);
-  const [selectedNodeForDescription, setSelectedNodeForDescription] = useState(null);
+function NewDiagramModal({ isOpen, onClose, onDiagramCreated, initialNodes = null, initialEdges = null }) {
+  const navigate = useNavigate();
   const toast = useToast();
-  const reactFlowWrapper = useRef(null);
-  const { screenToFlowPosition } = useReactFlow();
-  const { recentNodes, addRecentNode } = useRecentNodes();
-  const hoverTimeoutRef = useRef(null);
-  const isDraggingRef = useRef(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importedData, setImportedData] = useState(null);
 
   /**
-   * Manages node changes by detecting drag events.
-   * @param {Array} changes - Array of changes applied to nodes
+   * Handles changes in form input fields.
+   * Updates the form state and clears errors for the modified field.
+   *
+   * @param {Event} e - Input change event
    */
-  const handleNodesChange = useCallback((changes) => {
-    const isDragging = changes.some(change => 
-      change.type === 'position' &amp;&amp; change.dragging === true
-    );
-    
-    if (isDragging) {
-      isDraggingRef.current = true;
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-        hoverTimeoutRef.current = null;
-      }
-      setSelectedNodeForDescription(null);
-    } else if (changes.some(change => change.type === 'position' &amp;&amp; change.dragging === false)) {
-      isDraggingRef.current = false;
-    }
-    
-    onNodesChangeInternal(changes);
-  }, [onNodesChangeInternal]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-  useEffect(() => {
-    if (onRecentNodesChange) {
-      onRecentNodesChange(recentNodes);
-    }
-  }, [recentNodes, onRecentNodesChange]);
-
-  /**
-   * Updates data for a specific node.
-   * @param {Object} updatedNode - Node with updated data
-   */
-  const updateNode = useCallback((updatedNode) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id === updatedNode.id) {
-          return {
-            ...updatedNode,
-            data: { ...updatedNode.data },
-          };
-        }
-        return node;
-      })
-    );
-  }, [setNodes]);
-
-  /**
-   * Deletes one or multiple nodes and their associated connections.
-   * @param {Array&lt;string>} nodeIdsToDelete - Array of node IDs to delete
-   */
-  const deleteNodes = useCallback((nodeIdsToDelete) => {
-    setNodes((nds) => nds.filter((node) => !nodeIdsToDelete.includes(node.id)));
-    setEdges((eds) =>
-      eds.filter((edge) =>
-        !nodeIdsToDelete.includes(edge.source) &amp;&amp; !nodeIdsToDelete.includes(edge.target)
-      )
-    );
-  }, [setNodes, setEdges]);
-
-  useEffect(() => {
-    if (onSetUpdateNodeFunction) {
-      onSetUpdateNodeFunction(updateNode);
-    }
-  }, [onSetUpdateNodeFunction, updateNode]);
-
-  useEffect(() => {
-    if (onSetDeleteNodesFunction) {
-      onSetDeleteNodesFunction(deleteNodes);
-    }
-  }, [onSetDeleteNodesFunction, deleteNodes]);
-
-  const hasLocalChangesRef = useRef(false);
-  const isInitialLoadRef = useRef(true);
-
-  const prevInitialNodesRef = useRef();
-  
-  useEffect(() => {
-    if (!Array.isArray(initialNodes)) return;
-    
-    if (isInitialLoadRef.current &amp;&amp; initialNodes.length > 0) {
-      const nodesWithStyle = initialNodes.map(node => ({
-        ...node,
-        style: node.style || {}
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
       }));
-      setNodes(nodesWithStyle);
-      prevInitialNodesRef.current = initialNodes;
-      isInitialLoadRef.current = false;
-      return;
     }
-    
-    if (prevInitialNodesRef.current === initialNodes) {
-      return;
-    }
-    
-    if (initialNodes.length !== nodes.length) {
-      const nodesWithStyle = initialNodes.map(node => ({
-        ...node,
-        style: node.style || {}
-      }));
-      setNodes(nodesWithStyle);
-      prevInitialNodesRef.current = initialNodes;
-    }
-  }, [initialNodes]);
-
-  const prevInitialEdgesRef = useRef();
-  
-  useEffect(() => {
-    if (!Array.isArray(initialEdges)) return;
-    
-    if (isInitialLoadRef.current &amp;&amp; initialEdges.length > 0) {
-      setEdges(initialEdges);
-      prevInitialEdgesRef.current = initialEdges;
-      return;
-    }
-    
-    if (prevInitialEdgesRef.current === initialEdges) {
-      return;
-    }
-    
-    const hasRealChanges = initialEdges.length !== edges.length;
-    
-    if (hasRealChanges) {
-      setEdges(initialEdges);
-      prevInitialEdgesRef.current = initialEdges;
-    }
-  }, [initialEdges]);
-
-
-  useEffect(() => {
-    if (onNodesChangeProp) {
-      onNodesChangeProp(nodes);
-    }
-  }, [nodes, onNodesChangeProp]);
-
-  useEffect(() => {
-    if (onEdgesChangeProp) {
-      onEdgesChangeProp(edges);
-    }
-  }, [edges, onEdgesChangeProp]);
+  };
 
   /**
-   * Manages creation of new connections between nodes.
-   * @param {Object} params - Connection parameters (source, target, handles)
+   * Validates form fields before submission.
+   * Checks that the title is present and has at least 3 characters.
+   *
+   * @returns {boolean} true if form is valid, false otherwise
    */
-  const onConnect = useCallback(
-    (params) => {
-      setEdges((eds) => {
-        const { source, target, sourceHandle, targetHandle } = params || {};
+  const validateForm = () => {
+    const newErrors = {};
 
-        if (!source || !target) {
-          toast.error('Conexión inválida');
-          return eds;
-        }
+    if (!formData.title.trim()) {
+      newErrors.title = 'El título es requerido';
+    } else if (formData.title.trim().length &lt; 3) {
+      newErrors.title = 'El título debe tener al menos 3 caracteres';
+    }
 
-        if (source === target) {
-          toast.warning('No puedes conectar un nodo a sí mismo');
-          return eds;
-        }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-        const duplicateExists = eds.some(
-          (e) => 
-            (e.source === source &amp;&amp; e.target === target) ||
-            (e.source === target &amp;&amp; e.target === source)
-        );
+  /**
+   * Handles importing data from a JSON file.
+   * Stores imported data and pre-fills the title if available.
+   *
+   * @param {Object} data - Diagram data imported from JSON
+   * @param {Array} data.nodes - Diagram nodes
+   * @param {Array} data.edges - Diagram connections
+   * @param {Object} data.metadata - Diagram metadata
+   */
+  const handleImport = (data) => {
+    setImportedData(data);
+    setIsImportModalOpen(false);
 
-        if (duplicateExists) {
-          toast.info('La conexión ya existe');
-          return eds;
-        }
+    if (!formData.title &amp;&amp; data.metadata?.title) {
+      setFormData(prev => ({
+        ...prev,
+        title: data.metadata.title
+      }));
+    }
 
-        return addEdge(params, eds);
+    toast.success('Datos importados. Completa el formulario para crear el diagrama.');
+  };
+
+  /**
+   * Handles form submission to create a new diagram.
+   * Validates data, creates the diagram on the backend, registers activity,
+   * and redirects to the new diagram editor.
+   *
+   * @param {Event} e - Form submission event
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const nodesToUse = importedData?.nodes || initialNodes || [];
+      const edgesToUse = importedData?.edges || initialEdges || [];
+
+      const response = await createDiagram({
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        nodes: nodesToUse,
+        edges: edgesToUse,
       });
-    },
-    [setEdges, toast]
-  );
 
-  /**
-   * Allows dragging over the canvas.
-   * @param {DragEvent} event - Drag event
-   */
-  const onDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
-
-  /**
-   * Handles the action of dropping a node on the canvas.
-   * @param {DragEvent} event - Drop event
-   */
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
-
-      const nodeDataString = event.dataTransfer.getData('application/reactflow');
-
-      if (!nodeDataString) {
-        console.log('No data in drop');
-        return;
+      if (response.diagram) {
+        registerActivity(
+          ACTIVITY_TYPES.CREATE,
+          response.diagram.title,
+          response.diagram.id
+        );
       }
 
-      try {
-        const nodeData = JSON.parse(nodeDataString);
-        console.log('Dropped node data:', nodeData);
+      toast.success('¡Diagrama creado exitosamente!');
 
-        const position = screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
-        });
-
-        console.log('Calculated position:', position);
-
-        const newNodeId = `${nodeData.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-
-        const newNode = {
-          id: newNodeId,
-          type: nodeData.type,
-          position,
-          data: {
-            title: nodeData.label || 'Nuevo nodo',
-            icon: '⚡',
-            description: nodeData.description || '',
-          },
-        };
-
-        console.log('New node to create:', newNode);
-
-        setNodes((nds) => {
-          console.log('Current nodes:', nds);
-          const updated = [...nds, newNode];
-          console.log('Updated nodes:', updated);
-          return updated;
-        });
-
-        addRecentNode(nodeData);
-
-        toast.success(`Nodo "${nodeData.label}" agregado al canvas`);
-      } catch (error) {
-        console.error('Error processing drop:', error);
-        toast.error('Error al agregar el nodo');
+      if (onDiagramCreated) {
+        onDiagramCreated(response.diagram);
       }
-    },
-    [screenToFlowPosition, setNodes, toast, addRecentNode]
-  );
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Delete' || event.key === 'Supr') {
-        const selectedNodes = nodes.filter((node) => node.selected);
+      handleClose();
 
-        if (selectedNodes.length > 0 &amp;&amp; onDeleteRequest) {
-          event.preventDefault();
-          onDeleteRequest(selectedNodes);
-        }
+      if (response.diagram &amp;&amp; response.diagram.id) {
+        navigate(`/editor/${response.diagram.id}`);
       }
-    };
+    } catch (error) {
+      console.error('Error creating diagram:', error);
 
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [nodes, onDeleteRequest]);
-
-  /**
-   * Handles clicking on a node to show its description.
-   * @param {Event} _event - Click event (unused)
-   * @param {Object} node - Clicked node
-   */
-  const handleNodeClick = useCallback((_event, node) => {
-    if (node.data?.description &amp;&amp; node.data.description.trim() !== '') {
-      const nodeElement = document.querySelector(`[data-id="${node.id}"]`);
-      if (nodeElement) {
-        const rect = nodeElement.getBoundingClientRect();
-        setSelectedNodeForDescription({
-          node,
-          nodePosition: rect,
+      if (error.response?.status === 409) {
+        setErrors({
+          title: 'Ya existe un diagrama con ese título',
         });
+        toast.error('Ya existe un diagrama con ese título');
+      } else if (error.response?.status === 400) {
+        const errorMessage = error.response?.data?.error || 'Datos inválidos';
+        setErrors({
+          general: errorMessage,
+        });
+        toast.error(errorMessage);
       } else {
-        setSelectedNodeForDescription({
-          node,
-          nodePosition: null,
+        const errorMessage = 'Error al crear el diagrama. Por favor, intenta de nuevo.';
+        setErrors({
+          general: errorMessage,
         });
+        toast.error(errorMessage);
       }
-    } else {
-      setSelectedNodeForDescription(null);
+    } finally {
+      setIsSubmitting(false);
     }
-  }, []);
+  };
 
   /**
-   * Handles hovering over a node on desktop devices.
-   * @param {Event} _event - Mouse event (unused)
-   * @param {Object} node - Node being hovered over
+   * Closes the modal and resets the form to its initial state.
+   * Clears all fields, errors, and imported data.
    */
-  const handleNodeMouseEnter = useCallback((_event, node) => {
-    if (isDraggingRef.current) return;
-    
-    const hasHover = window.matchMedia('(hover: hover)').matches;
-    
-    if (!hasHover) return;
-    
-    if (node.data?.description &amp;&amp; node.data.description.trim() !== '') {
-      const nodeElement = document.querySelector(`[data-id="${node.id}"]`);
-      if (nodeElement) {
-        const rect = nodeElement.getBoundingClientRect();
-        hoverTimeoutRef.current = setTimeout(() => {
-          setSelectedNodeForDescription({
-            node,
-            nodePosition: rect,
-          });
-        }, 800);
-      }
-    }
-  }, []);
+  const handleClose = () => {
+    setFormData({
+      title: '',
+      description: '',
+    });
+    setErrors({});
+    setImportedData(null);
+    onClose();
+  };
 
   /**
-   * Handles exiting hover from a node.
+   * Handles keyboard event to close the modal with Escape key.
+   *
+   * @param {KeyboardEvent} e - Keyboard event
    */
-  const handleNodeMouseLeave = useCallback(() => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      handleClose();
     }
-    setSelectedNodeForDescription(null);
-  }, []);
+  };
+
+  if (!isOpen) return null;
 
   return (
-    &lt;section className="flowmap">
-      &lt;section className="flowmap__wrap" ref={reactFlowWrapper}>
-        &lt;ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={handleNodesChange}
-          onEdgesChange={onEdgesChangeInternal}
-          onConnect={onConnect}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-          onNodeDoubleClick={onNodeDoubleClick}
-          onEdgeDoubleClick={onEdgeDoubleClick}
-          onNodeClick={handleNodeClick}
-          onNodeMouseEnter={handleNodeMouseEnter}
-          onNodeMouseLeave={handleNodeMouseLeave}
-          nodeTypes={tiposNodos}
-          edgeTypes={tiposEdges}
-          connectionRadius={30}
-          nodesDraggable={true}
-          nodesConnectable={true}
-          elementsSelectable={true}
-          fitView
-          attributionPosition="bottom-left"
-          zoomOnScroll={false}
-          panOnScroll={false}
-          preventScrolling={false}
-        >
-          &lt;MiniMap 
-            nodeColor={(node) => {
-              try {
-                const key = `--node-${node.type}`;
-                const v = getComputedStyle(document.documentElement).getPropertyValue(key).trim();
-                return v || getComputedStyle(document.documentElement).getPropertyValue('--node-default').trim() || '#eee';
-              } catch (e) {
-                return '#eee';
-              }
-            }}
-            nodeStrokeWidth={2}
-          />
-          &lt;Controls />
-          &lt;Background />
-        &lt;/ReactFlow>
-      &lt;/section>
+    &lt;section
+      className="modal-overlay"
+      onClick={handleClose}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      &lt;article
+        className="modal"
+        onClick={(e) => e.stopPropagation()}
+      >
+        &lt;header className="modal__header">
+          &lt;h2 id="modal-title" className="modal__title">
+            {initialNodes ? 'Crear diagrama desde plantilla' : 'Crear nuevo diagrama'}
+          &lt;/h2>
+          &lt;button
+            type="button"
+            className="modal__close-button"
+            onClick={handleClose}
+            aria-label="Cerrar modal"
+          >
+            &lt;FiX />
+          &lt;/button>
+        &lt;/header>
 
-      &lt;NodeDescriptionPopup
-        isOpen={!!selectedNodeForDescription}
-        onClose={() => setSelectedNodeForDescription(null)}
-        node={selectedNodeForDescription?.node}
-        nodePosition={selectedNodeForDescription?.nodePosition}
+        {importedData &amp;&amp; (
+          &lt;aside className="modal__imported-badge">
+            &lt;FiUpload />
+            &lt;span>
+              Datos importados: {importedData.nodes?.length || 0} nodos y {importedData.edges?.length || 0} conexiones
+            &lt;/span>
+          &lt;/aside>
+        )}
+
+        &lt;form onSubmit={handleSubmit} className="modal__form">
+          {errors.general &amp;&amp; (
+            &lt;aside className="modal__error-general">
+              {errors.general}
+            &lt;/aside>
+          )}
+
+          &lt;fieldset className="modal__form-group">
+            &lt;label htmlFor="title" className="modal__label">
+              &lt;FiFileText className="modal__label-icon" />
+              Título del diagrama
+              &lt;span className="modal__required">*&lt;/span>
+            &lt;/label>
+            &lt;input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className={`modal__input ${errors.title ? 'modal__input--error' : ''}`}
+              placeholder="Ej: Flujo de proceso de ventas"
+              maxLength={100}
+              autoFocus
+            />
+            {errors.title &amp;&amp; (
+              &lt;span className="modal__error">{errors.title}&lt;/span>
+            )}
+          &lt;/fieldset>
+
+          &lt;fieldset className="modal__form-group">
+            &lt;label htmlFor="description" className="modal__label">
+              &lt;FiAlignLeft className="modal__label-icon" />
+              Descripción (opcional)
+            &lt;/label>
+            &lt;textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="modal__textarea"
+              placeholder="Describe brevemente de qué trata este diagrama..."
+              rows={4}
+              maxLength={500}
+            />
+            &lt;span className="modal__char-count">
+              {formData.description.length}/500
+            &lt;/span>
+          &lt;/fieldset>
+
+          {!initialNodes &amp;&amp; !importedData &amp;&amp; (
+            &lt;aside className="modal__import-option">
+              &lt;p className="modal__label">
+                ¿Quieres importar un diagrama mediante un JSON?
+              &lt;/p>
+              &lt;button
+                type="button"
+                className="modal__import-button"
+                onClick={() => setIsImportModalOpen(true)}
+              >
+                &lt;FiUpload />
+                Importar desde JSON
+              &lt;/button>
+            &lt;/aside>
+          )}
+
+          &lt;nav className="modal__actions">
+            &lt;button
+              type="button"
+              className="modal__button modal__button--secondary"
+              onClick={handleClose}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            &lt;/button>
+            &lt;button
+              type="submit"
+              className="modal__button modal__button--primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Creando...' : 'Crear diagrama'}
+            &lt;/button>
+          &lt;/nav>
+        &lt;/form>
+      &lt;/article>
+
+      &lt;ImportJSON
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImport}
+        toast={toast}
       />
     &lt;/section>
   );
-
 }
 
-
-
-
-export default FlowMap;
-
+export default NewDiagramModal;
 </code></pre>
         </article>
     </section>
@@ -500,7 +378,7 @@ export default FlowMap;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

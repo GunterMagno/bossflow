@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/Register/Register.jsx - Documentation</title>
+    <title>frontend/src/components/import-json/ImportJSON.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/Register/Register.jsx</h1>
+    <h1 class="page-title">frontend/src/components/import-json/ImportJSON.jsx</h1>
     
 
     
@@ -39,317 +39,281 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
-import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import './Register.css';
+            <pre class="prettyprint source linenums"><code>import { useState, useRef } from 'react';
+import { FiUpload, FiX, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
+import './ImportJSON.css';
+import { validateJSONStructure, isValidJSONFile, COMPATIBLE_VERSIONS } from '../../utils/jsonValidator';
 
 /**
- * Registration page component for new users.
- * Provides a complete form with validation to create a new account.
- * Includes fields for username, email, password and terms acceptance.
- *
- * @returns {JSX.Element} Registration page element
+ * Component to import diagrams from JSON files with validation and preview
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Controls the visibility of the modal
+ * @param {Function} props.onClose - Callback executed when closing the modal
+ * @param {Function} props.onImport - Callback executed when importing the diagram
+ * @param {Object} props.toast - Object to display notifications
+ * @returns {JSX.Element|null} Import modal or null if closed
  */
-function Register() {
-  const navigate = useNavigate();
-  const {
-    register: registerUser,
-    loading: authLoading,
-    isAuthenticated,
-  } = useAuth();
+function ImportJSON({ 
+  isOpen, 
+  onClose, 
+  onImport,
+  toast 
+}) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
+  const [validationError, setValidationError] = useState(null);
+  const [importFile, setImportFile] = useState(null);
+  const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    document.title = 'Registrarse | BossFlow';
-
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const [formData, setFormData] = useState({
-    nombreUsuario: '',
-    correo: '',
-    contrasena: '',
-    confirmarContrasena: '',
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const [loading, setLoading] = useState(false);
-
-  const [acceptTerms, setAcceptTerms] = useState(false);
+  if (!isOpen) return null;
 
   /**
-   * Handles changes in form fields.
-   * Updates form state and clears the error of the modified field.
-   *
-   * @param {Event} e - Input change event
+   * Closes the modal and resets all component state
    */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+  const handleClose = () => {
+    setPreviewData(null);
+    setValidationError(null);
+    setImportFile(null);
+    setIsProcessing(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
+    onClose();
   };
 
   /**
-   * Validates all registration form fields.
-   * Checks username, email, passwords and terms acceptance.
-   *
-   * @returns {Object} Object with validation errors found
+   * Manages the selection and validation of the JSON file
+   * @param {Event} event - File selection event
    */
-  const validateForm = () => {
-    const newErrors = {};
+  const handleFileSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    if (!formData.nombreUsuario) {
-      newErrors.nombreUsuario =
-        'Es obligatorio introducir un nombre de usuario.';
-    } else if (formData.nombreUsuario.length &lt; 3) {
-      newErrors.nombreUsuario =
-        'El nombre de usuario debe tener al menos 3 caracteres.';
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.nombreUsuario)) {
-      newErrors.nombreUsuario =
-        'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos.';
-    }
-
-    if (!formData.correo) {
-      newErrors.correo = 'Es obligatorio introducir un correo electrónico.';
-    } else if (
-      !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        formData.correo
-      )
-    ) {
-      newErrors.correo = 'El correo electrónico no es válido.';
-    }
-
-    if (!formData.contrasena) {
-      newErrors.contrasena = 'Es obligatorio introducir una contraseña.';
-    } else if (formData.contrasena.length &lt; 8) {
-      newErrors.contrasena =
-        'La contraseña debe tener al menos 8 caracteres.';
-    }
-
-    if (!formData.confirmarContrasena) {
-      newErrors.confirmarContrasena =
-        'Es obligatorio confirmar la contraseña.';
-    } else if (
-      formData.contrasena !== formData.confirmarContrasena
-    ) {
-      newErrors.confirmarContrasena = 'Las contraseñas no coinciden.';
-    }
-
-    if (!acceptTerms) {
-      newErrors.terminos = 'Debes aceptar los Términos de Uso y la Política de Privacidad.';
-    }
-
-    return newErrors;
-  };
-
-  /**
-   * Handles registration form submission.
-   * Validates data, registers the user and redirects to dashboard on success.
-   *
-   * @param {Event} e - Form submit event
-   */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (!isValidJSONFile(file.name)) {
+      setValidationError('Por favor, selecciona un archivo JSON válido (.json)');
+      setPreviewData(null);
+      setImportFile(null);
       return;
     }
 
-    try {
-      setErrors({});
-      setLoading(true);
+    setImportFile(file);
+    setValidationError(null);
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target.result;
+        const data = JSON.parse(content);
+        
+        const validation = validateJSONStructure(data);
+        
+        if (!validation.valid) {
+          setValidationError(validation.errors.join(', '));
+          setPreviewData(null);
+          return;
+        }
 
-      const result = await registerUser(
-        formData.nombreUsuario,
-        formData.correo,
-        formData.contrasena
-      );
-
-      if (result.success) {
-        navigate('/dashboard');
-      } else {
-        setErrors({ submit: result.error });
+        setPreviewData(data);
+        setValidationError(null);
+      } catch (error) {
+        setValidationError('Error al leer el archivo: ' + error.message);
+        setPreviewData(null);
       }
+    };
+    
+    reader.onerror = () => {
+      setValidationError('Error al leer el archivo');
+      setPreviewData(null);
+    };
+    
+    reader.readAsText(file);
+  };
+
+  /**
+   * Confirms and executes the import of the validated diagram
+   */
+  const handleConfirmImport = () => {
+    if (!previewData) return;
+
+    setIsProcessing(true);
+    
+    try {
+      if (!COMPATIBLE_VERSIONS.includes(previewData.version)) {
+        throw new Error(`Versión incompatible: ${previewData.version}`);
+      }
+
+      const { nodes: importedNodes, edges: importedEdges } = previewData.diagram;
+
+      if (!importedNodes || importedNodes.length === 0) {
+        throw new Error('El archivo no contiene nodos para importar');
+      }
+
+      onImport({
+        nodes: importedNodes,
+        edges: importedEdges || [],
+        metadata: previewData.metadata
+      });
+
+      toast.success(`Diagrama "${previewData.metadata.title}" importado correctamente`);
+      handleClose();
     } catch (error) {
-      setErrors({ submit: 'Error al registrarse. Inténtalo de nuevo.' });
+      console.error('Error al importar JSON:', error);
+      toast.error('Error al importar el diagrama: ' + error.message);
     } finally {
-      setLoading(false);
+      setIsProcessing(false);
+    }
+  };
+
+  /**
+   * Cancels the import and clears the preview state
+   */
+  const handleCancelImport = () => {
+    setPreviewData(null);
+    setValidationError(null);
+    setImportFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
   return (
-    &lt;main className="register">
-      &lt;article className="register__contenedor">
-        &lt;section className="register__encabezado">
-          &lt;h3 className="register__titulo">Crear cuenta&lt;/h3>
-          &lt;p className="register__subtitulo">Regístrate para comenzar&lt;/p>
-        &lt;/section>
+    &lt;section className="import-json__overlay" onClick={handleClose}>
+      &lt;article className="import-json__content" onClick={(e) => e.stopPropagation()}>
+        &lt;header className="import-json__header">
+          &lt;h2 className="import-json__title">
+            &lt;FiUpload />
+            Importar Diagrama desde JSON
+          &lt;/h2>
+          &lt;button
+            className="import-json__close"
+            onClick={handleClose}
+            disabled={isProcessing}
+            title="Cerrar"
+          >
+            &lt;FiX />
+          &lt;/button>
+        &lt;/header>
 
-        &lt;form onSubmit={handleSubmit} className="register__formulario">
-          {errors.submit &amp;&amp; (
-            &lt;section className="register__error" role="alert">
-              {errors.submit}
-            &lt;/section>
+        &lt;section className="import-json__body">
+          {!previewData ? (
+            &lt;>
+              &lt;p className="import-json__description">
+                Selecciona un archivo JSON para importar el diagrama. El archivo debe estar en formato BossFlow válido.
+              &lt;/p>
+
+              &lt;section className="import-json__file-input">
+                &lt;input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={handleFileSelect}
+                  id="json-file-input"
+                  className="import-json__file-input-hidden"
+                />
+                &lt;label htmlFor="json-file-input" className="import-json__file-label">
+                  &lt;FiUpload />
+                  {importFile ? importFile.name : 'Seleccionar archivo JSON'}
+                &lt;/label>
+              &lt;/section>
+
+              {validationError &amp;&amp; (
+                &lt;section className="import-json__error">
+                  &lt;FiAlertCircle />
+                  &lt;article>
+                    &lt;strong>Error de validación:&lt;/strong>
+                    &lt;p>{validationError}&lt;/p>
+                  &lt;/article>
+                &lt;/section>
+              )}
+
+              &lt;section className="import-json__info">
+                &lt;FiAlertCircle />
+                &lt;article>
+                  &lt;p>&lt;strong>Importante:&lt;/strong> Al importar un diagrama, se reemplazará el contenido actual del canvas.&lt;/p>
+                  &lt;p className="import-json__info-detail">
+                    Asegúrate de guardar tu trabajo antes de importar.
+                  &lt;/p>
+                &lt;/article>
+              &lt;/section>
+
+              &lt;nav className="import-json__actions">
+                &lt;button
+                  className="import-json__button import-json__button--secondary"
+                  onClick={handleClose}
+                >
+                  Cancelar
+                &lt;/button>
+              &lt;/nav>
+            &lt;/>
+          ) : (
+            &lt;>
+              &lt;section className="import-json__preview">
+                &lt;header className="import-json__preview-header">
+                  &lt;FiCheckCircle className="import-json__preview-icon" />
+                  &lt;h3>Vista previa del diagrama&lt;/h3>
+                &lt;/header>
+                
+                &lt;section className="import-json__preview-content">
+                  &lt;article className="import-json__preview-item">
+                    &lt;strong>Título:&lt;/strong>
+                    &lt;span>{previewData.metadata.title}&lt;/span>
+                  &lt;/article>
+                  &lt;article className="import-json__preview-item">
+                    &lt;strong>Exportado:&lt;/strong>
+                    &lt;span>{new Date(previewData.metadata.exportedAt).toLocaleString()}&lt;/span>
+                  &lt;/article>
+                  &lt;article className="import-json__preview-item">
+                    &lt;strong>Versión:&lt;/strong>
+                    &lt;span>{previewData.version}&lt;/span>
+                  &lt;/article>
+                  &lt;article className="import-json__preview-item">
+                    &lt;strong>Nodos:&lt;/strong>
+                    &lt;span>{previewData.metadata.nodeCount}&lt;/span>
+                  &lt;/article>
+                  &lt;article className="import-json__preview-item">
+                    &lt;strong>Conexiones:&lt;/strong>
+                    &lt;span>{previewData.metadata.edgeCount}&lt;/span>
+                  &lt;/article>
+                &lt;/section>
+              &lt;/section>
+
+              &lt;aside className="import-json__warning import-json__warning--danger">
+                &lt;FiAlertCircle />
+                &lt;p>&lt;strong>¿Continuar con la importación?&lt;/strong> El contenido actual del canvas será reemplazado.&lt;/p>
+              &lt;/aside>
+
+              &lt;nav className="import-json__actions">
+                &lt;button
+                  className="import-json__button import-json__button--secondary"
+                  onClick={handleCancelImport}
+                  disabled={isProcessing}
+                >
+                  Cancelar
+                &lt;/button>
+                &lt;button
+                  className="import-json__button import-json__button--primary"
+                  onClick={handleConfirmImport}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? 'Importando...' : 'Confirmar importación'}
+                &lt;/button>
+              &lt;/nav>
+            &lt;/>
           )}
 
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="nombreUsuario" className="register__etiqueta">
-              Nombre de Usuario
-            &lt;/label>
-            &lt;input
-              type="text"
-              id="nombreUsuario"
-              name="nombreUsuario"
-              value={formData.nombreUsuario}
-              onChange={handleChange}
-              placeholder="usuario123"
-              className={`register__input ${errors.nombreUsuario ? 'register__input--error' : ''}`}
-              disabled={loading}
-            />
-            {errors.nombreUsuario &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.nombreUsuario}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="correo" className="register__etiqueta">
-              Correo Electrónico
-            &lt;/label>
-            &lt;input
-              type="text"
-              id="correo"
-              name="correo"
-              value={formData.correo}
-              onChange={handleChange}
-              placeholder="tu@ejemplo.com"
-              className={`register__input ${errors.correo ? 'register__input--error' : ''}`}
-              disabled={loading}
-            />
-            {errors.correo &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.correo}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="contrasena" className="register__etiqueta">
-              Contraseña
-            &lt;/label>
-            &lt;input
-              type="password"
-              id="contrasena"
-              name="contrasena"
-              value={formData.contrasena}
-              onChange={handleChange}
-              placeholder="********"
-              className={`register__input ${errors.contrasena ? 'register__input--error' : ''}`}
-              disabled={loading}
-            />
-            {errors.contrasena &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.contrasena}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="register__campo">
-            &lt;label htmlFor="confirmarContrasena" className="register__etiqueta">
-              Confirmar Contraseña
-            &lt;/label>
-            &lt;input
-              type="password"
-              id="confirmarContrasena"
-              name="confirmarContrasena"
-              value={formData.confirmarContrasena}
-              onChange={handleChange}
-              placeholder="********"
-              className={`register__input ${errors.confirmarContrasena ? 'register__input--error' : ''}`}
-              disabled={loading}
-            />
-            {errors.confirmarContrasena &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.confirmarContrasena}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="register__terminos">
-            &lt;label className="register__checkbox">
-              &lt;input
-                type="checkbox"
-                id="terminos"
-                className="register__checkbox-input"
-                checked={acceptTerms}
-                onChange={(e) => {
-                  setAcceptTerms(e.target.checked);
-                  if (errors.terminos) {
-                    setErrors((prev) => ({ ...prev, terminos: '' }));
-                  }
-                }}
-                disabled={loading}
-              />
-              &lt;span className="register__checkbox-texto">
-                Acepto los{' '}
-                &lt;Link to="/legal/terminos" className="register__enlace-terminos" target="_blank">
-                  Términos de Uso
-                &lt;/Link>{' '}
-                y la{' '}
-                &lt;Link to="/legal/privacidad" className="register__enlace-terminos" target="_blank">
-                  Política de Privacidad
-                &lt;/Link>
-              &lt;/span>
-            &lt;/label>
-            {errors.terminos &amp;&amp; (
-              &lt;span className="register__mensaje-error" role="alert">
-                {errors.terminos}
-              &lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;button type="submit" className="register__boton" disabled={loading}>
-            {loading ? (
-              &lt;>
-                &lt;span className="register__spinner">&lt;/span>
-                Registrando...
-              &lt;/>
-            ) : (
-              'Crear cuenta'
-            )}
-          &lt;/button>
-        &lt;/form>
-
-        &lt;section className="register__pie">
-          &lt;p className="register__pie-texto">
-            ¿Ya tienes una cuenta?{' '}
-            &lt;Link to="/login" className="register__enlace-login">
-              Inicia sesión
-            &lt;/Link>
-          &lt;/p>
+          {isProcessing &amp;&amp; (
+            &lt;aside className="import-json__loading">
+              &lt;figure className="import-json__spinner">&lt;/figure>
+              &lt;p>Importando diagrama...&lt;/p>
+            &lt;/aside>
+          )}
         &lt;/section>
       &lt;/article>
-    &lt;/main>
+    &lt;/section>
   );
 }
 
-export default Register;
+export default ImportJSON;
 </code></pre>
         </article>
     </section>
@@ -362,7 +326,7 @@ export default Register;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

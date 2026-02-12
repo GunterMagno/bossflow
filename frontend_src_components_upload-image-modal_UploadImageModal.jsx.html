@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/DiagramCard/DiagramCard.jsx - Documentation</title>
+    <title>frontend/src/components/upload-image-modal/UploadImageModal.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/DiagramCard/DiagramCard.jsx</h1>
+    <h1 class="page-title">frontend/src/components/upload-image-modal/UploadImageModal.jsx</h1>
     
 
     
@@ -39,130 +39,332 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { Link } from 'react-router-dom';
-import { FiFileText, FiClock, FiTrash2, FiEdit2 } from 'react-icons/fi';
-import './DiagramCard.css';
+            <pre class="prettyprint source linenums"><code>import { useState, useRef } from 'react';
+import './UploadImageModal.css';
+import { FiUploadCloud } from 'react-icons/fi';
 
 /**
- * Tarjeta que muestra la información resumida de un diagrama
- * @param {Object} props - Propiedades del componente
- * @param {Object} props.diagram - Objeto con los datos del diagrama
- * @param {Function} props.onDelete - Callback ejecutado al eliminar el diagrama
- * @param {Function} props.onEdit - Callback ejecutado al editar el diagrama
- * @returns {JSX.Element} Interactive card with diagram information
+ * Modal component to upload images from file or URL.
+ * Allows drag and drop files, select from explorer or enter a URL.
+ * Validates image type and size before uploading to backend.
+ *
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Indicates if the modal is open
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Function} props.onImageUploaded - Callback function executed when an image is successfully uploaded
+ * @param {string} props.title - Modal title
+ * @returns {JSX.Element|null} Modal element or null if closed
  */
-function DiagramCard({ diagram, onDelete, onEdit }) {
-  /**
-   * Formatea una fecha en formato relativo (hace X minutos/horas/días)
-   * @param {string|Date} date - Fecha a formatear
-   * @returns {string} Fecha formateada en formato relativo o fecha absoluta
-   */
-  const formatRelativeDate = (date) => {
-    const now = new Date();
-    const diagramDate = new Date(date);
-    const diffMs = now - diagramDate;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+const UploadImageModal = ({ isOpen, onClose, onImageUploaded, title = "Subir imagen" }) => {
+  const [imageUrl, setImageUrl] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [preview, setPreview] = useState(null);
+  const fileInputRef = useRef(null);
 
-    if (diffMins &lt; 60) {
-      return `Hace ${diffMins} ${diffMins === 1 ? 'minuto' : 'minutos'}`;
-    } else if (diffHours &lt; 24) {
-      return `Hace ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
-    } else if (diffDays &lt; 7) {
-      return `Hace ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`;
-    } else {
-      return diagramDate.toLocaleDateString('es-ES', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
+  if (!isOpen) return null;
+
+  /**
+   * Closes the modal and resets all states to their initial values.
+   * Clears URL, errors, preview and executes the close callback.
+   */
+  const handleClose = () => {
+    setImageUrl('');
+    setError('');
+    setPreview(null);
+    onClose();
+  };
+
+  /**
+   * Validates the type and size of an image file.
+   * Verifies it is JPEG, PNG, GIF or WEBP and does not exceed 5MB.
+   *
+   * @param {File} file - File to validate
+   * @returns {boolean} true if the file is valid, false otherwise
+   */
+  const validateFile = (file) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const maxSize = 5 * 1024 * 1024;
+
+    if (!validTypes.includes(file.type)) {
+      setError('Tipo de archivo no válido. Use: JPEG, PNG, GIF o WEBP');
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      setError('La imagen excede el tamaño máximo de 5MB');
+      return false;
+    }
+
+    setError('');
+    return true;
+  };
+
+  /**
+   * Uploads an image file to the backend.
+   * Converts the file to base64 and sends it to the server via a POST request.
+   *
+   * @param {File} file - Image file to upload
+   * @returns {Promise&lt;Object>} Promise that resolves with the uploaded image data
+   */
+  const uploadFileToBackend = async (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = async (e) => {
+        try {
+          const base64Data = e.target.result;
+          
+          const response = await fetch('/api/images/upload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              image: base64Data,
+              filename: file.name,
+              mimeType: file.type
+            })
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al subir imagen');
+          }
+
+          const data = await response.json();
+          resolve(data.image);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      reader.onerror = () => reject(new Error('Error al leer el archivo'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  /**
+   * Handles the selection of an image file.
+   * Validates the file, uploads it to the backend and executes the callback with the image data.
+   *
+   * @param {File} file - Selected image file
+   */
+  const handleFileSelect = async (file) => {
+    if (!validateFile(file)) return;
+
+    setIsUploading(true);
+    setError('');
+
+    try {
+      const imageData = await uploadFileToBackend(file);
+      const fullUrl = imageData.url;
+      setPreview(fullUrl);
+
+      onImageUploaded({
+        ...imageData,
+        url: fullUrl
       });
+      
+      handleClose();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   /**
-   * Gestiona el clic en el botón de eliminar
-   * @param {Event} e - Evento del clic
+   * Handles the file selection event from the input.
+   * Extracts the first selected file and processes it.
+   *
+   * @param {Event} e - File input change event
    */
-  const handleDeleteClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onDelete) {
-      onDelete(diagram);
+  const handleFileInput = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFileSelect(file);
     }
   };
 
   /**
-   * Gestiona el clic en el botón de editar
-   * @param {Event} e - Evento del clic
+   * Handles the event of dragging a file over the drop zone.
+   * Prevents default behavior and activates the dragging state.
+   *
+   * @param {DragEvent} e - Drag event
    */
-  const handleEditClick = (e) => {
+  const handleDragOver = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    if (onEdit) {
-      onEdit(diagram);
+    setIsDragging(true);
+  };
+
+  /**
+   * Handles the event of leaving the drop zone.
+   * Prevents default behavior and deactivates the dragging state.
+   *
+   * @param {DragEvent} e - Drag event
+   */
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  /**
+   * Handles the event of dropping a file in the designated zone.
+   * Prevents default behavior, deactivates the dragging state and processes the file.
+   *
+   * @param {DragEvent} e - Drop event
+   */
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  /**
+   * Handles the submission of an external image URL.
+   * Validates the URL with the backend and executes the callback if valid.
+   *
+   * @returns {Promise&lt;void>} Promise that resolves when validation completes
+   */
+  const handleUrlSubmit = async () => {
+    if (!imageUrl.trim()) {
+      setError('Por favor, ingrese una URL');
+      return;
+    }
+
+    setIsUploading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/images/validate-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ url: imageUrl })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al validar URL');
+      }
+
+      const data = await response.json();
+      setPreview(imageUrl);
+      
+      onImageUploaded(data.image);
+      handleClose();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
-    &lt;article className="diagram-card-wrapper">
-      &lt;Link to={`/editor/${diagram.id}`} className="diagram-card">
-        &lt;figure className="diagram-card__icon">
-          &lt;FiFileText />
-        &lt;/figure>
+    &lt;section className="upload-image-modal-overlay" onClick={handleClose}>
+      &lt;article className="upload-image-modal" onClick={(e) => e.stopPropagation()}>
+        &lt;header className="upload-image-modal-header">
+          &lt;h2>{title}&lt;/h2>
+          &lt;button className="close-button" onClick={handleClose}>
+            ✕
+          &lt;/button>
+        &lt;/header>
 
-        &lt;section className="diagram-card__content">
-          &lt;h3 className="diagram-card__title">{diagram.title}&lt;/h3>
-          {diagram.description &amp;&amp; (
-            &lt;p className="diagram-card__description">{diagram.description}&lt;/p>
+        &lt;section className="upload-image-modal-body">
+          {error &amp;&amp; (
+            &lt;aside className="upload-error">
+              {error}
+            &lt;/aside>
           )}
 
-          &lt;footer className="diagram-card__footer">
-            &lt;section className="diagram-card__info">
-              &lt;span className="diagram-card__date">
-                &lt;FiClock className="diagram-card__date-icon" />
-                {formatRelativeDate(diagram.updatedAt)}
-              &lt;/span>
+          &lt;section className="upload-url-section">
+            &lt;h3 className="section-title">Desde URL&lt;/h3>
+            &lt;label htmlFor="image-url-input">URL de la imagen:&lt;/label>
+            &lt;input
+              id="image-url-input"
+              type="text"
+              className="url-input"
+              placeholder="https://ejemplo.com/imagen.jpg"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' &amp;&amp; handleUrlSubmit()}
+            />
+            
+            {preview &amp;&amp; (
+              &lt;figure className="url-preview">
+                &lt;img src={preview} alt="Vista previa" />
+              &lt;/figure>
+            )}
 
-              &lt;section className="diagram-card__stats">
-                &lt;span className="diagram-card__stat">
-                  {(diagram.nodes ? diagram.nodes.length : 0)} nodos
-                &lt;/span>
-                &lt;span className="diagram-card__stat-separator">•&lt;/span>
-                &lt;span className="diagram-card__stat">
-                  {(diagram.edges ? diagram.edges.length : 0)} conexiones
-                &lt;/span>
+            &lt;button
+              className="url-submit-button"
+              onClick={handleUrlSubmit}
+              disabled={isUploading || !imageUrl.trim()}
+            >
+              {isUploading ? 'Validando...' : 'Usar esta imagen'}
+            &lt;/button>
+          &lt;/section>
+
+          &lt;section className="section-divider">
+
+          &lt;section className="upload-file-section">
+            &lt;h3 className="section-title">Desde archivo&lt;/h3>
+            &lt;section
+              className={`upload-drop-zone ${isDragging ? 'dragging' : ''}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              tabIndex={0}
+            >
+              &lt;input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleFileInput}
+                style={{ display: 'none' }}
+              />
+              
+              {isUploading ? (
+                &lt;aside className="upload-loading">
+                  &lt;figure className="spinner">&lt;/figure>
+                  &lt;p>Subiendo imagen...&lt;/p>
+                &lt;/aside>
+              ) : (
+                &lt;>
+                  &lt;FiUploadCloud className="upload-icon" />
+                  &lt;p className="upload-main-text">
+                    Arrastra una imagen aquí
+                  &lt;/p>
+                  &lt;button
+                    className="upload-browse-button"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Seleccionar archivo
+                  &lt;/button>
+                  &lt;p className="upload-info">
+                    Formatos: JPEG, PNG, GIF, WEBP (máx. 5MB)
+                  &lt;/p>
+                &lt;/>
+              )}
               &lt;/section>
             &lt;/section>
-          &lt;/footer>
+          &lt;/section>
         &lt;/section>
-      &lt;/Link>
-
-      &lt;nav className="diagram-card__actions">
-        &lt;button
-          className="diagram-card__action-button diagram-card__action-button--edit"
-          onClick={handleEditClick}
-          aria-label="Editar diagrama"
-          title="Editar diagrama"
-        >
-          &lt;FiEdit2 />
-        &lt;/button>
-
-        &lt;button
-          className="diagram-card__action-button diagram-card__action-button--delete"
-          onClick={handleDeleteClick}
-          aria-label="Eliminar diagrama"
-          title="Eliminar diagrama"
-        >
-          &lt;FiTrash2 />
-        &lt;/button>
-      &lt;/nav>
-    &lt;/article>
+      &lt;/article>
+    &lt;/section>
   );
-}
+};
 
-export default DiagramCard;
-</code></pre>
+export default UploadImageModal;</code></pre>
         </article>
     </section>
 
@@ -174,7 +376,7 @@ export default DiagramCard;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/NewDiagramModal/NewDiagramModal.jsx - Documentation</title>
+    <title>frontend/src/components/export-modal/ExportModal.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/NewDiagramModal/NewDiagramModal.jsx</h1>
+    <h1 class="page-title">frontend/src/components/export-modal/ExportModal.jsx</h1>
     
 
     
@@ -39,333 +39,88 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiX, FiFileText, FiAlignLeft, FiUpload } from 'react-icons/fi';
-import { createDiagram } from '../../services/diagramService';
-import { registerActivity, ACTIVITY_TYPES } from '../../services/activityService';
-import { useToast } from '../../context/ToastContext';
-import ImportJSON from '../ImportJSON/ImportJSON';
-import './NewDiagramModal.css';
+            <pre class="prettyprint source linenums"><code>import { FiDownload, FiX, FiImage, FiFile } from 'react-icons/fi';
+import './ExportModal.css';
 
 /**
- * Modal component for creating a new diagram.
- * Allows creating diagrams from scratch, from templates, or by importing JSON data.
- *
+ * Modal to export the diagram in different formats
  * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Whether the modal is open
- * @param {Function} props.onClose - Callback function to close the modal
- * @param {Function} props.onDiagramCreated - Callback function executed when a diagram is created
- * @param {Array|null} props.initialNodes - Initial nodes for creating from template
- * @param {Array|null} props.initialEdges - Initial connections for creating from template
- * @returns {JSX.Element|null} Modal element or null if closed
+ * @param {boolean} props.isOpen - Controls the visibility of the modal
+ * @param {Function} props.onClose - Callback executed when closing the modal
+ * @param {Function} props.onExportPNG - Callback to export as PNG image
+ * @param {Function} props.onExportJSON - Callback to export as JSON file
+ * @param {boolean} props.isExporting - Indicates if an export is in progress
+ * @returns {JSX.Element|null} Export modal or null if closed
  */
-function NewDiagramModal({ isOpen, onClose, onDiagramCreated, initialNodes = null, initialEdges = null }) {
-  const navigate = useNavigate();
-  const toast = useToast();
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-  });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [importedData, setImportedData] = useState(null);
-
-  /**
-   * Handles changes in form input fields.
-   * Updates the form state and clears errors for the modified field.
-   *
-   * @param {Event} e - Input change event
-   */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
-  };
-
-  /**
-   * Validates form fields before submission.
-   * Checks that the title is present and has at least 3 characters.
-   *
-   * @returns {boolean} true if form is valid, false otherwise
-   */
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'El título es requerido';
-    } else if (formData.title.trim().length &lt; 3) {
-      newErrors.title = 'El título debe tener al menos 3 caracteres';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  /**
-   * Handles importing data from a JSON file.
-   * Stores imported data and pre-fills the title if available.
-   *
-   * @param {Object} data - Diagram data imported from JSON
-   * @param {Array} data.nodes - Diagram nodes
-   * @param {Array} data.edges - Diagram connections
-   * @param {Object} data.metadata - Diagram metadata
-   */
-  const handleImport = (data) => {
-    setImportedData(data);
-    setIsImportModalOpen(false);
-
-    if (!formData.title &amp;&amp; data.metadata?.title) {
-      setFormData(prev => ({
-        ...prev,
-        title: data.metadata.title
-      }));
-    }
-
-    toast.success('Datos importados. Completa el formulario para crear el diagrama.');
-  };
-
-  /**
-   * Handles form submission to create a new diagram.
-   * Validates data, creates the diagram on the backend, registers activity,
-   * and redirects to the new diagram editor.
-   *
-   * @param {Event} e - Form submission event
-   */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-
-      const nodesToUse = importedData?.nodes || initialNodes || [];
-      const edgesToUse = importedData?.edges || initialEdges || [];
-
-      const response = await createDiagram({
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        nodes: nodesToUse,
-        edges: edgesToUse,
-      });
-
-      if (response.diagram) {
-        registerActivity(
-          ACTIVITY_TYPES.CREATE,
-          response.diagram.title,
-          response.diagram.id
-        );
-      }
-
-      toast.success('¡Diagrama creado exitosamente!');
-
-      if (onDiagramCreated) {
-        onDiagramCreated(response.diagram);
-      }
-
-      handleClose();
-
-      if (response.diagram &amp;&amp; response.diagram.id) {
-        navigate(`/editor/${response.diagram.id}`);
-      }
-    } catch (error) {
-      console.error('Error creating diagram:', error);
-
-      if (error.response?.status === 409) {
-        setErrors({
-          title: 'Ya existe un diagrama con ese título',
-        });
-        toast.error('Ya existe un diagrama con ese título');
-      } else if (error.response?.status === 400) {
-        const errorMessage = error.response?.data?.error || 'Datos inválidos';
-        setErrors({
-          general: errorMessage,
-        });
-        toast.error(errorMessage);
-      } else {
-        const errorMessage = 'Error al crear el diagrama. Por favor, intenta de nuevo.';
-        setErrors({
-          general: errorMessage,
-        });
-        toast.error(errorMessage);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  /**
-   * Closes the modal and resets the form to its initial state.
-   * Clears all fields, errors, and imported data.
-   */
-  const handleClose = () => {
-    setFormData({
-      title: '',
-      description: '',
-    });
-    setErrors({});
-    setImportedData(null);
-    onClose();
-  };
-
-  /**
-   * Handles keyboard event to close the modal with Escape key.
-   *
-   * @param {KeyboardEvent} e - Keyboard event
-   */
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      handleClose();
-    }
-  };
-
+function ExportModal({ isOpen, onClose, onExportPNG, onExportJSON, isExporting }) {
   if (!isOpen) return null;
 
   return (
-    &lt;section
-      className="modal-overlay"
-      onClick={handleClose}
-      onKeyDown={handleKeyDown}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-    >
-      &lt;article
-        className="modal"
-        onClick={(e) => e.stopPropagation()}
-      >
-        &lt;header className="modal__header">
-          &lt;h2 id="modal-title" className="modal__title">
-            {initialNodes ? 'Crear diagrama desde plantilla' : 'Crear nuevo diagrama'}
+    &lt;section className="export-modal__overlay" onClick={onClose}>
+      &lt;article className="export-modal__content" onClick={(e) => e.stopPropagation()}>
+        &lt;header className="export-modal__header">
+          &lt;h2 className="export-modal__title">
+            &lt;FiDownload />
+            Exportar Diagrama
           &lt;/h2>
           &lt;button
-            type="button"
-            className="modal__close-button"
-            onClick={handleClose}
-            aria-label="Cerrar modal"
+            className="export-modal__close"
+            onClick={onClose}
+            disabled={isExporting}
+            title="Cerrar"
           >
             &lt;FiX />
           &lt;/button>
         &lt;/header>
 
-        {importedData &amp;&amp; (
-          &lt;aside className="modal__imported-badge">
-            &lt;FiUpload />
-            &lt;span>
-              Datos importados: {importedData.nodes?.length || 0} nodos y {importedData.edges?.length || 0} conexiones
-            &lt;/span>
-          &lt;/aside>
-        )}
+        &lt;section className="export-modal__body">
+          &lt;p className="export-modal__description">
+            Selecciona el formato en el que deseas exportar tu diagrama
+          &lt;/p>
 
-        &lt;form onSubmit={handleSubmit} className="modal__form">
-          {errors.general &amp;&amp; (
-            &lt;aside className="modal__error-general">
-              {errors.general}
-            &lt;/aside>
-          )}
-
-          &lt;fieldset className="modal__form-group">
-            &lt;label htmlFor="title" className="modal__label">
-              &lt;FiFileText className="modal__label-icon" />
-              Título del diagrama
-              &lt;span className="modal__required">*&lt;/span>
-            &lt;/label>
-            &lt;input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className={`modal__input ${errors.title ? 'modal__input--error' : ''}`}
-              placeholder="Ej: Flujo de proceso de ventas"
-              maxLength={100}
-              autoFocus
-            />
-            {errors.title &amp;&amp; (
-              &lt;span className="modal__error">{errors.title}&lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="modal__form-group">
-            &lt;label htmlFor="description" className="modal__label">
-              &lt;FiAlignLeft className="modal__label-icon" />
-              Descripción (opcional)
-            &lt;/label>
-            &lt;textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="modal__textarea"
-              placeholder="Describe brevemente de qué trata este diagrama..."
-              rows={4}
-              maxLength={500}
-            />
-            &lt;span className="modal__char-count">
-              {formData.description.length}/500
-            &lt;/span>
-          &lt;/fieldset>
-
-          {!initialNodes &amp;&amp; !importedData &amp;&amp; (
-            &lt;aside className="modal__import-option">
-              &lt;p className="modal__label">
-                ¿Quieres importar un diagrama mediante un JSON?
-              &lt;/p>
-              &lt;button
-                type="button"
-                className="modal__import-button"
-                onClick={() => setIsImportModalOpen(true)}
-              >
-                &lt;FiUpload />
-                Importar desde JSON
-              &lt;/button>
-            &lt;/aside>
-          )}
-
-          &lt;nav className="modal__actions">
+          &lt;nav className="export-modal__options">
             &lt;button
-              type="button"
-              className="modal__button modal__button--secondary"
-              onClick={handleClose}
-              disabled={isSubmitting}
+              className="export-modal__option"
+              onClick={onExportPNG}
+              disabled={isExporting}
             >
-              Cancelar
+              &lt;figure className="export-modal__option-icon">
+                &lt;FiImage />
+              &lt;/figure>
+              &lt;section className="export-modal__option-info">
+                &lt;h3>PNG&lt;/h3>
+                &lt;p>Imagen de alta calidad&lt;/p>
+              &lt;/section>
             &lt;/button>
+
             &lt;button
-              type="submit"
-              className="modal__button modal__button--primary"
-              disabled={isSubmitting}
+              className="export-modal__option"
+              onClick={onExportJSON}
+              disabled={isExporting}
             >
-              {isSubmitting ? 'Creando...' : 'Crear diagrama'}
+              &lt;figure className="export-modal__option-icon">
+                &lt;FiFile />
+              &lt;/figure>
+              &lt;section className="export-modal__option-info">
+                &lt;h3>JSON&lt;/h3>
+                &lt;p>Exportar estructura del diagrama&lt;/p>
+              &lt;/section>
             &lt;/button>
           &lt;/nav>
-        &lt;/form>
-      &lt;/article>
 
-      &lt;ImportJSON
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onImport={handleImport}
-        toast={toast}
-      />
+          {isExporting &amp;&amp; (
+            &lt;aside className="export-modal__loading">
+              &lt;figure className="export-modal__spinner">&lt;/figure>
+              &lt;p>Exportando diagrama...&lt;/p>
+            &lt;/aside>
+          )}
+        &lt;/section>
+      &lt;/article>
     &lt;/section>
   );
 }
 
-export default NewDiagramModal;
+export default ExportModal;
 </code></pre>
         </article>
     </section>
@@ -378,7 +133,7 @@ export default NewDiagramModal;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

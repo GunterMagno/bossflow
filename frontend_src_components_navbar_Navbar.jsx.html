@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/NodeEditModal/NodeEditModal.jsx - Documentation</title>
+    <title>frontend/src/components/navbar/Navbar.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/NodeEditModal/NodeEditModal.jsx</h1>
+    <h1 class="page-title">frontend/src/components/navbar/Navbar.jsx</h1>
     
 
     
@@ -39,347 +39,243 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
-import './NodeEditModal.css';
-import { FiX, FiTrash2, FiImage } from 'react-icons/fi';
-import UploadImageModal from '../UploadImageModal/UploadImageModal';
+            <pre class="prettyprint source linenums"><code>import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import {
+  FiUser,
+  FiSettings,
+  FiLogOut,
+  FiChevronDown,
+  FiMenu,
+  FiX,
+} from 'react-icons/fi';
+import './Navbar.css';
 
 /**
- * Modal component for editing diagram node properties.
- * Allows modifying title, description, type, and associated image of a node.
+ * Main navigation bar component of the application.
+ * Provides navigation between pages and user authentication management.
+ * Includes responsive menu for mobile devices and user dropdown menu.
  *
- * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Whether the modal is open
- * @param {Function} props.onClose - Callback function to close the modal
- * @param {Object} props.node - Node object to edit with its data
- * @param {Function} props.onSave - Callback function to save node changes
- * @param {Function} props.onDelete - Callback function to delete the node
- * @returns {JSX.Element|null} Modal element or null if closed
+ * @returns {JSX.Element} Navigation element with links and user options
  */
-function NodeEditModal({ isOpen, onClose, node, onSave, onDelete }) {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    type: '',
-    image: null
-  });
-
-  const [errors, setErrors] = useState({});
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-
-  const nodeTypes = [
-    { value: 'action', label: 'Acción' },
-    { value: 'decision', label: 'Decisión' },
-    { value: 'startEnd', label: 'Evento' },
-    { value: 'phase', label: 'Fase' },
-    { value: 'position', label: 'Posición' },
-    { value: 'timer', label: 'Temporizador' },
-    { value: 'mechanic', label: 'Mecánica' },
-    { value: 'ability', label: 'Habilidad' }
-  ];
-
-  useEffect(() => {
-    if (isOpen &amp;&amp; node) {
-      setFormData({
-        title: node.data?.title || '',
-        description: node.data?.description || '',
-        type: node.type || '',
-        image: node.data?.image || null
-      });
-      setErrors({});
-    }
-  }, [isOpen, node]);
+function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const menuRef = useRef(null);
 
   /**
-   * Handles changes in form fields.
-   * Updates the form state and clears the error for the modified field.
-   *
-   * @param {Event} e - Input change event
+   * Toggles the visibility state of the desktop user dropdown menu.
    */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
   /**
-   * Validates form fields before saving.
-   * Checks title, description, and node type according to established rules.
-   *
-   * @returns {boolean} true if form is valid, false otherwise
+   * Toggles the visibility state of the mobile hamburger menu.
    */
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'El título es obligatorio';
-    } else if (formData.title.trim().length &lt; 2) {
-      newErrors.title = 'El título debe tener al menos 2 caracteres';
-    } else if (formData.title.trim().length > 50) {
-      newErrors.title = 'El título no puede exceder 50 caracteres';
-    }
-
-    if (formData.description &amp;&amp; formData.description.length > 200) {
-      newErrors.description = 'La descripción no puede exceder 200 caracteres';
-    }
-
-    if (!formData.type) {
-      newErrors.type = 'Debes seleccionar un tipo de nodo';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   /**
-   * Handles form submission to save node changes.
-   * Validates data and executes the onSave callback with the updated node.
-   *
-   * @param {Event} e - Form submission event
+   * Logs out the current user.
+   * Closes all open menus, executes logout and redirects to home page.
    */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      onSave({
-        ...node,
-        type: formData.type,
-        data: {
-          ...node.data,
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          image: formData.image
-        }
-      });
-      onClose();
-    }
-  };
-
-  /**
-   * Handles uploaded image from the upload modal.
-   * Updates the form state with the new image data.
-   *
-   * @param {Object} imageData - Object with image data (url, filename, etc.)
-   */
-  const handleImageUploaded = (imageData) => {
-    setFormData(prev => ({
-      ...prev,
-      image: imageData
-    }));
-  };
-
-  /**
-   * Removes the image associated with the node.
-   * Sets the image field to null in the form state.
-   */
-  const handleRemoveImage = () => {
-    setFormData(prev => ({
-      ...prev,
-      image: null
-    }));
-  };
-
-  /**
-   * Handles node deletion.
-   * Executes the onDelete callback with the node ID if available.
-   */
-  const handleDelete = () => {
-    if (onDelete &amp;&amp; node) {
-      onDelete(node.id);
-    }
+  const handleLogout = () => {
+    console.log('Logging out...');
+    setMenuOpen(false);
+    setMobileMenuOpen(false);
+    logout();
+    navigate('/');
   };
 
   useEffect(() => {
     /**
-     * Handles the Escape key to close the modal.
+     * Handles clicks outside the dropdown menu to close it automatically.
      *
-     * @param {KeyboardEvent} e - Keyboard event
+     * @param {MouseEvent} event - Mouse click event
      */
-    const handleEsc = (e) => {
-      if (e.key === 'Escape' &amp;&amp; isOpen) {
-        onClose();
+    const handleClickOutside = (event) => {
+      if (menuRef.current &amp;&amp; !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
       }
     };
 
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [isOpen, onClose]);
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
 
-  if (!isOpen) return null;
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
 
   return (
-    &lt;section className="node-edit-modal-overlay" onClick={onClose}>
-      &lt;article className="node-edit-modal" onClick={(e) => e.stopPropagation()}>
-        &lt;header className="node-edit-modal__header">
-          &lt;h2 className="node-edit-modal__title">Editar Nodo&lt;/h2>
-          &lt;button
-            className="node-edit-modal__close"
-            onClick={onClose}
-            aria-label="Cerrar modal"
-          >
-            &lt;FiX />
-          &lt;/button>
-        &lt;/header>
+    &lt;header className="encabezado">
+      &lt;nav className="encabezado__navbar">
+        &lt;Link to="/" className="navbar__logo">
+          &lt;img src="/logo.png" alt="BossFlow" className="navbar__logo-img" />
+        &lt;/Link>
 
-        &lt;form className="node-edit-modal__form" onSubmit={handleSubmit}>
-          &lt;fieldset className="node-edit-modal__field">
-            &lt;label htmlFor="title" className="node-edit-modal__label">
-              Título &lt;span className="node-edit-modal__required">*&lt;/span>
-            &lt;/label>
-            &lt;input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className={`node-edit-modal__input ${errors.title ? 'node-edit-modal__input--error' : ''}`}
-              placeholder="Nombre del nodo"
-              maxLength={50}
-            />
-            {errors.title &amp;&amp; (
-              &lt;span className="node-edit-modal__error">{errors.title}&lt;/span>
-            )}
-          &lt;/fieldset>
+        &lt;button
+          className="navbar__hamburguesa"
+          onClick={toggleMobileMenu}
+          aria-label="Menú"
+        >
+          {mobileMenuOpen ? &lt;FiX /> : &lt;FiMenu />}
+        &lt;/button>
 
-          &lt;fieldset className="node-edit-modal__field">
-            &lt;label htmlFor="type" className="node-edit-modal__label">
-              Tipo &lt;span className="node-edit-modal__required">*&lt;/span>
-            &lt;/label>
-            &lt;select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className={`node-edit-modal__select ${errors.type ? 'node-edit-modal__select--error' : ''}`}
+        &lt;ul
+          className={`navbar__enlaces ${mobileMenuOpen ? 'navbar__enlaces--visible' : ''}`}
+        >
+          &lt;li className="navbar__elemento">
+            &lt;Link
+              to="/"
+              className="navbar__enlace"
+              onClick={() => setMobileMenuOpen(false)}
             >
-              &lt;option value="">Seleccionar tipo...&lt;/option>
-              {nodeTypes.map((type) => (
-                &lt;option key={type.value} value={type.value}>
-                  {type.label}
-                &lt;/option>
-              ))}
-            &lt;/select>
-            {errors.type &amp;&amp; (
-              &lt;span className="node-edit-modal__error">{errors.type}&lt;/span>
-            )}
-          &lt;/fieldset>
+              Inicio
+            &lt;/Link>
+          &lt;/li>
+          &lt;li className="navbar__elemento">
+            &lt;Link
+              to="/dashboard"
+              className="navbar__enlace"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Dashboard
+            &lt;/Link>
+          &lt;/li>
+          &lt;li className="navbar__elemento">
+            &lt;Link
+              to="/community"
+              className="navbar__enlace"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Comunidad
+            &lt;/Link>
+          &lt;/li>
 
-          &lt;fieldset className="node-edit-modal__field">
-            &lt;label htmlFor="description" className="node-edit-modal__label">
-              Descripción
-            &lt;/label>
-            &lt;textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className={`node-edit-modal__textarea ${errors.description ? 'node-edit-modal__textarea--error' : ''}`}
-              placeholder="Descripción opcional del nodo"
-              rows={4}
-              maxLength={200}
-            />
-            &lt;small className="node-edit-modal__char-count">
-              {formData.description.length}/200 caracteres
-            &lt;/small>
-            {errors.description &amp;&amp; (
-              &lt;span className="node-edit-modal__error">{errors.description}&lt;/span>
-            )}
-          &lt;/fieldset>
-
-          &lt;fieldset className="node-edit-modal__field">
-            &lt;label className="node-edit-modal__label">
-              Imagen
-            &lt;/label>
-            {formData.image ? (
-              &lt;figure className="node-edit-modal__image-preview">
-                &lt;img 
-                  src={formData.image.url} 
-                  alt={formData.image.filename || 'Vista previa'}
-                  className="node-edit-modal__image"
-                />
-                &lt;p className="node-edit-modal__image-filename">
-                  {formData.image.filename}
-                &lt;/p>
-                &lt;nav className="node-edit-modal__image-actions">
-                  &lt;button
-                    type="button"
-                    className="node-edit-modal__button node-edit-modal__button--change"
-                    onClick={() => setIsUploadModalOpen(true)}
-                  >
-                    &lt;FiImage /> Cambiar
-                  &lt;/button>
-                  &lt;button
-                    type="button"
-                    className="node-edit-modal__button node-edit-modal__button--remove"
-                    onClick={handleRemoveImage}
-                  >
-                    &lt;FiTrash2 /> Eliminar
-                  &lt;/button>
-                &lt;/nav>
-              &lt;/figure>
-            ) : (
-              &lt;button
-                type="button"
-                className="node-edit-modal__button node-edit-modal__button--upload"
-                onClick={() => setIsUploadModalOpen(true)}
-              >
-                &lt;FiImage /> Añadir imagen
-              &lt;/button>
-            )}
-          &lt;/fieldset>
-
-          &lt;nav className="node-edit-modal__actions">
-            &lt;section className="node-edit-modal__actions-left">
-              {onDelete &amp;&amp; (
-                &lt;button
-                  type="button"
-                  className="node-edit-modal__button node-edit-modal__button--delete"
-                  onClick={handleDelete}
-                  title="Eliminar nodo"
+          &lt;li className="navbar__elemento navbar__elemento--auth-movil">
+            {!isAuthenticated ? (
+              &lt;section className="navbar__botones-auth-movil">
+                &lt;Link
+                  to="/login"
+                  className="navbar__boton-login"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  &lt;FiTrash2 /> Eliminar
+                  Iniciar sesión
+                &lt;/Link>
+                &lt;Link
+                  to="/register"
+                  className="navbar__boton-registro"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Registrarse
+                &lt;/Link>
+              &lt;/section>
+            ) : (
+              &lt;section className="navbar__usuario-movil">
+                &lt;h3 className="navbar__seccion-titulo">Cuenta&lt;/h3>
+                &lt;Link
+                  to="/profile"
+                  className="navbar__enlace"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  &lt;FiUser /> Perfil
+                &lt;/Link>
+                &lt;Link
+                  to="/settings"
+                  className="navbar__enlace"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  &lt;FiSettings /> Configuración
+                &lt;/Link>
+                &lt;button
+                  onClick={handleLogout}
+                  className="navbar__enlace navbar__enlace--logout"
+                >
+                  &lt;FiLogOut /> Cerrar sesión
                 &lt;/button>
-              )}
-            &lt;/section>
-            &lt;section className="node-edit-modal__actions-right">
-              &lt;button
-                type="button"
-                className="node-edit-modal__button node-edit-modal__button--cancel"
-                onClick={onClose}
-              >
-                Cancelar
-              &lt;/button>
-              &lt;button
-                type="submit"
-                className="node-edit-modal__button node-edit-modal__button--save"
-              >
-                Guardar Cambios
-              &lt;/button>
-            &lt;/section>
-          &lt;/nav>
-        &lt;/form>
+              &lt;/section>
+            )}
+          &lt;/li>
+        &lt;/ul>
 
-        &lt;UploadImageModal
-          isOpen={isUploadModalOpen}
-          onClose={() => setIsUploadModalOpen(false)}
-          onImageUploaded={handleImageUploaded}
-          title="Añadir imagen al nodo"
-        />
-      &lt;/article>
-    &lt;/section>
+        &lt;section className="navbar__usuario-menu" ref={menuRef}>
+          {!isAuthenticated ? (
+              &lt;section className="navbar__botones-auth">
+              &lt;Link to="/login" className="navbar__boton-login">
+                Iniciar sesión
+              &lt;/Link>
+              &lt;Link to="/register" className="navbar__boton-registro">
+                Registrarse
+              &lt;/Link>
+            &lt;/section>
+          ) : (
+            &lt;>
+              &lt;button className="navbar__usuario" onClick={toggleMenu}>
+                &lt;span className="navbar__avatar">
+                  {user?.avatar ? (
+                    &lt;img src={user.avatar} alt={user.username} className="navbar__avatar-img" />
+                  ) : (
+                    &lt;FiUser />
+                  )}
+                &lt;/span>
+                &lt;span className="navbar__nombre">
+                  {user?.username || user?.email}
+                &lt;/span>
+                &lt;span
+                  className={`navbar__flecha ${menuOpen ? 'navbar__flecha--arriba' : ''}`}
+                >
+                  &lt;FiChevronDown />
+                &lt;/span>
+              &lt;/button>
+
+              {menuOpen &amp;&amp; (
+                &lt;ul className="menu-desplegable">
+                  &lt;li className="menu-desplegable__elemento">
+                    &lt;Link to="/profile" className="menu-desplegable__enlace">
+                      &lt;span className="menu-desplegable__icono">
+                        &lt;FiUser />
+                      &lt;/span>
+                      &lt;span>Perfil&lt;/span>
+                    &lt;/Link>
+                  &lt;/li>
+                  &lt;li className="menu-desplegable__elemento">
+                    &lt;Link to="/settings" className="menu-desplegable__enlace">
+                      &lt;span className="menu-desplegable__icono">
+                        &lt;FiSettings />
+                      &lt;/span>
+                      &lt;span>Configuración&lt;/span>
+                    &lt;/Link>
+                  &lt;/li>
+                  &lt;li className="menu-desplegable__separador">&lt;/li>
+                  &lt;li className="menu-desplegable__elemento">
+                    &lt;button
+                      onClick={handleLogout}
+                      className="menu-desplegable__enlace menu-desplegable__enlace--cerrar"
+                    >
+                      &lt;span className="menu-desplegable__icono">
+                        &lt;FiLogOut />
+                      &lt;/span>
+                      &lt;span>Cerrar sesión&lt;/span>
+                    &lt;/button>
+                  &lt;/li>
+                &lt;/ul>
+              )}
+            &lt;/>
+          )}
+        &lt;/section>
+      &lt;/nav>
+    &lt;/header>
   );
 }
 
-export default NodeEditModal;
+export default Navbar;
 </code></pre>
         </article>
     </section>
@@ -392,7 +288,7 @@ export default NodeEditModal;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

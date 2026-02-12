@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/ConfirmDialog/ConfirmDialog.jsx - Documentation</title>
+    <title>frontend/src/components/cookie-banner/CookieBanner.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/ConfirmDialog/ConfirmDialog.jsx</h1>
+    <h1 class="page-title">frontend/src/components/cookie-banner/CookieBanner.jsx</h1>
     
 
     
@@ -39,67 +39,117 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import './ConfirmDialog.css';
-import { FiAlertTriangle } from 'react-icons/fi';
+            <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import './CookieBanner.css';
 
 /**
- * Confirmation modal dialog for critical actions
- * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Controls the visibility of the dialog
- * @param {Function} props.onClose - Callback when closing the dialog
- * @param {Function} props.onConfirm - Callback when confirming the action
- * @param {string} props.title - Title shown in the header
- * @param {string} props.message - Descriptive message for the action
- * @param {string} [props.confirmText='Confirmar'] - Text of the confirmation button
- * @param {string} [props.cancelText='Cancelar'] - Text of the cancel button
- * @param {string} [props.type='warning'] - Visual type of the dialog (warning, error, etc.)
- * @returns {JSX.Element|null} Renders the dialog or null if closed
+ * Componente de banner de consentimiento de cookies/localStorage.
+ * Se muestra en la primera visita del usuario y puede ser aceptado o rechazado.
  */
-function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, confirmText = 'Confirmar', cancelText = 'Cancelar', type = 'warning' }) {
-  if (!isOpen) return null;
+function CookieBanner() {
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    // Check if user already accepted or rejected the banner
+    const cookieConsent = localStorage.getItem('cookieConsent');
+    
+    // If rejected, use sessionStorage so it appears again in new session
+    if (cookieConsent === 'rejected') {
+      const sessionConsent = sessionStorage.getItem('cookieConsentSession');
+      
+      if (!sessionConsent) {
+        // Show banner again in this session
+        const timer = setTimeout(() => {
+          setShowBanner(true);
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    } else if (!cookieConsent) {
+      // First visit - show banner after small delay for better UX
+      const timer = setTimeout(() => {
+        setShowBanner(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   /**
-   * Processes the confirmation by executing the callback and closing the dialog
+   * Gestiona la aceptación del uso de localStorage
    */
-  const handleConfirm = () => {
-    onConfirm();
-    onClose();
+  const handleAccept = () => {
+    localStorage.setItem('cookieConsent', 'accepted');
+    setShowBanner(false);
   };
 
+  /**
+   * Gestiona el rechazo del uso de localStorage
+   * Nota: El rechazo se registra para esta sesión, pero volverá a aparecer en la próxima visita
+   */
+  const handleReject = () => {
+    localStorage.setItem('cookieConsent', 'rejected');
+    sessionStorage.setItem('cookieConsentSession', 'rejected');
+    setShowBanner(false);
+  };
+
+  if (!showBanner) {
+    return null;
+  }
+
   return (
-    &lt;section className="confirm-dialog-overlay" onClick={onClose}>
-      &lt;article className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
-        &lt;header className={`confirm-dialog__header confirm-dialog__header--${type}`}>
-          &lt;FiAlertTriangle className="confirm-dialog__icon" />
-          &lt;h3 className="confirm-dialog__title">{title}&lt;/h3>
-        &lt;/header>
+    &lt;aside className="cookie-banner" role="dialog" aria-label="Aviso de uso de localStorage">
+      &lt;div className="cookie-banner__container">
+        &lt;div className="cookie-banner__content">
+          &lt;h3 className="cookie-banner__title">Aviso de Privacidad&lt;/h3>
+          &lt;p className="cookie-banner__text">
+            BossFlow &lt;strong>NO utiliza cookies&lt;/strong> de rastreo ni publicidad. Solo utilizamos{' '}
+            &lt;strong>localStorage&lt;/strong> para mantener tu sesión iniciada y guardar tus
+            preferencias de interfaz. Esto es esencial para el funcionamiento del servicio.
+          &lt;/p>
+          &lt;p className="cookie-banner__text">
+            Al continuar usando BossFlow, aceptas el uso de localStorage conforme a nuestra{' '}
+            &lt;Link to="/legal/privacidad" className="cookie-banner__link">
+              Política de Privacidad
+            &lt;/Link>{' '}
+            y{' '}
+            &lt;Link to="/legal/cookies" className="cookie-banner__link">
+              Política de Cookies
+            &lt;/Link>.
+          &lt;/p>
+        &lt;/div>
 
-        &lt;section className="confirm-dialog__body">
-          &lt;p className="confirm-dialog__message">{message}&lt;/p>
-        &lt;/section>
-
-        &lt;nav className="confirm-dialog__actions">
+        &lt;div className="cookie-banner__actions">
           &lt;button
             type="button"
-            className="confirm-dialog__button confirm-dialog__button--cancel"
-            onClick={onClose}
+            onClick={handleAccept}
+            className="cookie-banner__button cookie-banner__button--accept"
+            aria-label="Aceptar uso de localStorage"
           >
-            {cancelText}
+            Aceptar
           &lt;/button>
           &lt;button
             type="button"
-            className={`confirm-dialog__button confirm-dialog__button--confirm confirm-dialog__button--${type}`}
-            onClick={handleConfirm}
+            onClick={handleReject}
+            className="cookie-banner__button cookie-banner__button--reject"
+            aria-label="Rechazar y continuar con funcionalidad limitada"
           >
-            {confirmText}
+            Rechazar
           &lt;/button>
-        &lt;/nav>
-      &lt;/article>
-    &lt;/section>
+          &lt;Link
+            to="/legal/cookies"
+            className="cookie-banner__button cookie-banner__button--info"
+            aria-label="Más información sobre cookies"
+          >
+            Más información
+          &lt;/Link>
+        &lt;/div>
+      &lt;/div>
+    &lt;/aside>
   );
 }
 
-export default ConfirmDialog;
+export default CookieBanner;
 </code></pre>
         </article>
     </section>
@@ -112,7 +162,7 @@ export default ConfirmDialog;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

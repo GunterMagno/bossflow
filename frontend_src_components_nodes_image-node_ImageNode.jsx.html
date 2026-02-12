@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/Toast/Toast.jsx - Documentation</title>
+    <title>frontend/src/components/nodes/image-node/ImageNode.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/Toast/Toast.jsx</h1>
+    <h1 class="page-title">frontend/src/components/nodes/image-node/ImageNode.jsx</h1>
     
 
     
@@ -39,70 +39,188 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useEffect } from 'react';
-import { FiCheckCircle, FiXCircle, FiAlertCircle, FiInfo, FiX } from 'react-icons/fi';
-import './Toast.css';
+            <pre class="prettyprint source linenums"><code>import { memo } from 'react';
+import { Handle, Position, NodeResizer } from 'reactflow';
+import './ImageNode.css';
 
 /**
- * Temporary toast notification component.
- * Displays popup messages with different types and closes automatically.
- * Includes icons according to message type and manual close button.
+ * Componente de nodo de imagen para diagramas.
+ * Muestra una imagen redimensionable con puntos de conexión invisibles.
+ * Incluye capacidad de redimensionado y eliminación cuando está seleccionado.
  *
- * @param {Object} props - Component properties
- * @param {string} props.message - Message to display in the notification
- * @param {string} props.type - Notification type (success, error, warning, info)
- * @param {Function} props.onClose - Callback function to close the notification
- * @param {number} props.duration - Duration in milliseconds before closing automatically
- * @returns {JSX.Element} Toast notification element
+ * @param {Object} props - Propiedades del componente
+ * @param {Object} props.data - Datos del nodo (imagen, callbacks, etc.)
+ * @param {boolean} props.selected - Indica si el nodo está seleccionado
+ * @param {string} props.id - ID único del nodo
+ * @returns {JSX.Element} Elemento de nodo de imagen
  */
-function Toast({ message, type = 'success', onClose, duration = 3000 }) {
-  useEffect(() => {
-    if (duration > 0) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, duration);
-
-      return () => clearTimeout(timer);
-    }
-  }, [duration, onClose]);
-
+const ImageNode = ({ data, selected, id }) => {
   /**
-   * Gets the corresponding icon based on notification type.
-   * Returns different icons for success, error, warning and info.
+   * Maneja la eliminación del nodo de imagen.
+   * Detiene la propagación del evento y ejecuta el callback de eliminación.
    *
-   * @returns {JSX.Element} Icon element according to notification type
+   * @param {MouseEvent} e - Evento de clic del ratón
    */
-  const getIcon = () => {
-    switch (type) {
-      case 'success':
-        return &lt;FiCheckCircle className="toast__icon" />;
-      case 'error':
-        return &lt;FiXCircle className="toast__icon" />;
-      case 'warning':
-        return &lt;FiAlertCircle className="toast__icon" />;
-      case 'info':
-        return &lt;FiInfo className="toast__icon" />;
-      default:
-        return &lt;FiInfo className="toast__icon" />;
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (data.onDelete) {
+      data.onDelete();
     }
   };
 
-  return (
-    &lt;aside className={`toast toast--${type}`}>
-      {getIcon()}
-      &lt;span className="toast__message">{message}&lt;/span>
-      &lt;button
-        className="toast__close"
-        onClick={onClose}
-        aria-label="Cerrar notificación"
-      >
-        &lt;FiX />
-      &lt;/button>
-    &lt;/aside>
-  );
-}
+  /**
+   * Maneja el redimensionado del nodo de imagen.
+   * Guarda las nuevas dimensiones en los datos del nodo.
+   *
+   * @param {Event} event - Evento de redimensionado
+   * @param {Object} params - Parámetros del redimensionado con width y height
+   */
+  const handleResize = (event, params) => {
+    if (data.image) {
+      data.image.width = params.width;
+      data.image.height = params.height;
+    }
+  };
 
-export default Toast;
+  const imageWidth = data.image?.width || 150;
+  const imageHeight = data.image?.height || 150;
+
+  return (
+    &lt;article 
+      className={`image-node ${selected ? 'selected' : ''}`}
+      style={{
+        width: imageWidth,
+        height: imageHeight
+      }}
+    >
+      &lt;NodeResizer 
+        isVisible={selected}
+        minWidth={80}
+        minHeight={80}
+        onResize={handleResize}
+        handleStyle={{
+          width: '12px',
+          height: '12px',
+          borderRadius: '50%',
+          backgroundColor: '#4a90e2',
+        }}
+      />
+      &lt;figure className="image-node-container">
+        {data.image &amp;&amp; (
+          &lt;img 
+            src={data.image.url} 
+            alt={data.image.filename || 'Imagen del diagrama'}
+            className="image-node-img"
+            draggable={false}
+            loading="eager"
+            key={data.image.url}
+          />
+        )}
+        
+        {selected &amp;&amp; (
+          &lt;button
+            className="image-node-delete"
+            onClick={handleDelete}
+            title="Eliminar imagen"
+          >
+            ✕
+          &lt;/button>
+        )}
+      &lt;/figure>
+
+      &lt;Handle
+        type="target"
+        position={Position.Top}
+        id="top"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="target"
+        position={Position.Right}
+        id="right"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="target"
+        position={Position.Left}
+        id="left"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="source"
+        position={Position.Top}
+        id="top-source"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="source"
+        position={Position.Right}
+        id="right-source"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="source"
+        position={Position.Bottom}
+        id="bottom-source"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+      &lt;Handle
+        type="source"
+        position={Position.Left}
+        id="left-source"
+        style={{
+          opacity: 0,
+          width: '10px',
+          height: '10px',
+          pointerEvents: 'auto'
+        }}
+      />
+    &lt;/article>
+  );
+};
+
+export default memo(ImageNode);
 </code></pre>
         </article>
     </section>
@@ -115,7 +233,7 @@ export default Toast;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

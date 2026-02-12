@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/ConfirmModal/ConfirmModal.jsx - Documentation</title>
+    <title>frontend/src/components/flow-map/FlowMap.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/ConfirmModal/ConfirmModal.jsx</h1>
+    <h1 class="page-title">frontend/src/components/flow-map/FlowMap.jsx</h1>
     
 
     
@@ -39,105 +39,455 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { FiAlertTriangle, FiX } from 'react-icons/fi';
-import './ConfirmModal.css';
+            <pre class="prettyprint source linenums"><code>import { useCallback, useEffect, useRef, useState } from "react";
+import { DecisionNode, ActionNode, PhaseNode, EffectNode, StartNode, EndNode, PositionNode, TimerNode, AbilityNode } from "../nodes/Nodes";
+import ImageNode from "../nodes/image-node/ImageNode";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  useReactFlow,
+} from "reactflow";
+
+import "reactflow/dist/style.css";
+import "./FlowMap.css";
+import CustomEdge from '../custom-edge/CustomEdge';
+import NodeDescriptionPopup from '../node-description-popup/NodeDescriptionPopup';
+import { useToast } from '../../context/ToastContext';
+import useRecentNodes from '../../hooks/useRecentNodes';
+
+const tiposNodos = {
+  decision: DecisionNode,
+  action: ActionNode,
+  phase: PhaseNode,
+  effect: EffectNode,
+  start: StartNode,
+  end: EndNode,
+  startEnd: StartNode,
+  position: PositionNode,
+  timer: TimerNode,
+  mechanic: EffectNode,
+  ability: AbilityNode,
+  imageNode: ImageNode
+};
+const tiposEdges = { default: CustomEdge };
 
 /**
- * Confirmation modal for actions that require user validation
+ * Main flow diagram editor component.
  * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Controls the visibility of the modal
- * @param {Function} props.onClose - Callback executed when closing the modal
- * @param {Function} props.onConfirm - Callback executed when confirming the action
- * @param {string} [props.title='¿Estás seguro?'] - Title shown in the modal
- * @param {string} [props.message='Esta acción no se puede deshacer.'] - Descriptive message
- * @param {string} [props.confirmText='Confirmar'] - Text of the confirmation button
- * @param {string} [props.cancelText='Cancelar'] - Text of the cancel button
- * @param {string} [props.type='danger'] - Visual type of the modal (danger, warning, info)
- * @param {boolean} [props.isLoading=false] - Indicates if an operation is in progress
- * @returns {JSX.Element|null} Renders the modal or null if closed
+ * @param {Array} [props.initialNodes=[]] - Initial diagram nodes
+ * @param {Array} [props.initialEdges=[]] - Initial diagram connections
+ * @param {Function} props.onNodesChange - Callback executed when nodes change
+ * @param {Function} props.onEdgesChange - Callback executed when connections change
+ * @param {Function} props.onNodeDoubleClick - Callback for double-click on a node
+ * @param {Function} props.onEdgeDoubleClick - Callback for double-click on a connection
+ * @param {Function} props.onSetUpdateNodeFunction - Exposes the node update function
+ * @param {Function} props.onSetDeleteNodesFunction - Exposes the node deletion function
+ * @param {Function} props.onDeleteRequest - Callback for deletion requests
+ * @param {Function} props.onRecentNodesChange - Callback when recent nodes change
+ * @returns {JSX.Element} Interactive diagram editor
  */
-function ConfirmModal({
-  isOpen,
-  onClose,
-  onConfirm,
-  title = '¿Estás seguro?',
-  message = 'Esta acción no se puede deshacer.',
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
-  type = 'danger',
-  isLoading = false,
-}) {
-  /**
-   * Manages closing the modal using the Escape key
-   * @param {KeyboardEvent} e - Keyboard event
-   */
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape' &amp;&amp; !isLoading) {
-      onClose();
-    }
-  };
+function FlowMap({ initialNodes = [], initialEdges = [], onNodesChange: onNodesChangeProp, onEdgesChange: onEdgesChangeProp, onNodeDoubleClick, onEdgeDoubleClick, onSetUpdateNodeFunction, onSetDeleteNodesFunction, onDeleteRequest, onRecentNodesChange }) {
+  const [nodes, setNodes, onNodesChangeInternal] = useNodesState(Array.isArray(initialNodes) ? initialNodes : []);
+  const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(Array.isArray(initialEdges) ? initialEdges : []);
+  const [selectedNodeForDescription, setSelectedNodeForDescription] = useState(null);
+  const toast = useToast();
+  const reactFlowWrapper = useRef(null);
+  const { screenToFlowPosition } = useReactFlow();
+  const { recentNodes, addRecentNode } = useRecentNodes();
+  const hoverTimeoutRef = useRef(null);
+  const isDraggingRef = useRef(false);
 
-  if (!isOpen) return null;
+  /**
+   * Manages node changes by detecting drag events.
+   * @param {Array} changes - Array of changes applied to nodes
+   */
+  const handleNodesChange = useCallback((changes) => {
+    const isDragging = changes.some(change => 
+      change.type === 'position' &amp;&amp; change.dragging === true
+    );
+    
+    if (isDragging) {
+      isDraggingRef.current = true;
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = null;
+      }
+      setSelectedNodeForDescription(null);
+    } else if (changes.some(change => change.type === 'position' &amp;&amp; change.dragging === false)) {
+      isDraggingRef.current = false;
+    }
+    
+    onNodesChangeInternal(changes);
+  }, [onNodesChangeInternal]);
+
+  useEffect(() => {
+    if (onRecentNodesChange) {
+      onRecentNodesChange(recentNodes);
+    }
+  }, [recentNodes, onRecentNodesChange]);
+
+  /**
+   * Updates data for a specific node.
+   * @param {Object} updatedNode - Node with updated data
+   */
+  const updateNode = useCallback((updatedNode) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === updatedNode.id) {
+          return {
+            ...updatedNode,
+            data: { ...updatedNode.data },
+          };
+        }
+        return node;
+      })
+    );
+  }, [setNodes]);
+
+  /**
+   * Deletes one or multiple nodes and their associated connections.
+   * @param {Array&lt;string>} nodeIdsToDelete - Array of node IDs to delete
+   */
+  const deleteNodes = useCallback((nodeIdsToDelete) => {
+    setNodes((nds) => nds.filter((node) => !nodeIdsToDelete.includes(node.id)));
+    setEdges((eds) =>
+      eds.filter((edge) =>
+        !nodeIdsToDelete.includes(edge.source) &amp;&amp; !nodeIdsToDelete.includes(edge.target)
+      )
+    );
+  }, [setNodes, setEdges]);
+
+  useEffect(() => {
+    if (onSetUpdateNodeFunction) {
+      onSetUpdateNodeFunction(updateNode);
+    }
+  }, [onSetUpdateNodeFunction, updateNode]);
+
+  useEffect(() => {
+    if (onSetDeleteNodesFunction) {
+      onSetDeleteNodesFunction(deleteNodes);
+    }
+  }, [onSetDeleteNodesFunction, deleteNodes]);
+
+  const hasLocalChangesRef = useRef(false);
+  const isInitialLoadRef = useRef(true);
+
+  const prevInitialNodesRef = useRef();
+  
+  useEffect(() => {
+    if (!Array.isArray(initialNodes)) return;
+    
+    if (isInitialLoadRef.current &amp;&amp; initialNodes.length > 0) {
+      const nodesWithStyle = initialNodes.map(node => ({
+        ...node,
+        style: node.style || {}
+      }));
+      setNodes(nodesWithStyle);
+      prevInitialNodesRef.current = initialNodes;
+      isInitialLoadRef.current = false;
+      return;
+    }
+    
+    if (prevInitialNodesRef.current === initialNodes) {
+      return;
+    }
+    
+    if (initialNodes.length !== nodes.length) {
+      const nodesWithStyle = initialNodes.map(node => ({
+        ...node,
+        style: node.style || {}
+      }));
+      setNodes(nodesWithStyle);
+      prevInitialNodesRef.current = initialNodes;
+    }
+  }, [initialNodes]);
+
+  const prevInitialEdgesRef = useRef();
+  
+  useEffect(() => {
+    if (!Array.isArray(initialEdges)) return;
+    
+    if (isInitialLoadRef.current &amp;&amp; initialEdges.length > 0) {
+      setEdges(initialEdges);
+      prevInitialEdgesRef.current = initialEdges;
+      return;
+    }
+    
+    if (prevInitialEdgesRef.current === initialEdges) {
+      return;
+    }
+    
+    const hasRealChanges = initialEdges.length !== edges.length;
+    
+    if (hasRealChanges) {
+      setEdges(initialEdges);
+      prevInitialEdgesRef.current = initialEdges;
+    }
+  }, [initialEdges]);
+
+
+  useEffect(() => {
+    if (onNodesChangeProp) {
+      onNodesChangeProp(nodes);
+    }
+  }, [nodes, onNodesChangeProp]);
+
+  useEffect(() => {
+    if (onEdgesChangeProp) {
+      onEdgesChangeProp(edges);
+    }
+  }, [edges, onEdgesChangeProp]);
+
+  /**
+   * Manages creation of new connections between nodes.
+   * @param {Object} params - Connection parameters (source, target, handles)
+   */
+  const onConnect = useCallback(
+    (params) => {
+      setEdges((eds) => {
+        const { source, target, sourceHandle, targetHandle } = params || {};
+
+        if (!source || !target) {
+          toast.error('Conexión inválida');
+          return eds;
+        }
+
+        if (source === target) {
+          toast.warning('No puedes conectar un nodo a sí mismo');
+          return eds;
+        }
+
+        const duplicateExists = eds.some(
+          (e) => 
+            (e.source === source &amp;&amp; e.target === target) ||
+            (e.source === target &amp;&amp; e.target === source)
+        );
+
+        if (duplicateExists) {
+          toast.info('La conexión ya existe');
+          return eds;
+        }
+
+        return addEdge(params, eds);
+      });
+    },
+    [setEdges, toast]
+  );
+
+  /**
+   * Allows dragging over the canvas.
+   * @param {DragEvent} event - Drag event
+   */
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  /**
+   * Handles the action of dropping a node on the canvas.
+   * @param {DragEvent} event - Drop event
+   */
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const nodeDataString = event.dataTransfer.getData('application/reactflow');
+
+      if (!nodeDataString) {
+        console.log('No data in drop');
+        return;
+      }
+
+      try {
+        const nodeData = JSON.parse(nodeDataString);
+        console.log('Dropped node data:', nodeData);
+
+        const position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
+
+        console.log('Calculated position:', position);
+
+        const newNodeId = `${nodeData.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+
+        const newNode = {
+          id: newNodeId,
+          type: nodeData.type,
+          position,
+          data: {
+            title: nodeData.label || 'Nuevo nodo',
+            icon: '⚡',
+            description: nodeData.description || '',
+          },
+        };
+
+        console.log('New node to create:', newNode);
+
+        setNodes((nds) => {
+          console.log('Current nodes:', nds);
+          const updated = [...nds, newNode];
+          console.log('Updated nodes:', updated);
+          return updated;
+        });
+
+        addRecentNode(nodeData);
+
+        toast.success(`Nodo "${nodeData.label}" agregado al canvas`);
+      } catch (error) {
+        console.error('Error processing drop:', error);
+        toast.error('Error al agregar el nodo');
+      }
+    },
+    [screenToFlowPosition, setNodes, toast, addRecentNode]
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Delete' || event.key === 'Supr') {
+        const selectedNodes = nodes.filter((node) => node.selected);
+
+        if (selectedNodes.length > 0 &amp;&amp; onDeleteRequest) {
+          event.preventDefault();
+          onDeleteRequest(selectedNodes);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [nodes, onDeleteRequest]);
+
+  /**
+   * Handles clicking on a node to show its description.
+   * @param {Event} _event - Click event (unused)
+   * @param {Object} node - Clicked node
+   */
+  const handleNodeClick = useCallback((_event, node) => {
+    if (node.data?.description &amp;&amp; node.data.description.trim() !== '') {
+      const nodeElement = document.querySelector(`[data-id="${node.id}"]`);
+      if (nodeElement) {
+        const rect = nodeElement.getBoundingClientRect();
+        setSelectedNodeForDescription({
+          node,
+          nodePosition: rect,
+        });
+      } else {
+        setSelectedNodeForDescription({
+          node,
+          nodePosition: null,
+        });
+      }
+    } else {
+      setSelectedNodeForDescription(null);
+    }
+  }, []);
+
+  /**
+   * Handles hovering over a node on desktop devices.
+   * @param {Event} _event - Mouse event (unused)
+   * @param {Object} node - Node being hovered over
+   */
+  const handleNodeMouseEnter = useCallback((_event, node) => {
+    if (isDraggingRef.current) return;
+    
+    const hasHover = window.matchMedia('(hover: hover)').matches;
+    
+    if (!hasHover) return;
+    
+    if (node.data?.description &amp;&amp; node.data.description.trim() !== '') {
+      const nodeElement = document.querySelector(`[data-id="${node.id}"]`);
+      if (nodeElement) {
+        const rect = nodeElement.getBoundingClientRect();
+        hoverTimeoutRef.current = setTimeout(() => {
+          setSelectedNodeForDescription({
+            node,
+            nodePosition: rect,
+          });
+        }, 800);
+      }
+    }
+  }, []);
+
+  /**
+   * Handles exiting hover from a node.
+   */
+  const handleNodeMouseLeave = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setSelectedNodeForDescription(null);
+  }, []);
 
   return (
-    &lt;section
-      className="confirm-modal-overlay"
-      onClick={!isLoading ? onClose : undefined}
-      onKeyDown={handleKeyDown}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-modal-title"
-    >
-      &lt;article
-        className={`confirm-modal confirm-modal--${type}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        &lt;header className="confirm-modal__header">
-          &lt;figure className="confirm-modal__icon-wrapper">
-            &lt;FiAlertTriangle className="confirm-modal__icon" />
-          &lt;/figure>
-          &lt;button
-            type="button"
-            className="confirm-modal__close-button"
-            onClick={onClose}
-            disabled={isLoading}
-            aria-label="Cerrar modal"
-          >
-            &lt;FiX />
-          &lt;/button>
-        &lt;/header>
+    &lt;section className="flowmap">
+      &lt;section className="flowmap__wrap" ref={reactFlowWrapper}>
+        &lt;ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={handleNodesChange}
+          onEdgesChange={onEdgesChangeInternal}
+          onConnect={onConnect}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onNodeDoubleClick={onNodeDoubleClick}
+          onEdgeDoubleClick={onEdgeDoubleClick}
+          onNodeClick={handleNodeClick}
+          onNodeMouseEnter={handleNodeMouseEnter}
+          onNodeMouseLeave={handleNodeMouseLeave}
+          nodeTypes={tiposNodos}
+          edgeTypes={tiposEdges}
+          connectionRadius={30}
+          nodesDraggable={true}
+          nodesConnectable={true}
+          elementsSelectable={true}
+          fitView
+          attributionPosition="bottom-left"
+          zoomOnScroll={false}
+          panOnScroll={false}
+          preventScrolling={false}
+        >
+          &lt;MiniMap 
+            nodeColor={(node) => {
+              try {
+                const key = `--node-${node.type}`;
+                const v = getComputedStyle(document.documentElement).getPropertyValue(key).trim();
+                return v || getComputedStyle(document.documentElement).getPropertyValue('--node-default').trim() || '#eee';
+              } catch (e) {
+                return '#eee';
+              }
+            }}
+            nodeStrokeWidth={2}
+          />
+          &lt;Controls />
+          &lt;Background />
+        &lt;/ReactFlow>
+      &lt;/section>
 
-        &lt;section className="confirm-modal__content">
-          &lt;h2 id="confirm-modal-title" className="confirm-modal__title">
-            {title}
-          &lt;/h2>
-          &lt;p className="confirm-modal__message">{message}&lt;/p>
-        &lt;/section>
-
-        &lt;nav className="confirm-modal__actions">
-          &lt;button
-            type="button"
-            className="confirm-modal__button confirm-modal__button--cancel"
-            onClick={onClose}
-            disabled={isLoading}
-          >
-            {cancelText}
-          &lt;/button>
-          &lt;button
-            type="button"
-            className={`confirm-modal__button confirm-modal__button--confirm confirm-modal__button--${type}`}
-            onClick={onConfirm}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Procesando...' : confirmText}
-          &lt;/button>
-        &lt;/nav>
-      &lt;/article>
+      &lt;NodeDescriptionPopup
+        isOpen={!!selectedNodeForDescription}
+        onClose={() => setSelectedNodeForDescription(null)}
+        node={selectedNodeForDescription?.node}
+        nodePosition={selectedNodeForDescription?.nodePosition}
+      />
     &lt;/section>
   );
+
 }
 
-export default ConfirmModal;
+
+
+
+export default FlowMap;
+
 </code></pre>
         </article>
     </section>
@@ -150,7 +500,7 @@ export default ConfirmModal;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

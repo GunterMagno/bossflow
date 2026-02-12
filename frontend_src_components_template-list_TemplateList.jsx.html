@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/CookieBanner/CookieBanner.jsx - Documentation</title>
+    <title>frontend/src/components/template-list/TemplateList.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/CookieBanner/CookieBanner.jsx</h1>
+    <h1 class="page-title">frontend/src/components/template-list/TemplateList.jsx</h1>
     
 
     
@@ -40,116 +40,156 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import './CookieBanner.css';
+import TemplateCard from '../template-card/TemplateCard';
+import ConfirmModal from '../confirm-modal/ConfirmModal';
+import { FiFileText, FiAlertCircle } from 'react-icons/fi';
+import './TemplateList.css';
 
 /**
- * Componente de banner de consentimiento de cookies/localStorage.
- * Se muestra en la primera visita del usuario y puede ser aceptado o rechazado.
+ * Component that displays a list of diagram templates.
+ * Manages different states: loading, error, empty and list with templates.
+ * Includes modal confirmation before using a template.
+ *
+ * @param {Object} props - Component properties
+ * @param {Array} props.templates - Array of templates to display
+ * @param {boolean} props.loading - Indicates if templates are loading
+ * @param {string} props.error - Error message if any problem occurs
+ * @param {Function} props.onUseTemplate - Callback when using a template
+ * @param {Function} props.onEditTemplate - Callback when editing a template
+ * @param {Function} props.onDeleteTemplate - Callback when deleting a template
+ * @param {Function} props.onRetry - Callback to retry loading after an error
+ * @param {Function} props.onCreateTemplate - Callback to create a new template
+ * @param {boolean} props.showCreateButton - Indicates if the create template button should be shown
+ * @param {boolean} props.isSystemTemplates - Indicates if they are system templates
+ * @returns {JSX.Element} Template list element
  */
-function CookieBanner() {
-  const [showBanner, setShowBanner] = useState(false);
+function TemplateList({
+  templates,
+  loading,
+  error,
+  onUseTemplate,
+  onEditTemplate,
+  onDeleteTemplate,
+  onRetry,
+  onCreateTemplate,
+  showCreateButton,
+  isSystemTemplates = false
+}) {
+  const [templateToUse, setTemplateToUse] = useState(null);
 
-  useEffect(() => {
-    // Check if user already accepted or rejected the banner
-    const cookieConsent = localStorage.getItem('cookieConsent');
+  /**
+   * Handles the click on a template to start the usage process.
+   * Stores the selected template to display the confirmation modal.
+   *
+   * @param {Object} template - Template selected by the user
+   */
+  const handleTemplateClick = (template) => {
+    setTemplateToUse(template);
+  };
+
+  /**
+   * Confirms the use of the selected template.
+   * Executes the usage callback and closes the confirmation modal.
+   */
+  const handleConfirmUse = () => {
+    if (!templateToUse) return;
     
-    // If rejected, use sessionStorage so it appears again in new session
-    if (cookieConsent === 'rejected') {
-      const sessionConsent = sessionStorage.getItem('cookieConsentSession');
-      
-      if (!sessionConsent) {
-        // Show banner again in this session
-        const timer = setTimeout(() => {
-          setShowBanner(true);
-        }, 1000);
-        return () => clearTimeout(timer);
-      }
-    } else if (!cookieConsent) {
-      // First visit - show banner after small delay for better UX
-      const timer = setTimeout(() => {
-        setShowBanner(true);
-      }, 1000);
-
-      return () => clearTimeout(timer);
+    if (onUseTemplate) {
+      onUseTemplate(templateToUse);
     }
-  }, []);
-
-  /**
-   * Gestiona la aceptación del uso de localStorage
-   */
-  const handleAccept = () => {
-    localStorage.setItem('cookieConsent', 'accepted');
-    setShowBanner(false);
+    
+    setTemplateToUse(null);
   };
 
   /**
-   * Gestiona el rechazo del uso de localStorage
-   * Nota: El rechazo se registra para esta sesión, pero volverá a aparecer en la próxima visita
+   * Cancels the use of the template.
+   * Closes the confirmation modal without executing any action.
    */
-  const handleReject = () => {
-    localStorage.setItem('cookieConsent', 'rejected');
-    sessionStorage.setItem('cookieConsentSession', 'rejected');
-    setShowBanner(false);
+  const handleCancelUse = () => {
+    setTemplateToUse(null);
   };
 
-  if (!showBanner) {
-    return null;
+  if (loading) {
+    return (
+      &lt;section className="template-list">
+        &lt;aside className="template-list__loading">
+          &lt;figure className="template-list__spinner">&lt;/figure>
+          &lt;p>Cargando plantillas...&lt;/p>
+        &lt;/aside>
+      &lt;/section>
+    );
+  }
+
+  if (error) {
+    return (
+      &lt;section className="template-list">
+        &lt;aside className="template-list__error">
+          &lt;FiAlertCircle className="template-list__error-icon" />
+          &lt;p className="template-list__error-message">{error}&lt;/p>
+          {onRetry &amp;&amp; (
+            &lt;button
+              className="template-list__retry-button"
+              onClick={onRetry}
+            >
+              Reintentar
+            &lt;/button>
+          )}
+        &lt;/aside>
+      &lt;/section>
+    );
+  }
+
+  if (!templates || templates.length === 0) {
+    return (
+      &lt;section className="template-list">
+        &lt;aside className="template-list__empty">
+          &lt;FiFileText className="template-list__empty-icon" />
+          &lt;h3 className="template-list__empty-title">No hay plantillas disponibles&lt;/h3>
+          &lt;p className="template-list__empty-message">
+            Las plantillas te permiten crear diagramas rápidamente con estructuras predefinidas
+          &lt;/p>
+          {showCreateButton &amp;&amp; onCreateTemplate &amp;&amp; (
+            &lt;button onClick={onCreateTemplate} className="template-list__create-button">
+              Crear plantilla
+            &lt;/button>
+          )}
+        &lt;/aside>
+      &lt;/section>
+    );
   }
 
   return (
-    &lt;aside className="cookie-banner" role="dialog" aria-label="Aviso de uso de localStorage">
-      &lt;div className="cookie-banner__container">
-        &lt;div className="cookie-banner__content">
-          &lt;h3 className="cookie-banner__title">Aviso de Privacidad&lt;/h3>
-          &lt;p className="cookie-banner__text">
-            BossFlow &lt;strong>NO utiliza cookies&lt;/strong> de rastreo ni publicidad. Solo utilizamos{' '}
-            &lt;strong>localStorage&lt;/strong> para mantener tu sesión iniciada y guardar tus
-            preferencias de interfaz. Esto es esencial para el funcionamiento del servicio.
-          &lt;/p>
-          &lt;p className="cookie-banner__text">
-            Al continuar usando BossFlow, aceptas el uso de localStorage conforme a nuestra{' '}
-            &lt;Link to="/legal/privacidad" className="cookie-banner__link">
-              Política de Privacidad
-            &lt;/Link>{' '}
-            y{' '}
-            &lt;Link to="/legal/cookies" className="cookie-banner__link">
-              Política de Cookies
-            &lt;/Link>.
-          &lt;/p>
-        &lt;/div>
+    &lt;>
+      &lt;section className="template-list">
+        &lt;section className="template-list__grid">
+          {templates.map((template) => (
+            &lt;TemplateCard
+              key={template.id || template._id}
+              template={template}
+              onUseTemplate={handleTemplateClick}
+              onEditTemplate={onEditTemplate}
+              onDeleteTemplate={onDeleteTemplate}
+              isSystemTemplate={isSystemTemplates}
+            />
+          ))}
+        &lt;/section>
+      &lt;/section>
 
-        &lt;div className="cookie-banner__actions">
-          &lt;button
-            type="button"
-            onClick={handleAccept}
-            className="cookie-banner__button cookie-banner__button--accept"
-            aria-label="Aceptar uso de localStorage"
-          >
-            Aceptar
-          &lt;/button>
-          &lt;button
-            type="button"
-            onClick={handleReject}
-            className="cookie-banner__button cookie-banner__button--reject"
-            aria-label="Rechazar y continuar con funcionalidad limitada"
-          >
-            Rechazar
-          &lt;/button>
-          &lt;Link
-            to="/legal/cookies"
-            className="cookie-banner__button cookie-banner__button--info"
-            aria-label="Más información sobre cookies"
-          >
-            Más información
-          &lt;/Link>
-        &lt;/div>
-      &lt;/div>
-    &lt;/aside>
+      &lt;ConfirmModal
+        isOpen={!!templateToUse}
+        onClose={handleCancelUse}
+        onConfirm={handleConfirmUse}
+        title="¿Crear diagrama desde plantilla?"
+        message={`¿Quieres crear un nuevo diagrama basado en la plantilla "${templateToUse?.title}"?`}
+        confirmText="Crear"
+        cancelText="Cancelar"
+        type="success"
+      />
+    &lt;/>
   );
 }
 
-export default CookieBanner;
+export default TemplateList;
 </code></pre>
         </article>
     </section>
@@ -162,7 +202,7 @@ export default CookieBanner;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

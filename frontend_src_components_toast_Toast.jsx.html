@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/Footer/Footer.jsx - Documentation</title>
+    <title>frontend/src/components/toast/Toast.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/Footer/Footer.jsx</h1>
+    <h1 class="page-title">frontend/src/components/toast/Toast.jsx</h1>
     
 
     
@@ -39,140 +39,70 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import './Footer.css';
-import {
-  FaFacebookF,
-  FaXTwitter,
-  FaInstagram,
-  FaYoutube,
-} from 'react-icons/fa6';
+            <pre class="prettyprint source linenums"><code>import { useEffect } from 'react';
+import { FiCheckCircle, FiXCircle, FiAlertCircle, FiInfo, FiX } from 'react-icons/fi';
+import './Toast.css';
 
 /**
- * Pie de página de la aplicación con información corporativa y enlaces
- * @returns {JSX.Element} Footer con marca, enlaces, redes sociales y copyright
+ * Temporary toast notification component.
+ * Displays popup messages with different types and closes automatically.
+ * Includes icons according to message type and manual close button.
+ *
+ * @param {Object} props - Component properties
+ * @param {string} props.message - Message to display in the notification
+ * @param {string} props.type - Notification type (success, error, warning, info)
+ * @param {Function} props.onClose - Callback function to close the notification
+ * @param {number} props.duration - Duration in milliseconds before closing automatically
+ * @returns {JSX.Element} Toast notification element
  */
-function Footer() {
+function Toast({ message, type = 'success', onClose, duration = 3000 }) {
+  useEffect(() => {
+    if (duration > 0) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, duration);
+
+      return () => clearTimeout(timer);
+    }
+  }, [duration, onClose]);
+
+  /**
+   * Gets the corresponding icon based on notification type.
+   * Returns different icons for success, error, warning and info.
+   *
+   * @returns {JSX.Element} Icon element according to notification type
+   */
+  const getIcon = () => {
+    switch (type) {
+      case 'success':
+        return &lt;FiCheckCircle className="toast__icon" />;
+      case 'error':
+        return &lt;FiXCircle className="toast__icon" />;
+      case 'warning':
+        return &lt;FiAlertCircle className="toast__icon" />;
+      case 'info':
+        return &lt;FiInfo className="toast__icon" />;
+      default:
+        return &lt;FiInfo className="toast__icon" />;
+    }
+  };
+
   return (
-    &lt;footer className="footer">
-      &lt;section className="footer__superior">
-        &lt;section className="footer__seccion footer__seccion--sobre">
-          &lt;section className="footer__marca">
-            &lt;img
-              src="/logo-nt.svg"
-              alt="BossFlow Logo"
-              className="footer__logo"
-            />
-            &lt;h3 className="footer__titulo footer__titulo--marca">BossFlow&lt;/h3>
-          &lt;/section>
-          &lt;p className="footer__descripcion">
-            La plataforma para planificar y optimizar tácticas de batallas
-            contra jefes con diagramas de flujos interactivos. Colabora con tu
-            equipo, diseña estrategias visuales y gana fácil contra cualquier
-            boss.
-          &lt;/p>
-        &lt;/section>
-
-        &lt;section className="footer__enlaces">
-          &lt;section className="footer__seccion footer__seccion--enlaces">
-            &lt;h3 className="footer__titulo">Enlaces útiles&lt;/h3>
-            &lt;ul className="footer__lista">
-              &lt;li className="footer__elemento">
-                &lt;a href="/about" className="footer__enlace">
-                  Sobre nosotros
-                &lt;/a>
-              &lt;/li>
-              &lt;li className="footer__elemento">
-                &lt;a href="/features" className="footer__enlace">
-                  Características
-                &lt;/a>
-              &lt;/li>
-              &lt;li className="footer__elemento">
-                &lt;a href="/blog" className="footer__enlace">
-                  Blog
-                &lt;/a>
-              &lt;/li>
-            &lt;/ul>
-          &lt;/section>
-
-          &lt;section className="footer__seccion footer__seccion--enlaces">
-            &lt;h3 className="footer__titulo">Soporte &amp; Legal&lt;/h3>
-            &lt;ul className="footer__lista">
-              &lt;li className="footer__elemento">
-                &lt;a href="/legal/terminos" className="footer__enlace">
-                  Términos de Uso
-                &lt;/a>
-              &lt;/li>
-              &lt;li className="footer__elemento">
-                &lt;a href="/legal/privacidad" className="footer__enlace">
-                  Política de Privacidad
-                &lt;/a>
-              &lt;/li>
-              &lt;li className="footer__elemento">
-                &lt;a href="/legal/cookies" className="footer__enlace">
-                  Política de Cookies
-                &lt;/a>
-              &lt;/li>
-              &lt;li className="footer__elemento">
-                &lt;a href="/status" className="footer__enlace">
-                  Estado del servicio
-                &lt;/a>
-              &lt;/li>
-            &lt;/ul>
-          &lt;/section>
-        &lt;/section>
-
-        &lt;section className="footer__seccion footer__seccion--redes">
-          &lt;h3 className="footer__titulo">Redes sociales&lt;/h3>
-          &lt;section className="footer__redes">
-            &lt;a
-              href="https://www.facebook.com/profile.php?id=61585128865474"
-              className="footer__red"
-              aria-label="Facebook"
-              target="_blank"
-            >
-              &lt;FaFacebookF className="footer__red-icono" />
-            &lt;/a>
-            &lt;a
-              href="https://x.com/Bossflow412981"
-              className="footer__red"
-              aria-label="X"
-              target="_blank"
-            >
-              &lt;FaXTwitter className="footer__red-icono" />
-            &lt;/a>
-            &lt;a
-              href="https://www.instagram.com/bossflowpi/"
-              className="footer__red"
-              aria-label="Instagram"
-              target="_blank"
-            >
-              &lt;FaInstagram className="footer__red-icono" />
-            &lt;/a>
-            &lt;a
-              href="https://www.youtube.com/channel/UC4oVyly7b4UCxzs9ugaDd0w"
-              className="footer__red"
-              aria-label="YouTube"
-              target="_blank"
-            >
-              &lt;FaYoutube className="footer__red-icono" />
-            &lt;/a>
-          &lt;/section>
-        &lt;/section>
-      &lt;/section>
-
-      &lt;hr className="footer__separador" />
-
-      &lt;section className="footer__inferior">
-        &lt;p className="footer__copyright">
-          © BossFlow 2025. Todos los derechos reservados.
-        &lt;/p>
-        &lt;p className="footer__lema">Planifica. Mejora. Derrota al boss.&lt;/p>
-      &lt;/section>
-    &lt;/footer>
+    &lt;aside className={`toast toast--${type}`}>
+      {getIcon()}
+      &lt;span className="toast__message">{message}&lt;/span>
+      &lt;button
+        className="toast__close"
+        onClick={onClose}
+        aria-label="Cerrar notificación"
+      >
+        &lt;FiX />
+      &lt;/button>
+    &lt;/aside>
   );
 }
 
-export default Footer;
+export default Toast;
 </code></pre>
         </article>
     </section>
@@ -185,7 +115,7 @@ export default Footer;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

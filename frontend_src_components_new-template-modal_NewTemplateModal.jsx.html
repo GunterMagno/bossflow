@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/ImportJSON/ImportJSON.jsx - Documentation</title>
+    <title>frontend/src/components/new-template-modal/NewTemplateModal.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/ImportJSON/ImportJSON.jsx</h1>
+    <h1 class="page-title">frontend/src/components/new-template-modal/NewTemplateModal.jsx</h1>
     
 
     
@@ -39,281 +39,323 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { useState, useRef } from 'react';
-import { FiUpload, FiX, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
-import './ImportJSON.css';
-import { validateJSONStructure, isValidJSONFile, COMPATIBLE_VERSIONS } from '../../utils/jsonValidator';
+            <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiX, FiFileText, FiAlignLeft } from 'react-icons/fi';
+import { createDiagram, updateDiagram } from '../../services/diagramService';
+import { registerActivity, ACTIVITY_TYPES } from '../../services/activityService';
+import { useToast } from '../../context/ToastContext';
+import './NewTemplateModal.css';
 
 /**
- * Component to import diagrams from JSON files with validation and preview
- * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Controls the visibility of the modal
- * @param {Function} props.onClose - Callback executed when closing the modal
- * @param {Function} props.onImport - Callback executed when importing the diagram
- * @param {Object} props.toast - Object to display notifications
- * @returns {JSX.Element|null} Import modal or null if closed
+ * Componente modal para crear o editar plantillas de diagramas.
+ * Permite definir título y descripción para plantillas reutilizables.
+ *
+ * @param {Object} props - Propiedades del componente
+ * @param {boolean} props.isOpen - Indica si el modal está abierto
+ * @param {Function} props.onClose - Función callback para cerrar el modal
+ * @param {Function} props.onTemplateCreated - Función callback ejecutada cuando se crea o actualiza una plantilla
+ * @param {string} props.initialTitle - Título inicial de la plantilla (para edición)
+ * @param {string} props.initialDescription - Descripción inicial de la plantilla (para edición)
+ * @param {Array} props.initialNodes - Nodos iniciales de la plantilla
+ * @param {Array} props.initialEdges - Conexiones iniciales de la plantilla
+ * @param {string|null} props.editingTemplateId - ID de la plantilla si es edición, null si es creación
+ * @returns {JSX.Element|null} Elemento modal o null si está cerrado
  */
-function ImportJSON({ 
-  isOpen, 
-  onClose, 
-  onImport,
-  toast 
+function NewTemplateModal({
+  isOpen,
+  onClose,
+  onTemplateCreated,
+  initialTitle = '',
+  initialDescription = '',
+  initialNodes = [],
+  initialEdges = [],
+  editingTemplateId = null
 }) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [previewData, setPreviewData] = useState(null);
-  const [validationError, setValidationError] = useState(null);
-  const [importFile, setImportFile] = useState(null);
-  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [formData, setFormData] = useState({
+    title: initialTitle,
+    description: initialDescription,
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setFormData({
+      title: initialTitle,
+      description: initialDescription,
+    });
+  }, [initialTitle, initialDescription, isOpen]);
 
   /**
-   * Closes the modal and resets all component state
+   * Maneja los cambios en los campos de entrada del formulario.
+   * Actualiza el estado del formulario y limpia los errores del campo modificado.
+   *
+   * @param {Event} e - Evento de cambio del input
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
+  };
+
+  /**
+   * Valida los campos del formulario antes de enviar.
+   * Verifica que el título esté presente y tenga al menos 3 caracteres.
+   *
+   * @returns {boolean} true si el formulario es válido, false en caso contrario
+   */
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'El título es requerido';
+    } else if (formData.title.trim().length &lt; 3) {
+      newErrors.title = 'El título debe tener al menos 3 caracteres';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  /**
+   * Maneja el envío del formulario para crear o actualizar una plantilla.
+   * Determina si se trata de una creación o actualización según editingTemplateId,
+   * registra la actividad correspondiente y redirige al editor.
+   *
+   * @param {Event} e - Evento de envío del formulario
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      let response;
+
+      if (editingTemplateId) {
+        response = await updateDiagram(editingTemplateId, {
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+        });
+
+        if (response.diagram) {
+          registerActivity(
+            ACTIVITY_TYPES.UPDATE,
+            response.diagram.title,
+            response.diagram.id
+          );
+        }
+
+        toast.success('¡Plantilla actualizada exitosamente!');
+
+        if (onTemplateCreated) {
+          onTemplateCreated(response.diagram);
+        }
+
+        handleClose();
+
+        if (response.diagram &amp;&amp; response.diagram.id) {
+          navigate(`/editor/${response.diagram.id}`);
+        }
+      } else {
+        response = await createDiagram({
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          nodes: initialNodes,
+          edges: initialEdges,
+          isTemplate: true
+        });
+
+        if (response.diagram) {
+          registerActivity(
+            ACTIVITY_TYPES.CREATE,
+            response.diagram.title,
+            response.diagram.id
+          );
+        }
+
+        toast.success('¡Plantilla creada exitosamente!');
+
+        if (onTemplateCreated) {
+          onTemplateCreated(response.diagram);
+        }
+
+        handleClose();
+
+        if (response.diagram &amp;&amp; response.diagram.id) {
+          navigate(`/editor/${response.diagram.id}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error al crear plantilla:', error);
+
+      if (error.response?.status === 409) {
+        setErrors({
+          title: 'Ya existe una plantilla con ese título',
+        });
+        toast.error('Ya existe una plantilla con ese título');
+      } else if (error.response?.status === 400) {
+        const errorMessage = error.response?.data?.error || 'Datos inválidos';
+        setErrors({
+          general: errorMessage,
+        });
+        toast.error(errorMessage);
+      } else {
+        const errorMessage = 'Error al crear la plantilla. Por favor, intenta de nuevo.';
+        setErrors({
+          general: errorMessage,
+        });
+        toast.error(errorMessage);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * Cierra el modal y reinicia el formulario a su estado inicial.
+   * Limpia todos los campos y errores.
    */
   const handleClose = () => {
-    setPreviewData(null);
-    setValidationError(null);
-    setImportFile(null);
-    setIsProcessing(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    setFormData({
+      title: '',
+      description: '',
+    });
+    setErrors({});
     onClose();
   };
 
   /**
-   * Manages the selection and validation of the JSON file
-   * @param {Event} event - File selection event
+   * Maneja el evento de teclado para cerrar el modal con la tecla Escape.
+   *
+   * @param {KeyboardEvent} e - Evento de teclado
    */
-  const handleFileSelect = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!isValidJSONFile(file.name)) {
-      setValidationError('Por favor, selecciona un archivo JSON válido (.json)');
-      setPreviewData(null);
-      setImportFile(null);
-      return;
-    }
-
-    setImportFile(file);
-    setValidationError(null);
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = e.target.result;
-        const data = JSON.parse(content);
-        
-        const validation = validateJSONStructure(data);
-        
-        if (!validation.valid) {
-          setValidationError(validation.errors.join(', '));
-          setPreviewData(null);
-          return;
-        }
-
-        setPreviewData(data);
-        setValidationError(null);
-      } catch (error) {
-        setValidationError('Error al leer el archivo: ' + error.message);
-        setPreviewData(null);
-      }
-    };
-    
-    reader.onerror = () => {
-      setValidationError('Error al leer el archivo');
-      setPreviewData(null);
-    };
-    
-    reader.readAsText(file);
-  };
-
-  /**
-   * Confirms and executes the import of the validated diagram
-   */
-  const handleConfirmImport = () => {
-    if (!previewData) return;
-
-    setIsProcessing(true);
-    
-    try {
-      if (!COMPATIBLE_VERSIONS.includes(previewData.version)) {
-        throw new Error(`Versión incompatible: ${previewData.version}`);
-      }
-
-      const { nodes: importedNodes, edges: importedEdges } = previewData.diagram;
-
-      if (!importedNodes || importedNodes.length === 0) {
-        throw new Error('El archivo no contiene nodos para importar');
-      }
-
-      onImport({
-        nodes: importedNodes,
-        edges: importedEdges || [],
-        metadata: previewData.metadata
-      });
-
-      toast.success(`Diagrama "${previewData.metadata.title}" importado correctamente`);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
       handleClose();
-    } catch (error) {
-      console.error('Error al importar JSON:', error);
-      toast.error('Error al importar el diagrama: ' + error.message);
-    } finally {
-      setIsProcessing(false);
     }
   };
 
-  /**
-   * Cancels the import and clears the preview state
-   */
-  const handleCancelImport = () => {
-    setPreviewData(null);
-    setValidationError(null);
-    setImportFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
+  if (!isOpen) return null;
 
   return (
-    &lt;section className="import-json__overlay" onClick={handleClose}>
-      &lt;article className="import-json__content" onClick={(e) => e.stopPropagation()}>
-        &lt;header className="import-json__header">
-          &lt;h2 className="import-json__title">
-            &lt;FiUpload />
-            Importar Diagrama desde JSON
+    &lt;section
+      className="modal-overlay"
+      onClick={handleClose}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      &lt;article
+        className="modal"
+        onClick={(e) => e.stopPropagation()}
+      >
+        &lt;header className="modal__header">
+          &lt;h2 id="modal-title" className="modal__title">
+            {editingTemplateId ? 'Editar plantilla' : 'Crear nueva plantilla'}
           &lt;/h2>
           &lt;button
-            className="import-json__close"
+            type="button"
+            className="modal__close-button"
             onClick={handleClose}
-            disabled={isProcessing}
-            title="Cerrar"
+            aria-label="Cerrar modal"
           >
             &lt;FiX />
           &lt;/button>
         &lt;/header>
 
-        &lt;section className="import-json__body">
-          {!previewData ? (
-            &lt;>
-              &lt;p className="import-json__description">
-                Selecciona un archivo JSON para importar el diagrama. El archivo debe estar en formato BossFlow válido.
-              &lt;/p>
-
-              &lt;section className="import-json__file-input">
-                &lt;input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".json,application/json"
-                  onChange={handleFileSelect}
-                  id="json-file-input"
-                  className="import-json__file-input-hidden"
-                />
-                &lt;label htmlFor="json-file-input" className="import-json__file-label">
-                  &lt;FiUpload />
-                  {importFile ? importFile.name : 'Seleccionar archivo JSON'}
-                &lt;/label>
-              &lt;/section>
-
-              {validationError &amp;&amp; (
-                &lt;section className="import-json__error">
-                  &lt;FiAlertCircle />
-                  &lt;article>
-                    &lt;strong>Error de validación:&lt;/strong>
-                    &lt;p>{validationError}&lt;/p>
-                  &lt;/article>
-                &lt;/section>
-              )}
-
-              &lt;section className="import-json__info">
-                &lt;FiAlertCircle />
-                &lt;article>
-                  &lt;p>&lt;strong>Importante:&lt;/strong> Al importar un diagrama, se reemplazará el contenido actual del canvas.&lt;/p>
-                  &lt;p className="import-json__info-detail">
-                    Asegúrate de guardar tu trabajo antes de importar.
-                  &lt;/p>
-                &lt;/article>
-              &lt;/section>
-
-              &lt;nav className="import-json__actions">
-                &lt;button
-                  className="import-json__button import-json__button--secondary"
-                  onClick={handleClose}
-                >
-                  Cancelar
-                &lt;/button>
-              &lt;/nav>
-            &lt;/>
-          ) : (
-            &lt;>
-              &lt;section className="import-json__preview">
-                &lt;header className="import-json__preview-header">
-                  &lt;FiCheckCircle className="import-json__preview-icon" />
-                  &lt;h3>Vista previa del diagrama&lt;/h3>
-                &lt;/header>
-                
-                &lt;section className="import-json__preview-content">
-                  &lt;article className="import-json__preview-item">
-                    &lt;strong>Título:&lt;/strong>
-                    &lt;span>{previewData.metadata.title}&lt;/span>
-                  &lt;/article>
-                  &lt;article className="import-json__preview-item">
-                    &lt;strong>Exportado:&lt;/strong>
-                    &lt;span>{new Date(previewData.metadata.exportedAt).toLocaleString()}&lt;/span>
-                  &lt;/article>
-                  &lt;article className="import-json__preview-item">
-                    &lt;strong>Versión:&lt;/strong>
-                    &lt;span>{previewData.version}&lt;/span>
-                  &lt;/article>
-                  &lt;article className="import-json__preview-item">
-                    &lt;strong>Nodos:&lt;/strong>
-                    &lt;span>{previewData.metadata.nodeCount}&lt;/span>
-                  &lt;/article>
-                  &lt;article className="import-json__preview-item">
-                    &lt;strong>Conexiones:&lt;/strong>
-                    &lt;span>{previewData.metadata.edgeCount}&lt;/span>
-                  &lt;/article>
-                &lt;/section>
-              &lt;/section>
-
-              &lt;aside className="import-json__warning import-json__warning--danger">
-                &lt;FiAlertCircle />
-                &lt;p>&lt;strong>¿Continuar con la importación?&lt;/strong> El contenido actual del canvas será reemplazado.&lt;/p>
-              &lt;/aside>
-
-              &lt;nav className="import-json__actions">
-                &lt;button
-                  className="import-json__button import-json__button--secondary"
-                  onClick={handleCancelImport}
-                  disabled={isProcessing}
-                >
-                  Cancelar
-                &lt;/button>
-                &lt;button
-                  className="import-json__button import-json__button--primary"
-                  onClick={handleConfirmImport}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? 'Importando...' : 'Confirmar importación'}
-                &lt;/button>
-              &lt;/nav>
-            &lt;/>
-          )}
-
-          {isProcessing &amp;&amp; (
-            &lt;aside className="import-json__loading">
-              &lt;figure className="import-json__spinner">&lt;/figure>
-              &lt;p>Importando diagrama...&lt;/p>
+        &lt;form onSubmit={handleSubmit} className="modal__form">
+          {errors.general &amp;&amp; (
+            &lt;aside className="modal__error-general">
+              {errors.general}
             &lt;/aside>
           )}
-        &lt;/section>
+
+          &lt;fieldset className="modal__form-group">
+            &lt;label htmlFor="title" className="modal__label">
+              &lt;FiFileText className="modal__label-icon" />
+              Título de la plantilla
+              &lt;span className="modal__required">*&lt;/span>
+            &lt;/label>
+            &lt;input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className={`modal__input ${errors.title ? 'modal__input--error' : ''}`}
+              placeholder="Ej: Plantilla de flujo de trabajo"
+              maxLength={100}
+              autoFocus
+            />
+            {errors.title &amp;&amp; (
+              &lt;span className="modal__error">{errors.title}&lt;/span>
+            )}
+          &lt;/fieldset>
+
+          &lt;fieldset className="modal__form-group">
+            &lt;label htmlFor="description" className="modal__label">
+              &lt;FiAlignLeft className="modal__label-icon" />
+              Descripción (opcional)
+            &lt;/label>
+            &lt;textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="modal__textarea"
+              placeholder="Describe brevemente de qué trata esta plantilla..."
+              rows={4}
+              maxLength={500}
+            />
+            &lt;span className="modal__char-count">
+              {formData.description.length}/500
+            &lt;/span>
+          &lt;/fieldset>
+
+          &lt;nav className="modal__actions">
+            &lt;button
+              type="button"
+              className="modal__button modal__button--secondary"
+              onClick={handleClose}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            &lt;/button>
+            &lt;button
+              type="submit"
+              className="modal__button modal__button--primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting 
+                ? (editingTemplateId ? 'Guardando...' : 'Creando...') 
+                : (editingTemplateId ? 'Guardar y editar' : 'Crear plantilla')
+              }
+            &lt;/button>
+          &lt;/nav>
+        &lt;/form>
       &lt;/article>
     &lt;/section>
   );
 }
 
-export default ImportJSON;
+export default NewTemplateModal;
 </code></pre>
         </article>
     </section>
@@ -326,7 +368,7 @@ export default ImportJSON;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

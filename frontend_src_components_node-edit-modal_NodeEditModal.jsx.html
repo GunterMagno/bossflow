@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>frontend/src/components/ExportModal/ExportModal.jsx - Documentation</title>
+    <title>frontend/src/components/node-edit-modal/NodeEditModal.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">frontend/src/components/ExportModal/ExportModal.jsx</h1>
+    <h1 class="page-title">frontend/src/components/node-edit-modal/NodeEditModal.jsx</h1>
     
 
     
@@ -39,88 +39,347 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { FiDownload, FiX, FiImage, FiFile } from 'react-icons/fi';
-import './ExportModal.css';
+            <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
+import './NodeEditModal.css';
+import { FiX, FiTrash2, FiImage } from 'react-icons/fi';
+import UploadImageModal from '../UploadImageModal/UploadImageModal';
 
 /**
- * Modal to export the diagram in different formats
+ * Modal component for editing diagram node properties.
+ * Allows modifying title, description, type, and associated image of a node.
+ *
  * @param {Object} props - Component properties
- * @param {boolean} props.isOpen - Controls the visibility of the modal
- * @param {Function} props.onClose - Callback executed when closing the modal
- * @param {Function} props.onExportPNG - Callback to export as PNG image
- * @param {Function} props.onExportJSON - Callback to export as JSON file
- * @param {boolean} props.isExporting - Indicates if an export is in progress
- * @returns {JSX.Element|null} Export modal or null if closed
+ * @param {boolean} props.isOpen - Whether the modal is open
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Object} props.node - Node object to edit with its data
+ * @param {Function} props.onSave - Callback function to save node changes
+ * @param {Function} props.onDelete - Callback function to delete the node
+ * @returns {JSX.Element|null} Modal element or null if closed
  */
-function ExportModal({ isOpen, onClose, onExportPNG, onExportJSON, isExporting }) {
+function NodeEditModal({ isOpen, onClose, node, onSave, onDelete }) {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    type: '',
+    image: null
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const nodeTypes = [
+    { value: 'action', label: 'Acción' },
+    { value: 'decision', label: 'Decisión' },
+    { value: 'startEnd', label: 'Evento' },
+    { value: 'phase', label: 'Fase' },
+    { value: 'position', label: 'Posición' },
+    { value: 'timer', label: 'Temporizador' },
+    { value: 'mechanic', label: 'Mecánica' },
+    { value: 'ability', label: 'Habilidad' }
+  ];
+
+  useEffect(() => {
+    if (isOpen &amp;&amp; node) {
+      setFormData({
+        title: node.data?.title || '',
+        description: node.data?.description || '',
+        type: node.type || '',
+        image: node.data?.image || null
+      });
+      setErrors({});
+    }
+  }, [isOpen, node]);
+
+  /**
+   * Handles changes in form fields.
+   * Updates the form state and clears the error for the modified field.
+   *
+   * @param {Event} e - Input change event
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  /**
+   * Validates form fields before saving.
+   * Checks title, description, and node type according to established rules.
+   *
+   * @returns {boolean} true if form is valid, false otherwise
+   */
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'El título es obligatorio';
+    } else if (formData.title.trim().length &lt; 2) {
+      newErrors.title = 'El título debe tener al menos 2 caracteres';
+    } else if (formData.title.trim().length > 50) {
+      newErrors.title = 'El título no puede exceder 50 caracteres';
+    }
+
+    if (formData.description &amp;&amp; formData.description.length > 200) {
+      newErrors.description = 'La descripción no puede exceder 200 caracteres';
+    }
+
+    if (!formData.type) {
+      newErrors.type = 'Debes seleccionar un tipo de nodo';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  /**
+   * Handles form submission to save node changes.
+   * Validates data and executes the onSave callback with the updated node.
+   *
+   * @param {Event} e - Form submission event
+   */
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      onSave({
+        ...node,
+        type: formData.type,
+        data: {
+          ...node.data,
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          image: formData.image
+        }
+      });
+      onClose();
+    }
+  };
+
+  /**
+   * Handles uploaded image from the upload modal.
+   * Updates the form state with the new image data.
+   *
+   * @param {Object} imageData - Object with image data (url, filename, etc.)
+   */
+  const handleImageUploaded = (imageData) => {
+    setFormData(prev => ({
+      ...prev,
+      image: imageData
+    }));
+  };
+
+  /**
+   * Removes the image associated with the node.
+   * Sets the image field to null in the form state.
+   */
+  const handleRemoveImage = () => {
+    setFormData(prev => ({
+      ...prev,
+      image: null
+    }));
+  };
+
+  /**
+   * Handles node deletion.
+   * Executes the onDelete callback with the node ID if available.
+   */
+  const handleDelete = () => {
+    if (onDelete &amp;&amp; node) {
+      onDelete(node.id);
+    }
+  };
+
+  useEffect(() => {
+    /**
+     * Handles the Escape key to close the modal.
+     *
+     * @param {KeyboardEvent} e - Keyboard event
+     */
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' &amp;&amp; isOpen) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    &lt;section className="export-modal__overlay" onClick={onClose}>
-      &lt;article className="export-modal__content" onClick={(e) => e.stopPropagation()}>
-        &lt;header className="export-modal__header">
-          &lt;h2 className="export-modal__title">
-            &lt;FiDownload />
-            Exportar Diagrama
-          &lt;/h2>
+    &lt;section className="node-edit-modal-overlay" onClick={onClose}>
+      &lt;article className="node-edit-modal" onClick={(e) => e.stopPropagation()}>
+        &lt;header className="node-edit-modal__header">
+          &lt;h2 className="node-edit-modal__title">Editar Nodo&lt;/h2>
           &lt;button
-            className="export-modal__close"
+            className="node-edit-modal__close"
             onClick={onClose}
-            disabled={isExporting}
-            title="Cerrar"
+            aria-label="Cerrar modal"
           >
             &lt;FiX />
           &lt;/button>
         &lt;/header>
 
-        &lt;section className="export-modal__body">
-          &lt;p className="export-modal__description">
-            Selecciona el formato en el que deseas exportar tu diagrama
-          &lt;/p>
+        &lt;form className="node-edit-modal__form" onSubmit={handleSubmit}>
+          &lt;fieldset className="node-edit-modal__field">
+            &lt;label htmlFor="title" className="node-edit-modal__label">
+              Título &lt;span className="node-edit-modal__required">*&lt;/span>
+            &lt;/label>
+            &lt;input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className={`node-edit-modal__input ${errors.title ? 'node-edit-modal__input--error' : ''}`}
+              placeholder="Nombre del nodo"
+              maxLength={50}
+            />
+            {errors.title &amp;&amp; (
+              &lt;span className="node-edit-modal__error">{errors.title}&lt;/span>
+            )}
+          &lt;/fieldset>
 
-          &lt;nav className="export-modal__options">
-            &lt;button
-              className="export-modal__option"
-              onClick={onExportPNG}
-              disabled={isExporting}
+          &lt;fieldset className="node-edit-modal__field">
+            &lt;label htmlFor="type" className="node-edit-modal__label">
+              Tipo &lt;span className="node-edit-modal__required">*&lt;/span>
+            &lt;/label>
+            &lt;select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className={`node-edit-modal__select ${errors.type ? 'node-edit-modal__select--error' : ''}`}
             >
-              &lt;figure className="export-modal__option-icon">
-                &lt;FiImage />
-              &lt;/figure>
-              &lt;section className="export-modal__option-info">
-                &lt;h3>PNG&lt;/h3>
-                &lt;p>Imagen de alta calidad&lt;/p>
-              &lt;/section>
-            &lt;/button>
+              &lt;option value="">Seleccionar tipo...&lt;/option>
+              {nodeTypes.map((type) => (
+                &lt;option key={type.value} value={type.value}>
+                  {type.label}
+                &lt;/option>
+              ))}
+            &lt;/select>
+            {errors.type &amp;&amp; (
+              &lt;span className="node-edit-modal__error">{errors.type}&lt;/span>
+            )}
+          &lt;/fieldset>
 
-            &lt;button
-              className="export-modal__option"
-              onClick={onExportJSON}
-              disabled={isExporting}
-            >
-              &lt;figure className="export-modal__option-icon">
-                &lt;FiFile />
+          &lt;fieldset className="node-edit-modal__field">
+            &lt;label htmlFor="description" className="node-edit-modal__label">
+              Descripción
+            &lt;/label>
+            &lt;textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className={`node-edit-modal__textarea ${errors.description ? 'node-edit-modal__textarea--error' : ''}`}
+              placeholder="Descripción opcional del nodo"
+              rows={4}
+              maxLength={200}
+            />
+            &lt;small className="node-edit-modal__char-count">
+              {formData.description.length}/200 caracteres
+            &lt;/small>
+            {errors.description &amp;&amp; (
+              &lt;span className="node-edit-modal__error">{errors.description}&lt;/span>
+            )}
+          &lt;/fieldset>
+
+          &lt;fieldset className="node-edit-modal__field">
+            &lt;label className="node-edit-modal__label">
+              Imagen
+            &lt;/label>
+            {formData.image ? (
+              &lt;figure className="node-edit-modal__image-preview">
+                &lt;img 
+                  src={formData.image.url} 
+                  alt={formData.image.filename || 'Vista previa'}
+                  className="node-edit-modal__image"
+                />
+                &lt;p className="node-edit-modal__image-filename">
+                  {formData.image.filename}
+                &lt;/p>
+                &lt;nav className="node-edit-modal__image-actions">
+                  &lt;button
+                    type="button"
+                    className="node-edit-modal__button node-edit-modal__button--change"
+                    onClick={() => setIsUploadModalOpen(true)}
+                  >
+                    &lt;FiImage /> Cambiar
+                  &lt;/button>
+                  &lt;button
+                    type="button"
+                    className="node-edit-modal__button node-edit-modal__button--remove"
+                    onClick={handleRemoveImage}
+                  >
+                    &lt;FiTrash2 /> Eliminar
+                  &lt;/button>
+                &lt;/nav>
               &lt;/figure>
-              &lt;section className="export-modal__option-info">
-                &lt;h3>JSON&lt;/h3>
-                &lt;p>Exportar estructura del diagrama&lt;/p>
-              &lt;/section>
-            &lt;/button>
+            ) : (
+              &lt;button
+                type="button"
+                className="node-edit-modal__button node-edit-modal__button--upload"
+                onClick={() => setIsUploadModalOpen(true)}
+              >
+                &lt;FiImage /> Añadir imagen
+              &lt;/button>
+            )}
+          &lt;/fieldset>
+
+          &lt;nav className="node-edit-modal__actions">
+            &lt;section className="node-edit-modal__actions-left">
+              {onDelete &amp;&amp; (
+                &lt;button
+                  type="button"
+                  className="node-edit-modal__button node-edit-modal__button--delete"
+                  onClick={handleDelete}
+                  title="Eliminar nodo"
+                >
+                  &lt;FiTrash2 /> Eliminar
+                &lt;/button>
+              )}
+            &lt;/section>
+            &lt;section className="node-edit-modal__actions-right">
+              &lt;button
+                type="button"
+                className="node-edit-modal__button node-edit-modal__button--cancel"
+                onClick={onClose}
+              >
+                Cancelar
+              &lt;/button>
+              &lt;button
+                type="submit"
+                className="node-edit-modal__button node-edit-modal__button--save"
+              >
+                Guardar Cambios
+              &lt;/button>
+            &lt;/section>
           &lt;/nav>
+        &lt;/form>
 
-          {isExporting &amp;&amp; (
-            &lt;aside className="export-modal__loading">
-              &lt;figure className="export-modal__spinner">&lt;/figure>
-              &lt;p>Exportando diagrama...&lt;/p>
-            &lt;/aside>
-          )}
-        &lt;/section>
+        &lt;UploadImageModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setIsUploadModalOpen(false)}
+          onImageUploaded={handleImageUploaded}
+          title="Añadir imagen al nodo"
+        />
       &lt;/article>
     &lt;/section>
   );
 }
 
-export default ExportModal;
+export default NodeEditModal;
 </code></pre>
         </article>
     </section>
@@ -133,7 +392,7 @@ export default ExportModal;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Fri Feb 06 2026 11:31:22 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Thu Feb 12 2026 07:29:58 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
