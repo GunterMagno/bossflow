@@ -1,3 +1,11 @@
+---
+name: Tarea de sprint
+about: Plantilla para tareas de sprint / tickets de trabajo
+title: "[SPRINT]"
+labels: task
+assignees: ''
+---
+
 **Asignado a:** [Nombre de la persona] (@usuario)  
 **Rol:** [Rol]  
 **Estimación:** [Tiempo estimado en horas]  
