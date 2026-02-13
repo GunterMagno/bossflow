@@ -1,6 +1,21 @@
 # 👿 BossFlow ⚔
 
+[![Release](https://img.shields.io/github/v/tag/GunterMagno/BossFlow?label=version)](https://github.com/GunterMagno/BossFlow/releases)
+[![License](https://img.shields.io/github/license/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/blob/main/LICENSE)
+[![Issues](https://img.shields.io/github/issues/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/issues)
+[![PRs](https://img.shields.io/github/issues-pr/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/pulls)
+[![Contributors](https://img.shields.io/github/contributors/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/GunterMagno/BossFlow?style=social)](https://github.com/GunterMagno/BossFlow/stargazers)
+
+
+##### CI/CD
+
+[![Security Scan](https://github.com/GunterMagno/BossFlow/actions/workflows/trivy.yml/badge.svg)](https://github.com/GunterMagno/BossFlow/actions/workflows/trivy.yml)
+[![Docker Images](https://github.com/GunterMagno/BossFlow/actions/workflows/image_docker.yaml/badge.svg)](https://github.com/GunterMagno/BossFlow/actions/workflows/image_docker.yaml) 
+[![GitHub Pages](https://github.com/GunterMagno/BossFlow/actions/workflows/jsdoc.yml/badge.svg)](https://github.com/GunterMagno/BossFlow/actions/workflows/jsdoc.yml)
+
 ![Logo](./frontend/public/logo.png)
+
 
 ## Descripción
 
@@ -21,7 +36,9 @@ BossFlow resuelve el problema de la fragmentación de información sobre estrate
 - [Cómo contribuir](#cómo-contribuir)
 - [Contacto](#contacto)
 - [Información del equipo](#información-del-equipo)
+- [License](#license)
 - [Documentación adicional](#documentación-adicional)
+
 
 ## Tecnologías utilizadas
 
@@ -80,6 +97,46 @@ BossFlow está construido sobre el stack MERN como base (MongoDB, Express, React
 [https://bossflow.app/](https://bossflow.app/)
 
 ## Capturas de pantalla
+
+1. Al acceder a la aplicación (home y banner):
+
+![Imagen 1](./docs/app-images/img1.png)
+
+2. Pantalla de registro:
+
+![Imagen 2](./docs/app-images/img2.png)
+
+3. Polica de privacidad (vista a página políticas):
+
+![Imagen 3](./docs/app-images/img3.png)
+
+4. Modal para crear diagrama:
+
+![Imagen 4](./docs/app-images/img4.png)
+
+5. Editor:
+
+![Imagen 5](./docs/app-images/img5.png)
+
+6. Modal de exportación de diagramas:
+
+![Imagen 6](./docs/app-images/img6.png.png)
+
+7. Modal de importación de diagramas:
+
+![Imagen 7](./docs/app-images/img7.png)
+
+8. Vista Dashboard: 
+
+![Imagen 8](./docs/app-images/img10.png)
+
+9. Perfil de usuario:
+
+![Imagen 0](./docs/app-images/img8.png)
+
+10. Modal eliminación de cuenta:
+
+![Imagen 10](./docs/app-images/img9.png) 
 
 
 ## Instalación y ejecución
@@ -148,34 +205,29 @@ VITE_API_URL=http://localhost:4000/api
 Enlace al despliegue: [Despliegue de la aplicación](https://bossflow.app/)
     - [Documentación de despliegue](docs/despliegue/).
 
-Enlace a la demo de la aplicación: [Despliegue de la aplicación](https://youtube.com/)
+Enlace a la demo de la aplicación: [https://youtu.be/gMY0KOfktd0](https://youtu.be/gMY0KOfktd0)
 
 
 ## Cómo contribuir
 
-- Crea un fork y abre un Pull Request.
-- Sigue las buenas prácticas: prueba correcto funcionamiento, linting y formato.
-- Documenta lo realizado.
+¡BossFlow es un proyecto de código abierto y nos encanta recibir contribuciones! Ya sea que quieras corregir un error, añadir un nuevo tipo de nodo al editor o mejorar la documentación, tu ayuda es bienvenida.
+
+Para mantener la calidad y consistencia del proyecto, hemos preparado una guía detallada:
+
+**[Consulta nuestra Guía de Contribución completa aquí](CONTRIBUTING.md)**
 
 ## Contacto
 
 Para dudas o colaboración abre un Issue o contacta al creador del repositorio.
 
-## Información del equipo
-
-### Documentación profesores
-> [!NOTE]
-> Esta documentación va dirigida a algunos profesores en específico por los requerimentos de su asignatura.
-
-#### Daniel Sánchez Benítez
-- **[Propuesta inicial](docs/dani/propuesta-inicial.pdf)**
-- **[Requisitos técnicos](docs/dani/requisitos-tecnicos.pdf)**
-- **[Evaluación técnica](docs/dani/evaluacion-tecnica.pdf)**
-
 ## Información del equipo  
 - Alejandro Borrego Cruz - [Perfil Github](https://github.com/GunterMagno)
 - Jesús López Pérez - [Perfil Github](https://github.com/jesuuslopeez)
 - Daniel Montes Iglesias - [Perfil Github](https://github.com/danielmi5)
+
+## License
+
+Este proyecto está licenciado bajo MIT, los términos están descritos en el archivo [LICENSE](LICENSE).
 
 ## Documentación adicional
 
@@ -185,18 +237,7 @@ Enlace a la [WIKI](https://github.com/GunterMagno/BossFlow/wiki)
 
 👉 **[Ver índice completo de documentación](docs/README.md)**
 
-La carpeta `docs/` contiene la documentación técnica y de proyecto organizada por áreas:
-
-- `docs/README.md`: índice principal y guía de lectura para navegar la documentación.
-- `docs/api/`: especificaciones relacionadas con la estructura de los diagramas. Incluye:
-	- `estructura-nodos-json.md`: esquema JSON y reglas de validación para los nodos.
-	- `NODE_TYPES.md`: tipos de nodos y su semántica.
-- `docs/arquitectura/`: detalles arquitectónicos (diseño de la base de datos, flujo de autenticación, estrategias de logout, etc.). Ej.: `base-de-datos.md`, `auth-flujo.md`.
-- `docs/despliegue/`: guías para desplegar la aplicación (VPS, Docker, setup). Ej.: `setup-docker.md`, `DESPLIEGUE.md`, `despliegue-vps.md`.
-- `docs/proyecto/`: información del proyecto (objetivos, problema, viabilidad técnica, recursos).
-- `docs/historias-usuario/`: historias de usuario y criterios (CRUD de diagramas, flujos de usuario).
-- `docs/ui-ux/`: recursos de diseño, notas de Figma y capturas en `docs/ui-ux/capturas/`.
-
+La carpeta `docs/` contiene la documentación técnica y de proyecto organizada por áreas.
 
 
 

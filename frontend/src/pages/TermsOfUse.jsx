@@ -1,10 +1,14 @@
+// ============================================================
+// File: TermsOfUse.jsx
+// Description: Terms of use legal page.
+// ============================================================
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './LegalPages.css';
 
 /**
- * Página de Términos de Uso y Condiciones de Servicio.
- * Muestra los términos y condiciones completos para el uso de BossFlow.
+ * Terms of Use and Service Conditions page.
+ * Displays the full terms and conditions for using BossFlow.
  */
 function TermsOfUse() {
   useEffect(() => {
@@ -316,7 +320,7 @@ function TermsOfUse() {
             <p>
               Para información detallada sobre qué datos recogemos, cómo los utilizamos y cuáles
               son sus derechos, consulte nuestra{' '}
-              <Link to="/legal/privacidad" className="legal-page__link">
+              <Link to="/legal/privacy" className="legal-page__link">
                 Política de Privacidad
               </Link>.
             </p>
@@ -432,7 +436,7 @@ function TermsOfUse() {
           </p>
           <p>
             Consulta también nuestra{' '}
-            <Link to="/legal/privacidad" className="legal-page__link">
+            <Link to="/legal/privacy" className="legal-page__link">
               Política de Privacidad
             </Link>{' '}
             y{' '}

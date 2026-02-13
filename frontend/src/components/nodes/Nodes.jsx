@@ -1,3 +1,7 @@
+// ============================================================
+// File: Nodes.jsx
+// Description: Custom ReactFlow node type component definitions.
+// ============================================================
 import React from "react";
 import { Handle, Position, NodeResizer } from "reactflow";
 import "./Nodes.css";
@@ -12,7 +16,7 @@ import {
   FiStar,
 } from 'react-icons/fi';
 
-const posiciones = [
+const positions = [
   { pos: Position.Top, name: "top" },
   { pos: Position.Right, name: "right" },
   { pos: Position.Bottom, name: "bottom" },
@@ -20,17 +24,17 @@ const posiciones = [
 ];
 
 /**
- * Componente que renderiza los puntos de conexión (handles) de un nodo.
- * Crea handles de entrada y salida en las cuatro posiciones (arriba, derecha, abajo, izquierda).
+ * Component that renders the connection handles of a node.
+ * Creates input and output handles at all four positions (top, right, bottom, left).
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.nodeId - ID del nodo para garantizar handles únicos
- * @param {string} props.color - Color del fondo de los handles según el tipo de nodo
- * @returns {JSX.Element} Conjunto de handles para el nodo
+ * @param {Object} props - Component properties
+ * @param {string} props.nodeId - Node ID to ensure unique handles
+ * @param {string} props.color - Handle background color based on node type
+ * @returns {JSX.Element} Set of handles for the node
  */
 const Handles = ({ nodeId = '', color = 'var(--handle-default)' }) => (
   <>
-    {posiciones.map(({ pos, name }) => (
+    {positions.map(({ pos, name }) => (
       <React.Fragment key={name}>
         <Handle
           id={`${nodeId}-${name}-target`}
@@ -52,26 +56,26 @@ const Handles = ({ nodeId = '', color = 'var(--handle-default)' }) => (
 );
 
 /**
- * Componente simple para mostrar el título de un nodo.
+ * Simple component to display a node title.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.value - Texto del título a mostrar
- * @returns {JSX.Element} Elemento span con el título del nodo
+ * @param {Object} props - Component properties
+ * @param {string} props.value - Title text to display
+ * @returns {JSX.Element} Span element with the node title
  */
 const NodeTitle = ({ value }) => {
   return <span className="node-title">{value}</span>;
 };
 
 /**
- * Componente de nodo de tipo decisión.
- * Representa un punto de bifurcación o decisión en el flujo del diagrama.
+ * Decision node type component.
+ * Represents a branching or decision point in the diagram flow.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de decisión
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Decision node element
  */
 export const DecisionNode = ({ id, data, style, selected }) => (
   <article className={`node decision-node ${selected ? 'selected' : ''}`} style={style}>
@@ -89,15 +93,15 @@ export const DecisionNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de tipo acción.
- * Representa una acción o actividad en el flujo del diagrama.
+ * Action node type component.
+ * Represents an action or activity in the diagram flow.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de acción
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Action node element
  */
 export const ActionNode = ({ id, data, style, selected }) => (
   <article className={`node action-node ${selected ? 'selected' : ''}`} style={style}>
@@ -115,15 +119,15 @@ export const ActionNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de tipo fase.
- * Representa una fase o etapa del proceso en el diagrama.
+ * Phase node type component.
+ * Represents a phase or stage of the process in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de fase
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Phase node element
  */
 export const PhaseNode = ({ id, data, style, selected }) => (
   <article className={`node phase-node ${selected ? 'selected' : ''}`} style={style}>
@@ -141,15 +145,15 @@ export const PhaseNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de tipo efecto o mecánica.
- * Representa un efecto o mecánica del sistema en el diagrama.
+ * Effect or mechanic node type component.
+ * Represents an effect or system mechanic in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de efecto
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Effect node element
  */
 export const EffectNode = ({ id, data, style, selected }) => (
   <article className={`node effect-node ${selected ? 'selected' : ''}`} style={style}>
@@ -167,15 +171,15 @@ export const EffectNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de inicio.
- * Representa el punto de inicio de un flujo en el diagrama.
+ * Start node type component.
+ * Represents the starting point of a flow in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de inicio
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Start node element
  */
 export const StartNode = ({ id, data, style, selected }) => (
   <article className={`node start-node ${selected ? 'selected' : ''}`} style={style}>
@@ -193,15 +197,15 @@ export const StartNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de fin.
- * Representa el punto de finalización de un flujo en el diagrama.
+ * End node type component.
+ * Represents the ending point of a flow in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de fin
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} End node element
  */
 export const EndNode = ({ id, data, style, selected }) => (
   <article className={`node end-node ${selected ? 'selected' : ''}`} style={style}>
@@ -219,15 +223,15 @@ export const EndNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de tipo posición.
- * Representa una posición o ubicación específica en el diagrama.
+ * Position node type component.
+ * Represents a specific position or location in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de posición
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Position node element
  */
 export const PositionNode = ({ id, data, style, selected }) => (
   <article className={`node position-node ${selected ? 'selected' : ''}`} style={style}>
@@ -245,15 +249,15 @@ export const PositionNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de tipo temporizador.
- * Representa un temporizador o contador de tiempo en el diagrama.
+ * Timer node type component.
+ * Represents a timer or countdown in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de temporizador
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Timer node element
  */
 export const TimerNode = ({ id, data, style, selected }) => (
   <article className={`node timer-node ${selected ? 'selected' : ''}`} style={style}>
@@ -271,15 +275,15 @@ export const TimerNode = ({ id, data, style, selected }) => (
 );
 
 /**
- * Componente de nodo de tipo habilidad.
- * Representa una habilidad o capacidad especial en el diagrama.
+ * Ability node type component.
+ * Represents a special ability or capability in the diagram.
  *
- * @param {Object} props - Propiedades del componente
- * @param {string} props.id - ID único del nodo
- * @param {Object} props.data - Datos del nodo (título, descripción, etc.)
- * @param {Object} props.style - Estilos CSS aplicados al nodo
- * @param {boolean} props.selected - Indica si el nodo está seleccionado
- * @returns {JSX.Element} Elemento de nodo de habilidad
+ * @param {Object} props - Component properties
+ * @param {string} props.id - Unique node ID
+ * @param {Object} props.data - Node data (title, description, etc.)
+ * @param {Object} props.style - CSS styles applied to the node
+ * @param {boolean} props.selected - Whether the node is selected
+ * @returns {JSX.Element} Ability node element
  */
 export const AbilityNode = ({ id, data, style, selected }) => (
   <article className={`node ability-node ${selected ? 'selected' : ''}`} style={style}>

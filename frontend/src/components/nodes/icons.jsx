@@ -1,12 +1,16 @@
+// ============================================================
+// File: icons.jsx
+// Description: Icon definitions for diagram node categories.
+// ============================================================
 import React from 'react';
 import './icons.css';
 
 /**
- * Componente de icono para nodos de tipo decisión.
- * Representa una bifurcación o punto de decisión en el diagrama.
+ * Icon component for decision type nodes.
+ * Represents a branching or decision point in the diagram.
  *
- * @param {Object} props - Propiedades SVG del componente
- * @returns {JSX.Element} Elemento SVG del icono de decisión
+ * @param {Object} props - SVG component properties
+ * @returns {JSX.Element} Decision icon SVG element
  */
 export const DecisionIcon = (props) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" {...props}>
@@ -18,11 +22,11 @@ export const DecisionIcon = (props) => (
 );
 
 /**
- * Componente de icono para nodos de tipo acción.
- * Representa una acción o actividad en el flujo del diagrama.
+ * Icon component for action type nodes.
+ * Represents an action or activity in the diagram flow.
  *
- * @param {Object} props - Propiedades SVG del componente
- * @returns {JSX.Element} Elemento SVG del icono de acción
+ * @param {Object} props - SVG component properties
+ * @returns {JSX.Element} Action icon SVG element
  */
 export const ActionIcon = (props) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" {...props}>
@@ -38,11 +42,11 @@ export const ActionIcon = (props) => (
 );
 
 /**
- * Componente de icono para nodos de tipo fase.
- * Representa una fase o etapa del proceso en el diagrama.
+ * Icon component for phase type nodes.
+ * Represents a phase or stage of the process in the diagram.
  *
- * @param {Object} props - Propiedades SVG del componente
- * @returns {JSX.Element} Elemento SVG del icono de fase
+ * @param {Object} props - SVG component properties
+ * @returns {JSX.Element} Phase icon SVG element
  */
 export const PhaseIcon = (props) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" {...props}>
@@ -58,11 +62,11 @@ export const PhaseIcon = (props) => (
 );
 
 /**
- * Componente de icono para nodos de tipo efecto.
- * Representa un efecto o resultado en el flujo del diagrama.
+ * Icon component for effect type nodes.
+ * Represents an effect or outcome in the diagram flow.
  *
- * @param {Object} props - Propiedades SVG del componente
- * @returns {JSX.Element} Elemento SVG del icono de efecto
+ * @param {Object} props - SVG component properties
+ * @returns {JSX.Element} Effect icon SVG element
  */
 export const EffectIcon = (props) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" {...props}>
@@ -74,11 +78,11 @@ export const EffectIcon = (props) => (
 );
 
 /**
- * Componente de icono para nodos de inicio o fin.
- * Representa un punto de inicio o finalización en el diagrama.
+ * Icon component for start or end nodes.
+ * Represents a start or end point in the diagram.
  *
- * @param {Object} props - Propiedades SVG del componente
- * @returns {JSX.Element} Elemento SVG del icono de inicio/fin
+ * @param {Object} props - SVG component properties
+ * @returns {JSX.Element} Start/end icon SVG element
  */
 export const StartEndIcon = (props) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" {...props}>

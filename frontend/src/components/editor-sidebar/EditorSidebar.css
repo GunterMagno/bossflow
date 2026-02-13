@@ -1,0 +1,303 @@
+/* ============================================
+   EDITOR SIDEBAR
+   ============================================ */
+.editor-sidebar {
+  width: 280px;
+  height: 100%;
+  background: var(--primary);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.editor-sidebar__header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--primary);
+}
+
+.editor-sidebar__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--white);
+}
+
+/* Close button for overlay sidebar (visible on small screens) */
+.editor-sidebar__close-button {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+@media (max-width: 765px) {
+  .editor-sidebar__close-button {
+    display: inline-flex;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+}
+
+
+
+/* ============================================
+   CONTENT
+   ============================================ */
+.editor-sidebar__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Custom scrollbar */
+.editor-sidebar__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.editor-sidebar__content::-webkit-scrollbar-track {
+  background: var(--primary);
+}
+
+.editor-sidebar__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.editor-sidebar__content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+.editor-sidebar__section {
+  margin-bottom: var(--spacing-xs);
+}
+
+.editor-sidebar__section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  text-align: left;
+}
+
+.editor-sidebar__section-header:hover {
+  background: var(--hover);
+}
+
+.editor-sidebar__section-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--gray-3);
+  transition: transform var(--transition-fast);
+}
+
+.editor-sidebar__section-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.editor-sidebar__section-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+}
+
+/* ============================================
+   NODE BUTTONS
+   ============================================ */
+.editor-sidebar__node-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--focus);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.editor-sidebar__node-button:hover {
+  background: var(--hover);
+  border-color: var(--node-color, var(--primary));
+}
+
+.editor-sidebar__node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.editor-sidebar__node-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--white);
+  opacity: 0.9;
+}
+
+/* ============================================
+   RECENT NODES
+   ============================================ */
+.editor-sidebar__recent-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.editor-sidebar__recent-item:hover {
+  background: var(--hover);
+}
+
+.editor-sidebar__recent-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--gray-3);
+}
+
+.editor-sidebar__recent-label {
+  font-size: 0.8125rem;
+  color: var(--white);
+  opacity: 0.7;
+}
+
+.editor-sidebar__empty-message {
+  padding: var(--spacing-md);
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--gray-3);
+  opacity: 0.7;
+  line-height: 1.5;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+  .editor-sidebar {
+    width: 240px;
+  }
+
+  .editor-sidebar__node-button {
+    padding: var(--spacing-sm);
+  }
+
+  .editor-sidebar__node-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 1.125rem;
+  }
+
+  .editor-sidebar__node-label {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+  }
+
+  .editor-sidebar.editor-sidebar--open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* ============================================
+   Botón para salir
+   ============================================ */
+.editor-sidebar__exit-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  margin: var(--spacing-lg);
+  margin-top: auto;
+  color: var(--white);
+  opacity: 0.7;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 0.95rem;
+  width: calc(100% - var(--spacing-lg) * 2);
+  text-align: left;
+}
+
+.editor-sidebar__exit-button:hover {
+  background: var(--error);
+  opacity: 1;
+  color: var(--white);
+}
+
+.editor-sidebar__nav-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   DRAG AND DROP SUPPORT
+   ============================================ */
+.editor-sidebar__node-button[draggable="true"],
+.editor-sidebar__recent-item[draggable="true"] {
+  cursor: grab;
+  user-select: none;
+}
+
+.editor-sidebar__node-button[draggable="true"]:active,
+.editor-sidebar__recent-item[draggable="true"]:active {
+  cursor: grabbing;
+  opacity: 0.7;
+}

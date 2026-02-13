@@ -1,14 +1,19 @@
+// ============================================================
+// File: api.js
+// Description: Axios instance with interceptors for authentication and error handling.
+// ============================================================
+
 import axios from 'axios';
 
 /**
- * Configuración de la URL base para las solicitudes de la API.
- * En desarrollo se puede usar VITE_API_URL para una URL absoluta.
- * En producción se usa rutas relativas para que el proxy (Nginx) maneje /api.
+ * Configuration of the base URL for API requests.
+ * In development, VITE_API_URL can be used for an absolute URL.
+ * In production, relative paths are used so that the proxy (Nginx) handles /api.
  */
 const baseURL = import.meta.env.VITE_API_URL || '/api';
 
 /**
- * Instancia de Axios con configuración por defecto.
+ * Axios instance with default configuration.
  */
 const api = axios.create({
   baseURL,
@@ -19,7 +24,7 @@ const api = axios.create({
 });
 
 /**
- * Interceptor de solicitudes para agregar el token de autenticación.
+ * Request interceptor to add authentication token.
  */
 api.interceptors.request.use(
   (config) => {
@@ -35,8 +40,8 @@ api.interceptors.request.use(
 );
 
 /**
- * Interceptor de respuestas para manejar errores de autenticación.
- * Si el token expira (401), se emite un evento y se limpia localStorage.
+ * Response interceptor to handle authentication errors.
+ * If the token expires (401), an event is emitted and localStorage is cleared.
  */
 api.interceptors.response.use(
   (response) => response,
@@ -44,32 +49,23 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       const errorMessage = error.response.data?.error || '';
 
-      if (errorMessage.includes('Token inválido') || errorMessage.includes('expirado')) {
+      if (errorMessage.includes('Invalid token') || errorMessage.includes('expired')) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
         window.dispatchEvent(new Event('token-expired'));
-
-        console.warn('Token expirado. Sesión cerrada automáticamente.');
       }
     }
 
-    if (error.response) {
-      console.error('Error del servidor:', error.response.data);
-    } else if (error.request) {
-      console.error('Sin respuesta del servidor');
-    } else {
-      console.error('Error:', error.message);
-    }
     return Promise.reject(error);
   }
 );
 
 /**
- * Realiza una verificación de salud del servidor.
+ * Performs a server health check.
  * @async
- * @returns {Promise<Object>} Datos de salud del servidor.
- * @throws {Error} Si falla la conexión al servidor.
+ * @returns {Promise<Object>} Server health data.
+ * @throws {Error} If the connection to the server fails.
  */
 export const healthCheck = async () => {
   try {

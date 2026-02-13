@@ -1,19 +1,24 @@
+// ============================================================
+// File: useExportDiagram.js
+// Description: Custom hook providing diagram export
+//              functionality in PNG and JSON formats.
+// ============================================================
 import { useReactFlow, getNodesBounds, getViewportForBounds, getRectOfNodes } from 'reactflow';
 import { toPng, toSvg } from 'html-to-image';
 import { CURRENT_VERSION } from '../utils/jsonValidator';
 
 /**
- * Hook personalizado para exportar diagramas en diferentes formatos
- * @param {string} [diagramName='diagrama'] - Nombre base para los archivos exportados
- * @returns {Object} Objeto con métodos de exportación (PNG, JSON) y referencias a SVG y PDF (desactivados)
+ * Custom hook for exporting diagrams in different formats.
+ * @param {string} [diagramName='diagram'] - Base name for exported files
+ * @returns {Object} Object with export methods (PNG, JSON) and references to SVG and PDF (disabled)
  */
-export function useExportDiagram(diagramName = 'diagrama') {
+export function useExportDiagram(diagramName = 'diagram') {
   const { getNodes, getEdges } = useReactFlow();
 
   /**
-   * Genera un nombre de archivo con marca de fecha y hora
-   * @param {string} extension - Extensión del archivo (png, json, svg, pdf)
-   * @returns {string} Nombre de archivo con formato 'diagrama_YYYY-MM-DD_HH-MM.extension'
+   * Generates a filename with timestamp.
+   * @param {string} extension - File extension (png, json, svg, pdf)
+   * @returns {string} Filename with format 'diagram_YYYY-MM-DD_HH-MM.extension'
    */
   const generateFileName = (extension) => {
     const now = new Date();
@@ -23,9 +28,9 @@ export function useExportDiagram(diagramName = 'diagrama') {
   };
 
   /**
-   * Descarga un archivo generado desde una URL de datos
-   * @param {string} dataUrl - URL de datos del archivo a descargar
-   * @param {string} fileName - Nombre del archivo a descargar
+   * Downloads a generated file from a data URL.
+   * @param {string} dataUrl - Data URL of the file to download
+   * @param {string} fileName - Name of the file to download
    */
   const downloadFile = (dataUrl, fileName) => {
     const a = document.createElement('a');
@@ -35,8 +40,8 @@ export function useExportDiagram(diagramName = 'diagrama') {
   };
 
   /**
-   * Calcula las dimensiones y configuración del viewport para la exportación
-   * @returns {Object|null} Objeto con ancho, alto, viewport y límites de nodos, o null si no hay nodos
+   * Calculates dimensions and viewport configuration for export.
+   * @returns {Object|null} Object with width, height, viewport, and node bounds, or null if no nodes
    */
   const getExportConfig = () => {
     const nodes = getNodes();
@@ -68,33 +73,33 @@ export function useExportDiagram(diagramName = 'diagrama') {
   };
 
   /**
-   * Obtiene el elemento DOM del viewport de ReactFlow
-   * @returns {Element} Elemento viewport de ReactFlow
-   * @throws {Error} Si no se encuentra el viewport
+   * Gets the ReactFlow viewport DOM element.
+   * @returns {Element} ReactFlow viewport element
+   * @throws {Error} If viewport is not found
    */
   const getViewportElement = () => {
     const viewport = document.querySelector('.react-flow__viewport');
     if (!viewport) {
-      throw new Error('No se encontró el viewport de ReactFlow. Asegúrate de que el diagrama esté visible.');
+      throw new Error('ReactFlow viewport not found. Make sure the diagram is visible.');
     }
     return viewport;
   };
 
   /**
-   * Exporta el diagrama a formato PNG
+   * Exports the diagram to PNG format.
    * @async
-   * @throws {Error} Si no hay nodos para exportar o la exportación falla
+   * @throws {Error} If there are no nodes to export or export fails
    */
   const exportToPNG = async () => {
     try {
       const nodes = getNodes();
       if (nodes.length === 0) {
-        throw new Error('No hay nodos para exportar');
+        throw new Error('No nodes to export');
       }
 
       const config = getExportConfig();
       if (!config) {
-        throw new Error('No se pudo calcular la configuración de exportación');
+        throw new Error('Could not calculate export configuration');
       }
 
       const viewportElement = getViewportElement();
@@ -112,77 +117,17 @@ export function useExportDiagram(diagramName = 'diagrama') {
       
       downloadFile(dataUrl, generateFileName('png'));
     } catch (error) {
-      console.error('Error al exportar PNG:', error);
       throw error;
     }
   };
 
   const exportToSVG = null;
 
-  /**
-   * Exporta el diagrama a PDF (desactivado temporalmente).
-   */
-  /* Desactivado temporalmente
-  const exportToPDF = async () => {
-    try {
-      const nodes = getNodes();
-      if (nodes.length === 0) {
-        throw new Error('No hay nodos para exportar');
-      }
-
-      const config = getExportConfig();
-      if (!config) {
-        throw new Error('No se pudo calcular la configuración de exportación');
-      }
-
-      const viewportElement = getViewportElement();
-      
-      const dataUrl = await toPng(viewportElement, {
-        backgroundColor: '#1a1a1a',
-        width: config.width,
-        height: config.height,
-        style: {
-          width: `${config.width}px`,
-          height: `${config.height}px`,
-          transform: `translate(${config.viewport.x}px, ${config.viewport.y}px) scale(${config.viewport.zoom})`,
-        },
-      });
-
-      const img = new Image();
-      img.src = dataUrl;
-      
-      img.onload = () => {
-        import('jspdf').then(({ jsPDF }) => {
-          const orientation = config.width > config.height ? 'landscape' : 'portrait';
-          
-          const pdf = new jsPDF({
-            orientation,
-            unit: 'px',
-            format: [config.width, config.height]
-          });
-          
-          pdf.addImage(dataUrl, 'PNG', 0, 0, config.width, config.height);
-          pdf.save(generateFileName('pdf'));
-        }).catch((error) => {
-          console.error('Error al cargar jsPDF:', error);
-          throw new Error('Error al cargar la librería de PDF');
-        });
-      };
-
-      img.onerror = () => {
-        console.error('Error al cargar la imagen para PDF');
-        throw new Error('Error al exportar el PDF');
-      };
-    } catch (error) {
-      console.error('Error al exportar PDF:', error);
-      throw error;
-    }
-  };
-  */
+  /** @type {null} PDF export is not yet implemented. */
   const exportToPDF = null;
 
   /**
-   * Exporta el diagrama a JSON con la estructura de datos del diagrama.
+   * Exports the diagram to JSON with diagram data structure.
    */
   const exportToJSON = async () => {
     try {
@@ -190,13 +135,13 @@ export function useExportDiagram(diagramName = 'diagrama') {
       const edges = getEdges();
 
       if (nodes.length === 0) {
-        throw new Error('No hay nodos para exportar');
+        throw new Error('No nodes to export');
       }
 
       const exportData = {
         version: CURRENT_VERSION,
         metadata: {
-          title: diagramName || 'Diagrama sin título',
+          title: diagramName || 'Untitled diagram',
           exportedAt: new Date().toISOString(),
           exportedBy: 'BossFlow',
           nodeCount: nodes.length,
@@ -244,7 +189,6 @@ export function useExportDiagram(diagramName = 'diagrama') {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error al exportar JSON:', error);
       throw error;
     }
   };

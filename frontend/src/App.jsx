@@ -1,3 +1,7 @@
+// ============================================================
+// File: App.jsx
+// Description: Root application component defining route structure and context providers.
+// ============================================================
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -10,18 +14,18 @@ import Status from './pages/Status';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
+import Login from './components/login/Login';
+import Register from './components/register/Register';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import CookiesPolicy from './pages/CookiesPolicy';
 import Layout from './layouts/Layout';
-import CookieBanner from './components/CookieBanner/CookieBanner';
+import CookieBanner from './components/cookie-banner/CookieBanner';
 
 /**
- * Componente principal de la aplicación BossFlow.
- * Define la estructura de rutas y configura los proveedores de contexto.
- * @returns {React.ReactElement} El componente principal de la aplicación.
+ * Main BossFlow application component.
+ * Defines the route structure and configures context providers.
+ * @returns {React.ReactElement} The main application component.
  */
 function App() {
   return (
@@ -38,8 +42,8 @@ function App() {
               <Route path="/register" element={<Register />} />
 
               {/* Legal pages */}
-              <Route path="/legal/privacidad" element={<PrivacyPolicy />} />
-              <Route path="/legal/terminos" element={<TermsOfUse />} />
+              <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+              <Route path="/legal/terms" element={<TermsOfUse />} />
               <Route path="/legal/cookies" element={<CookiesPolicy />} />
 
               <Route path="/editor/:diagramId" element={
@@ -57,7 +61,7 @@ function App() {
                   <Dashboard />
                 </PrivateRoute>} />
 
-              <Route path="/dashboard/plantillas" element={
+              <Route path="/dashboard/templates" element={
                 <PrivateRoute>
                   <Templates />
                 </PrivateRoute>} />

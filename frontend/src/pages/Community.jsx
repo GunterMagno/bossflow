@@ -1,11 +1,15 @@
+// ============================================================
+// File: Community.jsx
+// Description: Community page placeholder for future social features.
+// ============================================================
 import { useEffect } from 'react';
 import { FiUsers, FiMessageCircle, FiTrendingUp, FiZap } from 'react-icons/fi';
 import './Community.css';
 
 /**
- * Página de comunidad (próximamente)
- * Muestra un placeholder con las características futuras de la sección de comunidad
- * @returns {JSX.Element} Página de comunidad en construcción
+ * Community page (coming soon).
+ * Displays a placeholder with future community section features.
+ * @returns {JSX.Element} Community page under construction.
  */
 function Community() {
   useEffect(() => {

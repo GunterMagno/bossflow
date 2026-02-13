@@ -1,11 +1,15 @@
+// ============================================================
+// File: Templates.jsx
+// Description: Templates management page for browsing default templates and managing user templates.
+// ============================================================
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getTemplates, deleteTemplate } from '../services/diagramService';
-import TemplateList from '../components/TemplateList/TemplateList';
-import NewDiagramModal from '../components/NewDiagramModal/NewDiagramModal';
-import NewTemplateModal from '../components/NewTemplateModal/NewTemplateModal';
-import ConfirmModal from '../components/ConfirmModal/ConfirmModal';
+import TemplateList from '../components/template-list/TemplateList';
+import NewDiagramModal from '../components/new-diagram-modal/NewDiagramModal';
+import NewTemplateModal from '../components/new-template-modal/NewTemplateModal';
+import ConfirmModal from '../components/confirm-modal/ConfirmModal';
 import { DEFAULT_TEMPLATES } from '../data/defaultTemplates';
 import { useToast } from '../context/ToastContext';
 import {
@@ -21,9 +25,9 @@ import {
 import './Dashboard.css';
 
 /**
- * Página de plantillas de BossFlow.
- * Muestra plantillas predeterminadas y permite al usuario crear y gestionar sus propias plantillas.
- * @returns {React.ReactElement} El componente de la página de plantillas.
+ * BossFlow templates page.
+ * Displays default templates and allows users to create and manage their own templates.
+ * @returns {React.ReactElement} The templates page component.
  */
 function Templates() {
   const { logout } = useAuth();
@@ -40,14 +44,14 @@ function Templates() {
   const [activeTab, setActiveTab] = useState('predeterminadas');
 
   /**
-   * Establece el título de la página cuando el componente se monta.
+   * Sets the page title when the component mounts.
    */
   useEffect(() => {
     document.title = 'Plantillas | BossFlow';
   }, []);
 
   /**
-   * Carga las plantillas del usuario desde el servidor.
+   * Loads user templates from the server.
    */
   const fetchTemplates = async () => {
     try {
@@ -56,7 +60,6 @@ function Templates() {
       const response = await getTemplates();
       setTemplates(response.templates || []);
     } catch (error) {
-      console.error('Error al cargar plantillas:', error);
       setErrorTemplates('No se pudieron cargar las plantillas.');
       setTemplates([]);
     } finally {
@@ -65,16 +68,16 @@ function Templates() {
   };
 
   /**
-   * Carga las plantillas cuando se cambia a la pestaña de mis plantillas.
+   * Loads templates when switching to the my templates tab.
    */
   useEffect(() => {
-    if (activeTab === 'mis-plantillas') {
+    if (activeTab === 'my-templates') {
       fetchTemplates();
     }
   }, [activeTab]);
 
   /**
-   * Cierra la sesión del usuario y lo redirige al inicio.
+   * Logs out the user and redirects to home.
    */
   const handleLogout = () => {
     logout();
@@ -82,8 +85,8 @@ function Templates() {
   };
 
   /**
-   * Maneja el uso de una plantilla para crear un nuevo diagrama.
-   * @param {Object} template - Plantilla a utilizar.
+   * Handles using a template to create a new diagram.
+   * @param {Object} template - Template to use.
    */
   const handleUseTemplate = (template) => {
     setTemplateNodes({
@@ -94,7 +97,7 @@ function Templates() {
   };
 
   /**
-   * Maneja el evento de creación de un nuevo diagrama desde una plantilla.
+   * Handles the event of creating a new diagram from a template.
    */
   const handleDiagramCreated = () => {
     setIsModalOpen(false);
@@ -102,7 +105,7 @@ function Templates() {
   };
 
   /**
-   * Maneja el evento de creación de una nueva plantilla.
+   * Handles the event of creating a new template.
    */
   const handleTemplateCreated = () => {
     fetchTemplates();
@@ -111,8 +114,8 @@ function Templates() {
   };
 
   /**
-   * Prepara una plantilla para edición.
-   * @param {Object} template - Plantilla a editar.
+   * Prepares a template for editing.
+   * @param {Object} template - Template to edit.
    */
   const handleEditTemplate = (template) => {
     if (activeTab === 'predeterminadas') {
@@ -125,15 +128,15 @@ function Templates() {
   };
 
   /**
-   * Prepara una plantilla para eliminación.
-   * @param {Object} template - Plantilla a eliminar.
+   * Prepares a template for deletion.
+   * @param {Object} template - Template to delete.
    */
   const handleDeleteTemplate = (template) => {
     setTemplateToDelete(template);
   };
 
   /**
-   * Confirma y ejecuta la eliminación de una plantilla.
+   * Confirms and executes template deletion.
    */
   const handleConfirmDelete = async () => {
     if (!templateToDelete) return;
@@ -143,7 +146,6 @@ function Templates() {
       toast.success('Plantilla eliminada correctamente');
       fetchTemplates();
     } catch (error) {
-      console.error('Error al eliminar plantilla:', error);
       toast.error('No se pudo eliminar la plantilla');
     } finally {
       setTemplateToDelete(null);
@@ -154,13 +156,13 @@ function Templates() {
     ? DEFAULT_TEMPLATES
     : templates;
 
-  const isLoading = activeTab === 'mis-plantillas' && loadingTemplates;
-  const currentError = activeTab === 'mis-plantillas' ? errorTemplates : null;
+  const isLoading = activeTab === 'my-templates' && loadingTemplates;
+  const currentError = activeTab === 'my-templates' ? errorTemplates : null;
 
   return (
     <section className="dashboard">
       <aside className="dashboard__sidebar">
-        <section className="dashboard__sidebar-contenido">
+        <section className="dashboard__sidebar-content">
           <header className="dashboard__logo">
             <h2>BossFlow</h2>
           </header>
@@ -170,7 +172,7 @@ function Templates() {
               to="/dashboard"
               className="dashboard__nav-item"
             >
-              <FiHome className="dashboard__nav-icono" />
+              <FiHome className="dashboard__nav-icon" />
               <span>Inicio</span>
             </Link>
 
@@ -178,31 +180,31 @@ function Templates() {
               to="/dashboard"
               className="dashboard__nav-item"
             >
-              <FiFileText className="dashboard__nav-icono" />
+              <FiFileText className="dashboard__nav-icon" />
               <span>Mis diagramas</span>
             </Link>
 
             <Link
-              to="/dashboard/colaboraciones"
+              to="/dashboard/collaborations"
               className="dashboard__nav-item"
             >
-              <FiUsers className="dashboard__nav-icono" />
+              <FiUsers className="dashboard__nav-icon" />
               <span>Colaboraciones</span>
             </Link>
 
             <Link
-              to="/dashboard/plantillas"
-              className="dashboard__nav-item dashboard__nav-item--activo"
+              to="/dashboard/templates"
+              className="dashboard__nav-item dashboard__nav-item--active"
             >
-              <FiLayers className="dashboard__nav-icono" />
+              <FiLayers className="dashboard__nav-icon" />
               <span>Plantillas</span>
             </Link>
 
             <Link
-              to="/dashboard/comentarios"
+              to="/dashboard/comments"
               className="dashboard__nav-item"
             >
-              <FiMessageSquare className="dashboard__nav-icono" />
+              <FiMessageSquare className="dashboard__nav-icon" />
               <span>Comentarios</span>
             </Link>
 
@@ -210,38 +212,38 @@ function Templates() {
               to="/settings"
               className="dashboard__nav-item"
             >
-              <FiSettings className="dashboard__nav-icono" />
+              <FiSettings className="dashboard__nav-icon" />
               <span>Configuración</span>
             </Link>
           </nav>
 
           <button className="dashboard__logout" onClick={handleLogout}>
-            <FiLogOut className="dashboard__nav-icono" />
+            <FiLogOut className="dashboard__nav-icon" />
             <span>Cerrar sesión</span>
           </button>
         </section>
       </aside>
 
-      {/* Contenido principal */}
+      {/* Main content */}
       <main className="dashboard__main">
-        <section className="dashboard__seccion">
-          <header className="dashboard__seccion-header">
+        <section className="dashboard__section">
+          <header className="dashboard__section-header">
             <section>
-              <h2 className="dashboard__titulo">Plantillas</h2>
-              <p className="dashboard__descripcion">
+              <h2 className="dashboard__title">Plantillas</h2>
+              <p className="dashboard__description">
                 Crea diagramas rápidamente usando plantillas predefinidas
               </p>
             </section>
             <button
               onClick={() => setIsTemplateModalOpen(true)}
-              className="dashboard__boton-nuevo"
+              className="dashboard__new-button"
             >
-              <FiPlus className="dashboard__boton-icono" />
+              <FiPlus className="dashboard__button-icon" />
               Nueva plantilla
             </button>
           </header>
 
-          {/* Pestañas */}
+          {/* Tabs */}
           <nav className="dashboard__tabs">
             <button
               className={`dashboard__tab ${activeTab === 'predeterminadas' ? 'dashboard__tab--active' : ''}`}
@@ -250,8 +252,8 @@ function Templates() {
               Predeterminadas
             </button>
             <button
-              className={`dashboard__tab ${activeTab === 'mis-plantillas' ? 'dashboard__tab--active' : ''}`}
-              onClick={() => setActiveTab('mis-plantillas')}
+              className={`dashboard__tab ${activeTab === 'my-templates' ? 'dashboard__tab--active' : ''}`}
+              onClick={() => setActiveTab('my-templates')}
             >
               Mis plantillas
             </button>
@@ -266,13 +268,13 @@ function Templates() {
             onDeleteTemplate={handleDeleteTemplate}
             onRetry={fetchTemplates}
             onCreateTemplate={() => setIsTemplateModalOpen(true)}
-            showCreateButton={activeTab === 'mis-plantillas'}
+            showCreateButton={activeTab === 'my-templates'}
             isSystemTemplates={activeTab === 'predeterminadas'}
           />
         </section>
       </main>
 
-      {/* Modal para crear nuevo diagrama desde plantilla */}
+      {/* Modal for creating a new diagram from a template */}
       <NewDiagramModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -284,7 +286,7 @@ function Templates() {
         initialEdges={templateNodes?.edges}
       />
 
-      {/* Modal para crear nueva plantilla */}
+      {/* Modal for creating a new template */}
       <NewTemplateModal
         isOpen={isTemplateModalOpen}
         onClose={() => {
@@ -303,13 +305,13 @@ function Templates() {
         }
         initialDescription={editingTemplate?.description || ''}
         editingTemplateId={
-          activeTab === 'mis-plantillas' && editingTemplate 
+          activeTab === 'my-templates' && editingTemplate 
             ? editingTemplate.id
             : null
         }
       />
 
-      {/* Modal de confirmación para eliminar */}
+      {/* Confirmation modal for deletion */}
       <ConfirmModal
         isOpen={!!templateToDelete}
         onClose={() => setTemplateToDelete(null)}

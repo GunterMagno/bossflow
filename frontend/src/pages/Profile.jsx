@@ -1,3 +1,7 @@
+// ============================================================
+// File: Profile.jsx
+// Description: User profile page for viewing and editing personal information, statistics, and data management.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -25,13 +29,13 @@ import {
   FiTrash2,
   FiShield,
 } from 'react-icons/fi';
-import ConfirmModal from '../components/ConfirmModal/ConfirmModal';
+import ConfirmModal from '../components/confirm-modal/ConfirmModal';
 import './Profile.css';
 
 /**
- * Página de perfil del usuario.
- * Permite al usuario ver y editar su información personal, estadísticas y juegos favoritos.
- * @returns {React.ReactElement} El componente de la página de perfil.
+ * User profile page.
+ * Allows the user to view and edit their personal information, statistics, and favorite games.
+ * @returns {React.ReactElement} The profile page component.
  */
 function Profile() {
   const { user: authUser, logout } = useAuth();
@@ -53,14 +57,14 @@ function Profile() {
 
   const [newGame, setNewGame] = useState('');
 
-  // Estado para gestión de datos
+  // State for data management
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   /**
-   * Carga el perfil del usuario y las estadísticas al montar el componente.
+   * Loads the user profile when the component mounts.
    */
   useEffect(() => {
     document.title = 'Perfil | BossFlow';
@@ -69,7 +73,7 @@ function Profile() {
   }, []);
 
   /**
-   * Carga el perfil del usuario desde el servidor.
+   * Loads the user profile from the server.
    */
   const loadProfile = async () => {
     try {
@@ -82,7 +86,6 @@ function Profile() {
         avatar: response.user.avatar || '',
       });
     } catch (error) {
-      console.error('Error cargando perfil:', error);
       toast.error('Error al cargar el perfil');
     } finally {
       setLoading(false);
@@ -90,26 +93,26 @@ function Profile() {
   };
 
   /**
-   * Carga las estadísticas del usuario desde el servidor.
+   * Loads user statistics from the server.
    */
   const loadStats = async () => {
     try {
       const response = await getStats();
       setStats(response.stats);
     } catch (error) {
-      console.error('Error cargando estadísticas:', error);
+      // Statistics loading failed silently
     }
   };
 
   /**
-   * Activa el modo de edición del perfil.
+   * Activates profile edit mode.
    */
   const handleEdit = () => {
     setIsEditing(true);
   };
 
   /**
-   * Cancela la edición del perfil y restaura los datos originales.
+   * Cancels profile edit and restores original data.
    */
   const handleCancel = () => {
     setFormData({
@@ -122,7 +125,7 @@ function Profile() {
   };
 
   /**
-   * Guarda los cambios realizados en el perfil del usuario.
+   * Saves changes made to the user profile.
    */
   const handleSave = async () => {
     setSaving(true);
@@ -145,7 +148,6 @@ function Profile() {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      console.error('Error actualizando perfil:', error);
       const errorMessage = error.response?.data?.error || 'Error al actualizar el perfil';
       toast.error(errorMessage);
     } finally {
@@ -154,8 +156,8 @@ function Profile() {
   };
 
   /**
-   * Gestiona los cambios en los campos de entrada del formulario.
-   * @param {Event} e - Evento del input.
+   * Handles changes in form input fields.
+   * @param {Event} e - Input event.
    */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -166,7 +168,7 @@ function Profile() {
   };
 
   /**
-   * Agrega un nuevo juego favorito a la lista.
+   * Adds a new favorite game to the list.
    */
   const handleAddGame = () => {
     if (newGame.trim() && formData.favoriteGames.length < 10) {
@@ -179,8 +181,8 @@ function Profile() {
   };
 
   /**
-   * Elimina un juego favorito de la lista.
-   * @param {number} index - Índice del juego a eliminar.
+   * Removes a favorite game from the list.
+   * @param {number} index - Index of the game to remove.
    */
   const handleRemoveGame = (index) => {
     setFormData((prev) => ({
@@ -190,14 +192,14 @@ function Profile() {
   };
 
   /**
-   * Exporta todos los datos del usuario en formato JSON.
+   * Exports all user data in JSON format.
    */
   const handleExportData = async () => {
     setIsExporting(true);
     try {
       const blob = await exportUserData();
 
-      // Crear un enlace de descarga temporal
+      // Create a temporary download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -209,7 +211,6 @@ function Profile() {
 
       toast.success('Datos exportados correctamente');
     } catch (error) {
-      console.error('Error al exportar datos:', error);
       toast.error('Error al exportar tus datos');
     } finally {
       setIsExporting(false);
@@ -217,7 +218,7 @@ function Profile() {
   };
 
   /**
-   * Elimina permanentemente la cuenta del usuario.
+   * Permanently deletes the user account.
    */
   const handleDeleteAccount = async () => {
     if (!deletePassword.trim()) {
@@ -225,40 +226,35 @@ function Profile() {
       return;
     }
 
-    console.log('Intentando eliminar cuenta con contraseña...');
     setIsDeleting(true);
-    
+
     try {
       const response = await deleteAccount(deletePassword);
-      console.log('Cuenta eliminada exitosamente:', response);
-      
-      // Cerrar modal primero
+
+      // Close modal first
       setShowDeleteModal(false);
       setDeletePassword('');
       
       toast.success('Cuenta eliminada correctamente. Redirigiendo...');
 
-      // Cerrar sesión y redirigir
+      // Log out and redirect
       setTimeout(() => {
         logout();
         navigate('/');
       }, 2000);
     } catch (error) {
-      console.error('Error completo al eliminar cuenta:', error);
-      console.error('Respuesta del error:', error.response);
-      
       const errorMessage =
         error.response?.data?.error || 'Error al eliminar la cuenta. Verifica tu contraseña.';
       toast.error(errorMessage);
       setIsDeleting(false);
-      // No cerrar el modal en caso de error para que el usuario pueda intentar de nuevo
+      // Do not close the modal on error so the user can try again
     }
   };
 
   /**
-   * Formatea una fecha al formato local (día, mes, año).
-   * @param {string} dateString - Cadena de fecha a formatear.
-   * @returns {string} Fecha formateada.
+   * Formats a date to local format (day, month, year).
+   * @param {string} dateString - Date string to format.
+   * @returns {string} Formatted date.
    */
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -503,7 +499,7 @@ function Profile() {
           </article>
         )}
 
-        {/* Sección de Privacidad y Datos */}
+        {/* Privacy and Data Management Section */}
         <article className="profile-section profile-section--danger">
           <h2 className="profile-section-title">
             <FiShield /> Privacidad y Gestión de Datos
@@ -554,7 +550,7 @@ function Profile() {
         </article>
       </section>
 
-      {/* Modal de confirmación para eliminar cuenta */}
+      {/* Confirmation modal for account deletion */}
       <ConfirmModal
         isOpen={showDeleteModal}
         onClose={() => {

@@ -1,10 +1,14 @@
+// ============================================================
+// File: useHealthCheck.js
+// Description: Custom hook for checking backend server health status on component mount.
+// ============================================================
 import { useState, useEffect } from 'react';
 import { healthCheck } from '../services/api';
 
 /**
- * Hook personalizado para verificar la salud de la conexión con el backend
- * Realiza un chequeo de disponibilidad al montarse el componente
- * @returns {Object} Objeto con el estado de la conexión (loading, data, error, isConnected)
+ * Custom hook to check backend connection health.
+ * Performs an availability check when the component mounts.
+ * @returns {Object} Object with connection status (loading, data, error, isConnected)
  */
 export const useHealthCheck = () => {
   const [status, setStatus] = useState({

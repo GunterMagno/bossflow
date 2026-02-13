@@ -1,10 +1,14 @@
+// ============================================================
+// File: PrivacyPolicy.jsx
+// Description: Privacy policy legal page.
+// ============================================================
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './LegalPages.css';
 
 /**
- * Página de Política de Privacidad.
- * Muestra la política de privacidad y protección de datos de BossFlow.
+ * Privacy Policy page.
+ * Displays BossFlow's privacy and data protection policy.
  */
 function PrivacyPolicy() {
   useEffect(() => {
@@ -380,7 +384,7 @@ function PrivacyPolicy() {
         <footer className="legal-page__footer">
           <p>
             ¿Tienes dudas? Consulta también nuestros{' '}
-            <Link to="/legal/terminos" className="legal-page__link">
+            <Link to="/legal/terms" className="legal-page__link">
               Términos de Uso
             </Link>{' '}
             y la{' '}

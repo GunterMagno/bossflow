@@ -1,0 +1,152 @@
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  min-width: 300px;
+  max-width: 500px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--white);
+  border-radius: var(--radius-md) 0 var(--radius-md) 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  z-index: 9999;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Toast icon */
+.toast__icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Toast message */
+.toast__message {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Close button */
+.toast__close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.toast__close:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   TIPOS DE TOAST
+   ============================================ */
+
+/* Success */
+.toast--success {
+  border-left: 4px solid #10b981;
+}
+
+.toast--success .toast__icon {
+  color: #10b981;
+}
+
+.toast--success .toast__message {
+  color: #047857;
+}
+
+/* Error */
+.toast--error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast--error .toast__icon {
+  color: #ef4444;
+}
+
+.toast--error .toast__message {
+  color: #dc2626;
+}
+
+/* Warning */
+.toast--warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.toast--warning .toast__icon {
+  color: #f59e0b;
+}
+
+.toast--warning .toast__message {
+  color: #d97706;
+}
+
+/* Info */
+.toast--info {
+  border-left: 4px solid var(--primary);
+}
+
+.toast--info .toast__icon {
+  color: var(--primary);
+}
+
+.toast--info .toast__message {
+  color: var(--primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .toast {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+    min-width: auto;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .toast__icon {
+    font-size: 1.25rem;
+  }
+
+  .toast__message {
+    font-size: 0.85rem;
+  }
+}

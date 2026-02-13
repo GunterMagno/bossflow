@@ -1,18 +1,22 @@
+// ============================================================
+// File: Status.jsx
+// Description: Server health status monitoring page.
+// ============================================================
 import { useHealthCheck } from '../hooks/useHealthCheck';
 import { useEffect } from 'react';
 import { FiCheckCircle, FiXCircle, FiAlertTriangle } from 'react-icons/fi';
 import './Status.css';
 
 /**
- * Página de estado del sistema.
- * Muestra el estado de los servicios y componentes de BossFlow.
- * @returns {React.ReactElement} El componente de la página de estado.
+ * System status page.
+ * Displays the status of BossFlow services and components.
+ * @returns {React.ReactElement} The status page component.
  */
 function Status() {
   const { loading, data, error, isConnected } = useHealthCheck();
 
   /**
-   * Establece el título de la página cuando el componente se monta.
+   * Sets the page title when the component mounts.
    */
   useEffect(() => {
     document.title = 'Estado del Sistema | BossFlow';
@@ -20,18 +24,18 @@ function Status() {
 
   return (
     <main className="status">
-      <article className="status__contenedor">
-        <header className="status__encabezado">
-          <h1 className="status__titulo">Estado del Sistema</h1>
-          <p className="status__subtitulo">
+      <article className="status__container">
+        <header className="status__header">
+          <h1 className="status__title">Estado del Sistema</h1>
+          <p className="status__subtitle">
             Monitoreo de servicios de BossFlow
           </p>
         </header>
 
         <section className="status__main">
-          <article className="status__servicio">
-            <header className="status__servicio-header">
-              <h2 className="status__servicio-titulo">Backend API</h2>
+          <article className="status__service">
+            <header className="status__service-header">
+              <h2 className="status__service-title">Backend API</h2>
               <span
                 className={`status__badge ${isConnected ? 'status__badge--online' : 'status__badge--offline'}`}
               >
@@ -47,7 +51,7 @@ function Status() {
               </span>
             </header>
 
-            <section className="status__servicio-body">
+            <section className="status__service-body">
               {loading ? (
                 <section className="status__loading">
                   <figure className="status__spinner"></figure>
@@ -74,13 +78,13 @@ function Status() {
                     <FiAlertTriangle />
                   </figure>
                   <section className="status__error-content">
-                    <p className="status__error-titulo">
+                    <p className="status__error-title">
                       Servicio no disponible
                     </p>
-                    <p className="status__error-mensaje">
+                    <p className="status__error-message">
                       No se pudo verificar el estado del servicio
                     </p>
-                    <section className="status__error-ayuda">
+                    <section className="status__error-help">
                       <p>Si el problema persiste:</p>
                       <ul>
                         <li>Intenta recargar la página</li>
@@ -94,9 +98,9 @@ function Status() {
             </section>
           </article>
 
-          <article className="status__servicio">
-            <header className="status__servicio-header">
-              <h2 className="status__servicio-titulo">Base de Datos</h2>
+          <article className="status__service">
+            <header className="status__service-header">
+              <h2 className="status__service-title">Base de Datos</h2>
               <span
                 className={`status__badge ${isConnected ? 'status__badge--online' : 'status__badge--offline'}`}
               >
@@ -112,7 +116,7 @@ function Status() {
               </span>
             </header>
 
-            <section className="status__servicio-body">
+            <section className="status__service-body">
               <section className="status__info">
                 <article className="status__info-item">
                   <span className="status__info-label">Estado:</span>
