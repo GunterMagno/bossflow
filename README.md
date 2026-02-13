@@ -5,7 +5,8 @@
 [![Issues](https://img.shields.io/github/issues/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/issues)
 [![PRs](https://img.shields.io/github/issues-pr/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/pulls)
 [![Contributors](https://img.shields.io/github/contributors/GunterMagno/BossFlow)](https://github.com/GunterMagno/BossFlow/graphs/contributors)
-[![Stars](https://img.shields.io/github/stars/GunterMagno/BossFlow?style=social)](https://github.com/GunterMagno/BossFlow/stargazers)
+[![Stars](https://img.shields.io/github/stars/GunterMagno/BossFlow?style=social)](https://github.com/GunterMagno/BossFlow/stargazers) 
+
 
 
 ##### CI/CD
